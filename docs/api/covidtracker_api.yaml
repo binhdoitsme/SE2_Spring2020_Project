@@ -1,0 +1,289 @@
+#%RAML 1.0
+title: covid_tracking
+version: v1
+# baseUri: covidtracker.org/
+# backend api
+types:
+  Link:
+    properties:
+      href:
+        type: string
+        example: "/somehref"
+      rel: 
+        type: string
+        example: "somerel"
+      method:
+        type: string
+        example: "get"
+  Record:
+    properties:
+      poiName:
+        type: string
+        example: "Vietnam"
+      infectedCnt:
+        type: integer
+        example: 100000
+      deathCnt: 
+        type: integer
+        example: 15000
+      curedCnt: 
+        type: integer
+        example: 18000
+
+/session:
+  post:
+    description: Authenticate admin user
+    body:
+      application/json:
+        properties:
+          username: string
+          password: string
+    responses:
+      200:
+        body:
+          application/json:
+            properties:
+              authToken: string
+      400:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Unauthorized user!"
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
+  delete:
+    description: Destroy admin session
+    responses:
+      200:
+        body:
+          application/json:
+            properties:
+              authToken: string
+      400:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Unauthorized user!"
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
+/stats:
+  description: Manage the disease statistics
+  get:
+    description: Get the disease statistics
+    responses:
+      200:
+        body:
+          application/json:
+            properties:
+              records: Record[]
+              links: Link[]
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
+  post:
+    description: Add a new disease statistics manually
+    body:
+      application/json:
+        properties:
+          authToken: string
+          record: Record[]
+    responses:
+      200:
+        body:
+          application/json:
+            properties:
+              message:
+                type: string
+                example: "Succeeded!"
+      400:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Unauthorized user!"
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
+  put:
+    description: Automatically fetch data from external source to database and refreshes view
+    responses:
+      200:
+        body:
+          application/json:
+            properties:
+              records: Record[]
+              links:
+                properties:
+                  self: Link
+                  all: Link
+      400:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Unauthorized user!"
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
+
+  /{poiId}:
+    description: Manage disease statistics by point-of-interest
+    get:
+      description: Get the records for a point-of-interest
+      responses:
+        200:
+          body:
+            application/json:
+              properties:
+                records: Record[]
+                links:
+                  properties:
+                    self: Link
+                    all: Link
+        500:
+          body:
+            application/json:
+              properties:
+                message: 
+                  type: string
+                  example: "Server failed!"
+    patch:
+      description: Change information about a point-of-interest
+      responses:
+        200:
+          body:
+            application/json:
+              properties:
+                message:
+                  type: string
+                  example: "Succeeded!"
+        400:
+          body:
+            application/json:
+              properties:
+                message: 
+                  type: string
+                  example: "Unauthorized user!"
+        500:
+          body:
+            application/json:
+              properties:
+                message: 
+                  type: string
+                  example: "Server failed!"
+    delete:
+      description: Remove a point of interest from the database
+      responses:
+        200:
+          body:
+            application/json:
+              properties:
+                message:
+                  type: string
+                  example: "Succeeded"
+        400:
+          body:
+            application/json:
+              properties:
+                message: 
+                  type: string
+                  example: "Unauthorized user!"
+        500:
+          body:
+            application/json:
+              properties:
+                message: 
+                  type: string
+                  example: "Server failed!"
+    /{recordId}:
+      description: Manage individual records of a point-of-interest
+      patch:
+        description: Update a new record for a point-of-interest manually
+        body:
+          application/json:
+            properties:
+              record: Record
+              authToken: string
+        responses:
+          200:
+          400:
+            body:
+              application/json:
+                properties:
+                  message: 
+                    type: string
+                    example: "Unauthorized user!"
+          500:
+            body:
+              application/json:
+                properties:
+                  message: 
+                    type: string
+                    example: "Server failed!"
+      delete:
+        description: Delete a record of a point-of-interest manually
+        responses:
+          200:
+            body:
+              application/json:
+                properties:
+                  message: 
+                    type: string
+                    example: "Succeeded"
+          400:
+            body:
+              application/json:
+                properties:
+                  message: 
+                    type: string
+                    example: "Unauthorized user!"
+          500:
+            body:
+              application/json:
+                properties:
+                  message: 
+                    type: string
+                    example: "Server failed!"
+/articles:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            properties:
+              articles: Link[]
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
