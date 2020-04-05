@@ -28,6 +28,7 @@ public class TomcatBuilderImpl implements TomcatBuilder {
     public TomcatBuilder defaultConfigure() {
         instance.setHostname(DEFAULT_HOSTNAME);
         instance.setPort(DEFAULT_PORT);
+        instance.getConnector();
         instance.getHost().setAppBase(DEFAULT_APP_BASE);
         context = instance.addContext(CONTEXT_PATH, TMP_DIR);
         return this;
