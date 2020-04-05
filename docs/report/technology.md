@@ -1,6 +1,6 @@
 # Two-Tier MVC Web Application - Technologies used
 ### The project will be separated into 2 servers:
-- Backend server: Java, [Servlet] (https://www.oracle.com/technetwork/java/index-jsp-135475.html)
+- Backend server: Java, [Servlet] (https://www.oracle.com/technetwork/java/index-jsp-135475.html), Embedded Tomcat
 - Frontend server: [Node.js](https://nodejs.org/en/about/)/[EJS](https://ejs.co/)
 
 ### Why using 2 separate servers?
@@ -10,3 +10,6 @@
 
 ### Why Node.js/EJS for front-end?
 Because the group has more or less worked with Node.js in web development in prior courses and found the platform to be both fast and lightweight. EJS was chosen for its flat learning curve.
+
+### Why Embedded Tomcat?
+Embedded Tomcat makes deploying the application easier: it is only necessary to run the built JAR file, like running a pure console application, instead of having to set up a Tomcat server from scratch. This approach resembles the way Microsoft has done with ASP.NET Core web applications.
