@@ -29,6 +29,12 @@ types:
       curedCnt: 
         type: integer
         example: 18000
+  Article:
+    properties:
+      provider: string
+      link: Link
+      title: string
+      imgUrl: Link
 
 /session:
   post:
@@ -279,7 +285,7 @@ types:
         body:
           application/json:
             properties:
-              articles: Link[]
+              articles: Article[]
       500:
         body:
           application/json:
