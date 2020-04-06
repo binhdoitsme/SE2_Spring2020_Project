@@ -1,17 +1,42 @@
 package com.hanu.domain.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-
-@NoArgsConstructor
-@RequiredArgsConstructor
-@Getter @ToString
 public final class Article {
-    private @NonNull String provider;
-    private @NonNull Link link;
-    private @NonNull String title;
-    private @NonNull Link imgUrl;
+    private String provider;
+    private Link link;
+    private String title;
+    private Link imgUrl;
+
+    public Article() { }
+
+    public Article(String provider, Link link, String title, Link imgUrl) {
+        this.provider = provider;
+        this.link = link;
+        this.title = title;
+        this.imgUrl = imgUrl;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Link getLink() {
+        return link;
+    }
+
+    public Link getImgUrl() {
+        return imgUrl;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ":(" + "provider=" + provider
+                                            + ", title=" + title
+                                            + ", link=" + link.toString()
+                                            + ", imgUrl=" + imgUrl.toString()
+                                            + ")";
+    }
 }

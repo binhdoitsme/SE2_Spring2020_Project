@@ -1,13 +1,25 @@
 package com.hanu.util.newscrawler;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
-@Getter
 public final class NewsFormat {
-    private @NonNull String articleSelector;
-    private @NonNull String headerSelector;
-    private @NonNull String imgSelector;
+    private String articleSelector;
+    private String headerSelector;
+    private String imgSelector;
+
+    public NewsFormat(String articleSelector, String headerSelector, String imgSelector) {
+        this.articleSelector = articleSelector;
+        this.headerSelector = headerSelector;
+        this.imgSelector = imgSelector;
+    }
+
+    public String getArticleSelector() {
+        return articleSelector;
+    }
+
+    public String getHeaderSelector() {
+        return headerSelector;
+    }
+
+    public String getImgSelector() {
+        return imgSelector;
+    }
 }

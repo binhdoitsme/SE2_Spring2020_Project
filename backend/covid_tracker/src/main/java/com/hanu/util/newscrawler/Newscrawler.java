@@ -12,8 +12,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import lombok.SneakyThrows;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,8 +58,7 @@ public class Newscrawler {
 
     public Newscrawler() { }
 
-    @SneakyThrows
-    public List<Article> getArticles() {
+    public List<Article> getArticles() throws IOException {
         List<Article> articles = new ArrayList<>();
         for (String provider : SOURCES.keySet()) {
             articles.addAll(getArticlesByProvider(provider));
