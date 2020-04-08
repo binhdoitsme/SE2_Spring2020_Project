@@ -9,14 +9,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DependencyLoader {
+import com.hanu.util.configuration.Configuration;
 
+public class DependencyLoader {  
     // constants
-    private static final String ROOT_PACKAGE = "org.example";
+    private static final String ROOT_PACKAGE = Configuration.get("io.rootpackage");
     private static final Class<? extends Annotation> INJECT_ANNOTATION_CLASS = Inject.class;
     private static final Class<?> DEPENDENCY_CONTAINER_CLASS = DependencyContainer.class;
 
+    private static ClassPool classPool = ClassPool.getDefault();
+
     public static void loadDependencies() throws IOException, ClassNotFoundException, CannotCompileException, NotFoundException {
+
         // scan every java file in this project
         List<CtClass> classList = ClassPathClassLoader.getClasses(ROOT_PACKAGE).stream()
                 .map(c -> getCtClassFromClassName(c))
@@ -30,7 +34,7 @@ public class DependencyLoader {
     }
 
     private static void setFieldDependencyFor(CtField injectedField)
-            throws NotFoundException, CannotCompileException {
+            throws NotFoundException, CannotCompileException, ClassNotFoundException {
         CtClass declaredClass = injectedField.getDeclaringClass();
         CtConstructor defaultConstructor = declaredClass.getDeclaredConstructor(null);
         defaultConstructor.insertAfter(getDependencySetterStatement(injectedField));
@@ -62,7 +66,7 @@ public class DependencyLoader {
 
     private static CtClass getCtClassFromClassName(String qualifiedClassName) {
         try {
-            return ClassPool.getDefault().get(qualifiedClassName);
+            return classPool.getCtClass(qualifiedClassName);
         } catch (NotFoundException e) {
             e.printStackTrace();
             return null;

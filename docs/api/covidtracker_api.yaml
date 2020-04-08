@@ -29,8 +29,35 @@ types:
       curedCnt: 
         type: integer
         example: 18000
+  Article:
+    properties:
+      provider: string
+      link: Link
+      title: string
+      imgUrl: Link
 
 /session:
+  get:
+    description: Validate user session
+    queryParameters:
+      authToken: string
+    responses:
+      200:
+        body:
+      400:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Unauthorized user!"
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
   post:
     description: Authenticate admin user
     body:
@@ -288,7 +315,7 @@ types:
         body:
           application/json:
             properties:
-              articles: Link[]
+              articles: Article[]
       500:
         body:
           application/json:

@@ -1,8 +1,9 @@
 package com.hanu.util.server;
 
-import lombok.SneakyThrows;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +16,7 @@ public class TomcatBuilderImpl implements TomcatBuilder {
     private static final String DEFAULT_APP_BASE = ".";
     private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
     private static final String CONTEXT_PATH = "";
+    private static final Logger logger = LoggerFactory.getLogger(TomcatBuilderImpl.class);
 
     // fields
     private Tomcat instance;
@@ -34,18 +36,21 @@ public class TomcatBuilderImpl implements TomcatBuilder {
         return this;
     }
 
-    @SneakyThrows
     @Override
     public TomcatBuilder registerServlets(List<Class<HttpServlet>> servlets) {
-        for (Class<HttpServlet> servlet : servlets) {
-            WebServlet servletAnnotation = servlet.getAnnotation(WebServlet.class);
-            String servletName = servletAnnotation.name();
-            HttpServlet servletInstance = servlet.newInstance();
-            String[] urlPatterns = servletAnnotation.urlPatterns();
-            instance.addServlet(CONTEXT_PATH, servletName, servletInstance);
-            for (String urlPattern : urlPatterns) {
-                context.addServletMappingDecoded(urlPattern, servletName);
+        try {
+            for (Class<HttpServlet> servlet : servlets) {
+                WebServlet servletAnnotation = servlet.getAnnotation(WebServlet.class);
+                String servletName = servletAnnotation.name();
+                HttpServlet servletInstance = servlet.newInstance();
+                String[] urlPatterns = servletAnnotation.urlPatterns();
+                instance.addServlet(CONTEXT_PATH, servletName, servletInstance);
+                for (String urlPattern : urlPatterns) {
+                    context.addServletMappingDecoded(urlPattern, servletName);
+                }
             }
+        } catch (Exception e) {
+            logger.error(e.getClass().getName() + ": " + e.getMessage());
         }
 
         return this;
