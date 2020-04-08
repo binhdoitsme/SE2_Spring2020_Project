@@ -84,6 +84,15 @@ types:
   description: Manage the disease statistics
   get:
     description: Get the disease statistics
+    queryParameters:
+      aggregate:
+        description: get the aggregation type
+        type: string
+        required: false
+      continent:
+        description: get the continent name
+        type: string
+        required: false
     responses:
       200:
         body:
