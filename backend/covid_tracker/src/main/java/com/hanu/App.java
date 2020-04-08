@@ -18,7 +18,7 @@ public final class App implements Runnable {
                             .configureDependencies()
                             .configureServer();
         } catch (Exception e) {
-            logger.error(e.getClass().getName() + ": " + e.getMessage());
+            logger.error(e.getMessage(), e);
         }
     }
 

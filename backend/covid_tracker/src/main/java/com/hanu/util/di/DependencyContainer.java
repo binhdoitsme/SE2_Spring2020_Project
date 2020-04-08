@@ -9,20 +9,20 @@ public class DependencyContainer {
 
     private static DependencyContainer instance;
 
-    private final Map<Class<?>, Object> dependencyContainer = new HashMap<>();
+    private static Map<Class<?>, Object> dependencyContainer = new HashMap<>();
 
     DependencyContainer() { }
 
     public DependencyContainer addDependency(Class<?> dependencyType, Object implementation) {
-        this.dependencyContainer.put(dependencyType, implementation);
+        dependencyContainer.put(dependencyType, implementation);
         return this;
     }
 
     public static DependencyContainer getInstance() {
-        if (instance != null) {
-            return instance;
+        if (instance == null) {
+            instance = new DependencyContainer();
         }
-        return new DependencyContainer();
+        return instance;
     }
 
     @SuppressWarnings("unchecked")

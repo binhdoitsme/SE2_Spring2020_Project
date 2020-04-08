@@ -5,7 +5,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 
+import com.hanu.db.UserRepositoryImpl;
+import com.hanu.domain.repository.UserRepository;
 import com.hanu.util.configuration.Configuration;
+import com.hanu.util.db.DbConnector;
+import com.hanu.util.db.DbConnectorImpl;
 import com.hanu.util.di.DependencyContainer;
 import com.hanu.util.di.DependencyLoader;
 import com.hanu.util.server.ServletLoader;
@@ -13,18 +17,13 @@ import com.hanu.util.server.TomcatBuilder;
 import com.hanu.util.server.TomcatBuilderImpl;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
 
 public class Startup {
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
+    // private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    private static final String SERVLET_PACKAGE_NAME = "com.hanu.servlet";
-
-    @SuppressWarnings("unused")
     private DependencyContainer container;
 
     public Startup configureDependencies()
@@ -32,13 +31,15 @@ public class Startup {
         // load dependency injection instances here
         container = DependencyContainer.getInstance();
         DependencyLoader.loadDependencies();
+        container.addDependency(DbConnector.class, new DbConnectorImpl());
+        container.addDependency(UserRepository.class, new UserRepositoryImpl());
         return this;
     }
 
     public void configureServer() throws ClassNotFoundException {
-        List<Class<HttpServlet>> servlets = ServletLoader.getServletClasses(SERVLET_PACKAGE_NAME);
+        String servletPackageName = Configuration.get("servlet.package");
+        List<Class<HttpServlet>> servlets = ServletLoader.getServletClasses(servletPackageName);
         TomcatBuilder appBuilder = new TomcatBuilderImpl();
-        logger.info("database.connectionstring=" + Configuration.getInstance().get("database.connectionstring"));
         appBuilder.defaultConfigure().registerServlets(servlets).startServer();
     }
 
