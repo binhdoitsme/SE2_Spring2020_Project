@@ -54,10 +54,14 @@ public class Configuration {
         }
     }
 
-    public String get(String property) {
+    public String getString(String property) {
         return configurations.stream().filter(c -> c.containsKey(property))
                                     .map(c -> c.getString(property))
                                     .collect(Collectors.joining(""));
+    }
+
+    public static String get(String property) {
+        return instance.getString(property);
     }
 
     @Override

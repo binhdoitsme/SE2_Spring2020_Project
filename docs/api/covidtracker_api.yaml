@@ -37,6 +37,27 @@ types:
       imgUrl: Link
 
 /session:
+  get:
+    description: Validate user session
+    queryParameters:
+      authToken: string
+    responses:
+      200:
+        body:
+      400:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Unauthorized user!"
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
   post:
     description: Authenticate admin user
     body:
