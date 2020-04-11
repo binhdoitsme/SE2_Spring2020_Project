@@ -17,16 +17,22 @@ types:
         example: "get"
   Record:
     properties:
+      timestamp:
+        type: string
+        example: "2020-04-08 00:00:00.0"
       poiName:
         type: string
         example: "Vietnam"
-      infectedCnt:
+      continent:
+        type: string
+        example: "asia"
+      infected:
         type: integer
         example: 100000
-      deathCnt: 
+      death: 
         type: integer
         example: 15000
-      curedCnt: 
+      cured: 
         type: integer
         example: 18000
   Article:
