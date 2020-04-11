@@ -58,6 +58,11 @@ public class Record {
         return poiName;
     }
 
+    public Record poiId(int poiId) {
+        this.poiId = poiId;
+        return this;
+    }
+
     public Record poiName(String name) {
         this.poiName = name;
         return this;
