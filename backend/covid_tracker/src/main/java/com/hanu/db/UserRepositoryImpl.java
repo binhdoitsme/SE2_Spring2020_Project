@@ -70,7 +70,7 @@ public class UserRepositoryImpl extends RepositoryImpl<User, String> implements 
     }
 
     @Override
-    public void remove(Iterable<User> items) {
+    public int remove(Iterable<User> items) {
         throw new UnsupportedOperationException();
     }
 
