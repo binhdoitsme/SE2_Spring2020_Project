@@ -112,12 +112,20 @@ types:
   get:
     description: Get the disease statistics
     queryParameters:
-      aggregate:
-        description: get the aggregation type
+      groupby:
+        description: get the group-by type (world, continent, country, etc.)
         type: string
         required: false
       continent:
         description: get the continent name
+        type: string
+        required: false
+      latest:
+        description: whether the aggregation is for the latest data (recent 2 days) only
+        type: string
+        required: false
+      timeframe:
+        description: defines in how much time the data is grouped (by day, by week, etc.)
         type: string
         required: false
     responses:
