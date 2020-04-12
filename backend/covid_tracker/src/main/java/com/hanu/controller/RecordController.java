@@ -1,10 +1,15 @@
 package com.hanu.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hanu.base.Converter;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.usecase.RemoveRecordUsecase;
@@ -29,38 +34,45 @@ public class RecordController {
 		RemoveRecordUsecase = new RemoveRecordUsecase();
 	}
 
-	public void updateRecords(Record record) {
-    	Record updateRecord = new Record();
-        try {        	
-        	updateRecord.setId(record.getId());
-        	updateRecord.setTimestamp(record.getTimestamp());
-        	updateRecord.setPoiId(record.getPoiId());
-        	updateRecord.setInfected(record.getInfected());
-        	updateRecord.setDeath(record.getDeath());
-        	updateRecord.setRecovered(record.getRecovered());
-    	              
-            UpdateRecordUsecase.handle(updateRecord);
-            
+
+    
+    private Record setRecord(Record input) {
+    	Record record = new Record();
+    	try {        	
+        	record.setId(input.getId());
+        	record.setTimestamp(input.getTimestamp());
+        	record.setPoiId(input.getPoiId());
+        	record.setInfected(input.getInfected());
+        	record.setDeath(input.getDeath());
+        	record.setRecovered(input.getRecovered());    	                                   
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
+		return record;
     }
     
-    public void removeRecords(Record record) {
-    	Record removeRecord = new Record();
-        try {        	
-        	removeRecord.setId(record.getId());
-        	removeRecord.setTimestamp(record.getTimestamp());
-        	removeRecord.setPoiId(record.getPoiId());
-        	removeRecord.setInfected(record.getInfected());
-        	removeRecord.setDeath(record.getDeath());
-        	removeRecord.setRecovered(record.getRecovered());
-    	              
-            RemoveRecordUsecase.handle(removeRecord);
-            
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);          
-        }
+	public void updateRecords(Iterable<Record> recordArray) {
+		List<Record> updateRecords = new ArrayList<Record>();
+		for (Record record : recordArray) {
+	        try {        	
+	        	updateRecords.add(setRecord(record));	            
+	        } catch (Exception e) {
+	            logger.error(e.getMessage(), e);
+	        }
+	        UpdateRecordUsecase.handle(updateRecords);
+		}   	
+    }
+    
+    public void removeRecords(Iterable<Record> recordArray) {
+    	List<Record> removeRecords = new ArrayList<Record>();
+		for (Record record : recordArray) {
+	        try {        	
+	        	removeRecords.add(setRecord(record));	            
+	        } catch (Exception e) {
+	            logger.error(e.getMessage(), e);
+	        }
+	        RemoveRecordUsecase.handle(removeRecords);
+		}   	
     }
 
 

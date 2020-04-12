@@ -1,5 +1,7 @@
 package com.hanu.domain.usecase;
 
+import java.util.List;
+
 import com.hanu.db.RecordRepositoryImpl;
 import com.hanu.domain.model.Record;
 
@@ -10,14 +12,12 @@ public class UpdateRecordUsecase {
 	}
 
 
-	public Record handle(Record updateRecord) {
+	public void handle(List<Record> updateRecords) {
 		try {
 			RecordRepositoryImpl update = new RecordRepositoryImpl();
-			update.update(updateRecord);
+			update.update(updateRecords);
 		} catch (Exception e) {
 			// TODO: handle exception
-			return null;
 		}
-		return updateRecord;
 	}
 }
