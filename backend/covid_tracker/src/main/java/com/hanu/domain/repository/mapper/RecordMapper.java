@@ -1,6 +1,8 @@
 package com.hanu.domain.repository.mapper;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
 
 import com.hanu.base.Mapper;
 import com.hanu.domain.model.Record;
@@ -27,5 +29,19 @@ public class RecordMapper extends Mapper<Record> {
             logger.error(e.getMessage(), e);
         }
         return r;
+    }
+    
+    public static Record forwardConvertOnce(ResultSet rs) {
+        try {
+            return new Record(rs.getInt("id"),
+                    rs.getTimestamp("timestamp"),
+                    rs.getInt("poi_id"),
+                    rs.getLong("infected"),
+                    rs.getLong("death"),
+                    rs.getLong("recovered"));
+        } catch (SQLException e) {
+        	logger.error(e.getMessage(), e);
+            return null;
+        }
     }
 }

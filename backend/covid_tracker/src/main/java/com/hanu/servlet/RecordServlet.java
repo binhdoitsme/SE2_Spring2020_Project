@@ -1,5 +1,6 @@
 package com.hanu.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanu.controller.RecordController;
 import com.hanu.domain.dto.RecordDto;
+import com.hanu.domain.model.Record;
 import com.hanu.exception.ServerFailedException;
 
 import org.json.JSONObject;
@@ -44,8 +46,9 @@ public class RecordServlet extends HttpServlet {
         List<String> queryParamNames = Collections.list(req.getParameterNames());
 
         if (queryParamNames.isEmpty()) {
-            // GET /stats 
-            // will be done by others
+        	 // GET /stats 
+            List<Record> allRecords = controller.getRecords();
+            writeAsJsonToResponse(allRecords, resp);
             return;
         } else {
             List<RecordDto> result = new LinkedList<>();
@@ -64,6 +67,16 @@ public class RecordServlet extends HttpServlet {
             writeAsJsonToResponse(result, resp);
             return;
         }
+    }
+    
+    private String getRequestBody(HttpServletRequest req) throws IOException {
+        BufferedReader reader = req.getReader();
+        StringBuilder body = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            body.append(line).append("\n");
+        }
+        return body.toString();
     }
 
     private void writeAsJsonToResponse(Object o, HttpServletResponse resp) throws IOException {

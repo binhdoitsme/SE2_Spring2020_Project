@@ -12,6 +12,7 @@ import com.hanu.domain.converter.RecordDtoConverter;
 import com.hanu.domain.dto.RecordDto;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.usecase.GetAggregatedRecordsUseCase;
+import com.hanu.domain.usecase.GetAllRecordUseCase;
 import com.hanu.util.string.StringConvert;
 
 import org.slf4j.Logger;
@@ -42,5 +43,10 @@ public class RecordController {
             logger.error(e.getMessage(), e);
             return new ArrayList<>();
         }
+    }
+    
+    //getAllRecord
+    public List<Record> getRecords() {
+    	return new GetAllRecordUseCase().handle();
     }
 }

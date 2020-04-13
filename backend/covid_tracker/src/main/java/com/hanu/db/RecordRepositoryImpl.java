@@ -2,6 +2,8 @@ package com.hanu.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import com.hanu.domain.repository.RecordRepository;
 import com.hanu.domain.repository.mapper.RecordMapper;
 import com.hanu.exception.InvalidQueryTypeException;
 import com.hanu.util.configuration.Configuration;
+import com.hanu.util.db.RecordToDbConverter;
 
 public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implements RecordRepository {
     private static final String AGGREGATE_TEMPLATE = Configuration.get("db.aggregated.template");
@@ -23,28 +26,77 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     private static final String LATEST_LIMIT = Configuration.get("db.aggregated.latest");
 
     @Override
-    public List<Record> getAll() {
-        
-        return null;
-    }
+	public List<Record> getAll() {
+		List<Record> records = new ArrayList<>();
+		String query = "SELECT * FROM record";
+		try {
+			ResultSet rs = this.getConnector().connect().executeSelect(query);
+			while(rs.next()) {
+				records.add(RecordMapper.forwardConvertOnce(rs));
+			}
+		} catch (SQLException | InvalidQueryTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return records;
+	}
 
     @Override
-    public Record getById(Integer id) {
-        
-        return null;
-    }
+	public Record getById(Integer id) {
+		Record record = null;
+		String query = "SELECT * FROM record WHERE id = " + "\'" +id + "\'";
+		try {
+			ResultSet rs = this.getConnector().executeSelect(query);
+			record = RecordMapper.forwardConvertOnce(rs);
+		} catch (SQLException | InvalidQueryTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return record;
+	}
+    
+    public List<Record> getByTimeStamp(Timestamp time) {
+		List<Record> records = new ArrayList<>();
+		String query = "SELECT * FROM record WHERE timeStamp = " + "\'" + time + "\'";
+		try {
+			ResultSet rs = this.getConnector().executeSelect(query);
+			while(rs.next()) {
+				records.add(RecordMapper.forwardConvertOnce(rs));
+			}
+		} catch (SQLException | InvalidQueryTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return records;
+	}
 
     @Override
-    public void add(Record item) {
-        
-
-    }
+	public void add(Record item) {
+		String query = new String("INSERT INTO record VALUES $values")
+								.replace("$values",RecordToDbConverter.forwardConverter(item));
+		try {
+			this.getConnector().executeInsert(query);
+		} catch (SQLException | InvalidQueryTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
     @Override
-    public void add(Iterable<Record> items) {
-        
-
-    }
+	public void add(Iterable<Record> items) {
+		ArrayList<String> insertValueStrings = new ArrayList<String>();
+		for (Record record : items) {
+			insertValueStrings.add(RecordToDbConverter.forwardConverter(record));
+		}
+		String query = new String("INSERT INTO record VALUES $values")
+								.replace("$values", String.join(",",insertValueStrings));
+		try {
+			getConnector().connect().executeInsert(query);
+		} catch (SQLException | InvalidQueryTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
     @Override
     public void remove(Record item) {
@@ -115,5 +167,4 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
                 .replace("$fields", groupByType == GroupByType.CONTINENT ? FIELD_SUM_TEMPLATE : "*");
         return sql;
     }
-
 }
