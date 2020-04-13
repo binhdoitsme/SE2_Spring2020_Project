@@ -30,7 +30,7 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 		List<Record> records = new ArrayList<>();
 		String query = "SELECT * FROM record";
 		try {
-			ResultSet rs = this.getConnector().connect().executeSelect(query);
+			ResultSet rs = this.getConnector().connect().connect().executeSelect(query);
 			while(rs.next()) {
 				records.add(RecordMapper.forwardConvertOnce(rs));
 			}
@@ -44,9 +44,10 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     @Override
 	public Record getById(Integer id) {
 		Record record = null;
-		String query = "SELECT * FROM record WHERE id = " + "\'" +id + "\'";
+		String query = "SELECT * FROM record INNER JOIN point_of_interest ON record.poi_id = point_of_interest.id"
+				+  " WHERE id = " + "\'" +id + "\'";
 		try {
-			ResultSet rs = this.getConnector().executeSelect(query);
+			ResultSet rs = this.getConnector().connect().executeSelect(query);
 			record = RecordMapper.forwardConvertOnce(rs);
 		} catch (SQLException | InvalidQueryTypeException e) {
 			// TODO Auto-generated catch block
@@ -55,27 +56,28 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 		return record;
 	}
     
-    public List<Record> getByTimeStamp(Timestamp time) {
+    @Override
+	public List<Record> getByPoiID(int input) throws SQLException, InvalidQueryTypeException {
 		List<Record> records = new ArrayList<>();
-		String query = "SELECT * FROM record WHERE timeStamp = " + "\'" + time + "\'";
+		String query = "SELECT * FROM record INNER JOIN point_of_interest ON record.poi_id = point_of_interest.id"
+				+  " WHERE poi_id = " + "\'" +input+ "\'";
 		try {
-			ResultSet rs = this.getConnector().executeSelect(query);
+			ResultSet rs = this.getConnector().connect().executeSelect(query);
 			while(rs.next()) {
 				records.add(RecordMapper.forwardConvertOnce(rs));
 			}
-		} catch (SQLException | InvalidQueryTypeException e) {
-			// TODO Auto-generated catch block
+		} catch (SQLException | InvalidQueryTypeException e) {				
 			e.printStackTrace();
-		}
+		}			
 		return records;
 	}
-
+    
     @Override
 	public void add(Record item) {
 		String query = new String("INSERT INTO record VALUES $values")
 								.replace("$values",RecordToDbConverter.forwardConverter(item));
 		try {
-			this.getConnector().executeInsert(query);
+			this.getConnector().connect().executeInsert(query);
 		} catch (SQLException | InvalidQueryTypeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -91,12 +93,13 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 		String query = new String("INSERT INTO record VALUES $values")
 								.replace("$values", String.join(",",insertValueStrings));
 		try {
-			getConnector().connect().executeInsert(query);
+			this.getConnector().connect().executeInsert(query);
 		} catch (SQLException | InvalidQueryTypeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+    
 
     @Override
     public void remove(Record item) {

@@ -11,5 +11,6 @@ import com.hanu.util.di.Dependency;
 
 @Dependency
 public interface RecordRepository extends Repository<Record, Integer> {
-    List<Record> getAggregatedRecords(AggregationType type) throws SQLException, InvalidQueryTypeException;
+    List<Record> getByPoiID(int input) throws SQLException,InvalidQueryTypeException;
+	List<Record> getAggregatedRecords(AggregationType type) throws SQLException, InvalidQueryTypeException;
 }

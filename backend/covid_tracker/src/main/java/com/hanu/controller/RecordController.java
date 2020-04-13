@@ -12,6 +12,7 @@ import com.hanu.domain.converter.RecordDtoConverter;
 import com.hanu.domain.dto.RecordDto;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.usecase.GetAggregatedRecordsUseCase;
+import com.hanu.domain.usecase.GetAllByPoiIdUseCase;
 import com.hanu.domain.usecase.GetAllRecordUseCase;
 import com.hanu.util.string.StringConvert;
 
@@ -48,5 +49,10 @@ public class RecordController {
     //getAllRecord
     public List<Record> getRecords() {
     	return new GetAllRecordUseCase().handle();
+    }
+    
+    //getAllRecordByPoiID
+    public List<Record> getByPoiID(int input){
+    	return new GetAllByPoiIdUseCase().handle(input);
     }
 }

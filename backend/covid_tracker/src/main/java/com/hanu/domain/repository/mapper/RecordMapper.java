@@ -31,17 +31,21 @@ public class RecordMapper extends Mapper<Record> {
         return r;
     }
     
-    public static Record forwardConvertOnce(ResultSet rs) {
+    public static Record forwardConvertOnce(ResultSet source) {
+    	Record r = null;
         try {
-            return new Record(rs.getInt("id"),
-                    rs.getTimestamp("timestamp"),
-                    rs.getInt("poi_id"),
-                    rs.getLong("infected"),
-                    rs.getLong("death"),
-                    rs.getLong("recovered"));
-        } catch (SQLException e) {
-        	logger.error(e.getMessage(), e);
-            return null;
+            r = new Record(source.getInt("id"), source.getTimestamp("timestamp"), source.getInt("poi_id"),
+                            source.getInt("infected"), source.getInt("death"), source.getInt("recovered"));
+            try {
+            	String continent = source.getString("continent");
+            	String poiName = source.getString("name");
+            	r = r.continent(continent).poiName(poiName);
+            } catch (Exception e) {
+            	//todo
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
+        return r;
     }
 }

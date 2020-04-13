@@ -1,5 +1,6 @@
 package com.hanu.domain.usecase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.hanu.base.RequestHandler;
@@ -15,7 +16,11 @@ public class GetAllRecordUseCase implements RequestHandler<Record, List<Record>>
 	}
 	
 	public List<Record> handle() {
-		return repository.getAll();
+		try {
+			return repository.getAll();
+		} catch (Exception e){
+			return new ArrayList<Record>();
+		}
 	}
 
 	@Override

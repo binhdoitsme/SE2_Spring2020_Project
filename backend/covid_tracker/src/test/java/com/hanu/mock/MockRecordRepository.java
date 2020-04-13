@@ -1,5 +1,6 @@
 package com.hanu.mock;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 import com.hanu.db.util.AggregationType;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.repository.RecordRepository;
+import com.hanu.exception.InvalidQueryTypeException;
 
 public class MockRecordRepository implements RecordRepository {
 
@@ -77,5 +79,11 @@ public class MockRecordRepository implements RecordRepository {
     public List<Record> getAggregatedRecords(AggregationType type) {
         return records.values().stream().collect(Collectors.toList());
     }
+
+	@Override
+	public List<Record> getByPoiID(int input) throws SQLException, InvalidQueryTypeException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
