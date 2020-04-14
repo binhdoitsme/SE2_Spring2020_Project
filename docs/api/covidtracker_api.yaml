@@ -17,16 +17,22 @@ types:
         example: "get"
   Record:
     properties:
+      timestamp:
+        type: string
+        example: "2020-04-08 00:00:00.0"
       poiName:
         type: string
         example: "Vietnam"
-      infectedCnt:
+      continent:
+        type: string
+        example: "asia"
+      infected:
         type: integer
         example: 100000
-      deathCnt: 
+      death: 
         type: integer
         example: 15000
-      curedCnt: 
+      cured: 
         type: integer
         example: 18000
   Article:
@@ -111,6 +117,23 @@ types:
   description: Manage the disease statistics
   get:
     description: Get the disease statistics
+    queryParameters:
+      groupby:
+        description: get the group-by type (world, continent, country, etc.)
+        type: string
+        required: false
+      continent:
+        description: get the continent name
+        type: string
+        required: false
+      latest:
+        description: whether the aggregation is for the latest data (recent 2 days) only
+        type: string
+        required: false
+      timeframe:
+        description: defines in how much time the data is grouped (by day, by week, etc.)
+        type: string
+        required: false
     responses:
       200:
         body:

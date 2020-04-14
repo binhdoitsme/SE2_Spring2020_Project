@@ -1,5 +1,13 @@
 package com.hanu.util.newscrawler;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -11,15 +19,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * The class handling crawling CoViD-19 news over the net
@@ -45,7 +44,7 @@ public class Newscrawler {
                             new NewsFormat("div.focus2", "h2 > a", "a > img"),
                             new NewsFormat("li.tlitem", "h4 > a", "a > img") });
             put("vnexpress",
-                    new NewsFormat[] { new NewsFormat("article", "h3.title_news > a", "a.thumb > img") });
+                    new NewsFormat[] { new NewsFormat("article", "h3 > a", "div > a > picture > img") });
         }
     };
     private static final Map<String, String> SITE_ROOTS = new HashMap<String, String>() {
@@ -82,7 +81,8 @@ public class Newscrawler {
             Elements elements = doc.select(nf.getArticleSelector());
             for (Element e : elements) {
                 if (articles.size() < COUNT_PER_SOURCE) {
-                    articles.add(createArticleFrom(e, nf, provider, siteRoot));
+                    Article a = createArticleFrom(e, nf, provider, siteRoot);
+                    if (a != null) articles.add(a);
                 } else {
                     break;
                 }
@@ -112,16 +112,20 @@ public class Newscrawler {
     }
 
     private Article createArticleFrom(Element e, NewsFormat nf, String provider, String siteRoot) {
-        String headerSelector = nf.getHeaderSelector();
-        String imgSelector = nf.getImgSelector();
-        String heading = e.selectFirst(headerSelector).text();
-        String absUrl = siteRoot.concat(e.selectFirst(headerSelector).attributes().get("href").replace(siteRoot, ""));
-        Element imgElement = e.selectFirst(imgSelector);
-        String imgUrl = imgElement.attributes().get("src");
-        imgUrl = imgUrl.startsWith("data:") ? imgElement.attributes().get("data-original") : imgUrl;
-        return new Article(provider, 
-                            new Link(absUrl, "article", "GET"),
-                            heading,
-                            new Link(imgUrl, "thumb", "GET"));
+        try {
+            String headerSelector = nf.getHeaderSelector();
+            String imgSelector = nf.getImgSelector();
+            String heading = e.selectFirst(headerSelector).text();
+            String absUrl = siteRoot.concat(e.selectFirst(headerSelector).attributes().get("href").replace(siteRoot, ""));
+            Element imgElement = e.selectFirst(imgSelector);
+            String imgUrl = imgElement.attributes().get("src");
+            imgUrl = imgUrl.startsWith("data:") ? imgElement.attributes().get("data-src") : imgUrl;
+            return new Article(provider, 
+                                new Link(absUrl, "article", "GET"),
+                                heading,
+                                new Link(imgUrl, "thumb", "GET"));
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }

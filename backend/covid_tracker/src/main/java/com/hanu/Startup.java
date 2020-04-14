@@ -5,7 +5,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 
+import com.hanu.db.RecordRepositoryImpl;
 import com.hanu.db.UserRepositoryImpl;
+import com.hanu.domain.repository.RecordRepository;
 import com.hanu.domain.repository.UserRepository;
 import com.hanu.util.configuration.Configuration;
 import com.hanu.util.db.DbConnector;
@@ -31,8 +33,11 @@ public class Startup {
         // load dependency injection instances here
         container = DependencyContainer.getInstance();
         DependencyLoader.loadDependencies();
+
+        // add dependencies here
         container.addDependency(DbConnector.class, new DbConnectorImpl());
         container.addDependency(UserRepository.class, new UserRepositoryImpl());
+        container.addDependency(RecordRepository.class, new RecordRepositoryImpl());
         return this;
     }
 

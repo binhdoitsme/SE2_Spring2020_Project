@@ -38,7 +38,7 @@ public class UserRepositoryImpl extends RepositoryImpl<User, String> implements 
     @Override
     public User getById(String id) {
         try {
-            String sql = "SELECT * FROM user";
+            String sql = "SELECT * FROM user WHERE id = $id".replace("$id", id);
             ResultSet rs = this.getConnector().connect().executeSelect(sql);
             UserMapper mapper = new UserMapper();
             rs.next();
