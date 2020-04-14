@@ -38,10 +38,9 @@ public class RecordServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		BufferedReader reader = req.getReader();
+		//jsonString Array -> list of record
 		Iterable<Record> recordArray = new Gson().fromJson(reader, new TypeToken<ArrayList<Record>>(){}.getType());
 		controller.updateRecords(recordArray);
-		// RecordRepositoryImpl update = new RecordRepositoryImpl();
-		// update.update(updateRecord);
 		resp.getWriter().println("Updated!!!");
 	}
 
@@ -49,6 +48,7 @@ public class RecordServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		BufferedReader reader = req.getReader();
+		//jsonString Array -> list of record
 		Iterable<Record> recordArray = new Gson().fromJson(reader, new TypeToken<ArrayList<Record>>(){}.getType());
 		controller.removeRecords(recordArray);
 		resp.getWriter().println("Removed!!!");

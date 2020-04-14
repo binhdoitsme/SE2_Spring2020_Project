@@ -14,17 +14,14 @@ import com.hanu.base.Converter;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.usecase.RemoveRecordUsecase;
 import com.hanu.domain.usecase.UpdateRecordUsecase;
+import com.hanu.exception.EmptyBodyException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RecordController {
     public static final Logger logger = LoggerFactory.getLogger(RecordController.class);
-    // other methods written by others...
-
-    /**
-     * Delegate to GetAggregatedRecords usecase
-     */
+    
     private UpdateRecordUsecase UpdateRecordUsecase;
     private RemoveRecordUsecase RemoveRecordUsecase;
         
@@ -36,7 +33,7 @@ public class RecordController {
 
 
     
-    private Record setRecord(Record input) {
+    private Record getRecord(Record input) {
     	Record record = new Record();
     	try {        	
         	record.setId(input.getId());
@@ -44,20 +41,23 @@ public class RecordController {
         	record.setPoiId(input.getPoiId());
         	record.setInfected(input.getInfected());
         	record.setDeath(input.getDeath());
-        	record.setRecovered(input.getRecovered());    	                                   
+        	record.setRecovered(input.getRecovered()); 
+        	
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
 		return record;
     }
+
     
 	public void updateRecords(Iterable<Record> recordArray) {
 		List<Record> updateRecords = new ArrayList<Record>();
 		for (Record record : recordArray) {
-	        try {        	
-	        	updateRecords.add(setRecord(record));	            
+	        try {
+	        	Record r = getRecord(record);
+	        	updateRecords.add(r);	            
 	        } catch (Exception e) {
-	            logger.error(e.getMessage(), e);
+	        	logger.error(e.getMessage(), e);
 	        }
 	        UpdateRecordUsecase.handle(updateRecords);
 		}   	
@@ -67,7 +67,7 @@ public class RecordController {
     	List<Record> removeRecords = new ArrayList<Record>();
 		for (Record record : recordArray) {
 	        try {        	
-	        	removeRecords.add(setRecord(record));	            
+	        	removeRecords.add(getRecord(record));	            
 	        } catch (Exception e) {
 	            logger.error(e.getMessage(), e);
 	        }
