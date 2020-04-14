@@ -1,20 +1,12 @@
 package com.hanu.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.hanu.base.Converter;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.usecase.RemoveRecordUsecase;
 import com.hanu.domain.usecase.UpdateRecordUsecase;
-import com.hanu.exception.EmptyBodyException;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +54,7 @@ public class RecordController {
 	        UpdateRecordUsecase.handle(updateRecords);
 		}   	
     }
+	
     
     public void removeRecords(Iterable<Record> recordArray) {
     	List<Record> removeRecords = new ArrayList<Record>();
