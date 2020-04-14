@@ -1,5 +1,7 @@
 package com.hanu.mock;
 
+import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.stream.Collectors;
 import com.hanu.db.util.AggregationType;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.repository.RecordRepository;
+import com.hanu.exception.InvalidQueryTypeException;
 
 public class MockRecordRepository implements RecordRepository {
 
@@ -41,17 +44,21 @@ public class MockRecordRepository implements RecordRepository {
     }
 
     @Override
-    public void add(Iterable<Record> items) {
+    public int add(Iterable<Record> items) {
         items.forEach(itm -> {
             records.put(itm.getId(), itm);
         });
+        return 0;
     }
 
     @Override
-    public void remove(Record item) { }
+    public void remove(Record item) {
+    }
 
     @Override
-    public void remove(Iterable<Record> items) { }
+    public int remove(Iterable<Record> items) {
+        return 0;
+    }
 
     @Override
     public Record update(Record item) {
@@ -76,6 +83,17 @@ public class MockRecordRepository implements RecordRepository {
     @Override
     public List<Record> getAggregatedRecords(AggregationType type) {
         return records.values().stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public int getPoiIdByName(String poiName) throws SQLException, InvalidQueryTypeException {
+        return 0;
+    }
+
+    @Override
+    public Date getLatestDate() throws SQLException, InvalidQueryTypeException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
