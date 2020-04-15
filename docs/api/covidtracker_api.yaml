@@ -178,7 +178,11 @@ types:
                 type: string
                 example: "Server failed!"
   put:
-    description: Automatically fetch data from external source to database and refreshes view
+    description: Update data (manually or automatically)
+    body:
+      application/json:
+        type: Record[]
+        required: false
     responses:
       200:
         body:
