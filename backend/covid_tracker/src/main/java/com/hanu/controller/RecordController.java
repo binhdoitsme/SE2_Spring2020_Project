@@ -11,6 +11,7 @@ import com.hanu.db.util.TimeframeType;
 import com.hanu.domain.converter.RecordDtoConverter;
 import com.hanu.domain.dto.RecordDto;
 import com.hanu.domain.model.Record;
+import com.hanu.domain.usecase.AddRecordUseCase;
 import com.hanu.domain.usecase.GetAggregatedRecordsUseCase;
 import com.hanu.domain.usecase.GetAllByPoiIdUseCase;
 import com.hanu.domain.usecase.GetAllRecordUseCase;
@@ -59,7 +60,7 @@ public class RecordController {
     //getRecordByID
     
     //addRecord
-    public void addRecord(List<Record> records) {
-    	
+    public int addRecord(List<Record> records) {
+    	return new AddRecordUseCase().handle(records);
     }
 }

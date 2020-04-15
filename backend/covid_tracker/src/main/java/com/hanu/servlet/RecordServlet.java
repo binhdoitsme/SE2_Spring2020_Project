@@ -123,10 +123,12 @@ public class RecordServlet extends HttpServlet {
     									js.getLong("death"), 
     									js.getLong("recovered")));
     		}
+    		
+    		addRecords(records);
     	}
     }
     
-    private void addRecords() {
-    	
+    private void addRecords(List<Record> records) {
+    	controller.addRecord(records);
     }
 }
