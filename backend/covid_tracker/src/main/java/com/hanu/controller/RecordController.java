@@ -55,4 +55,11 @@ public class RecordController {
     public List<Record> getByPoiID(int input){
     	return new GetAllByPoiIdUseCase().handle(input);
     }
+    
+    //getRecordByID
+    
+    //addRecord
+    public void addRecord(List<Record> records) {
+    	
+    }
 }

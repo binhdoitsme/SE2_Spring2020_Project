@@ -2,7 +2,10 @@ package com.hanu.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,7 +20,10 @@ import com.hanu.controller.RecordController;
 import com.hanu.domain.dto.RecordDto;
 import com.hanu.domain.model.Record;
 import com.hanu.exception.ServerFailedException;
+import com.mysql.cj.xdevapi.JsonArray;
 
+import org.json.HTTP;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -94,5 +100,33 @@ public class RecordServlet extends HttpServlet {
             resp.setStatus(500);
         }
         resp.getWriter().write(json);
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    	String authToken = null;
+    	List<String> queryParamNames = Collections.list(req.getParameterNames());
+    	JSONObject jsonObject = HTTP.toJSONObject(getRequestBody(req));
+    	try {
+    		authToken = jsonObject.getString("authToken");
+    	} catch (Exception e) {
+    		authToken = null;
+    	}
+    	if(authToken != null) {
+    		JSONArray jsonArray = (JSONArray) jsonObject.get("record");
+    		List<Record> records = new ArrayList<Record>();
+    		for( int i = 0; i < jsonArray.length(); i++) {
+    			JSONObject js = (JSONObject) jsonArray.get(i);
+    			records.add(new Record(Timestamp.valueOf(js.getString("timestamp")), 
+    									js.getInt("poiId"), 
+    									js.getLong("infected"), 
+    									js.getLong("death"), 
+    									js.getLong("recovered")));
+    		}
+    	}
+    }
+    
+    private void addRecords() {
+    	
     }
 }

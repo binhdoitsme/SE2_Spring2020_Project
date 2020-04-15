@@ -25,6 +25,14 @@ public class Record {
         this.death = death;
         this.recovered = recovered;
     }
+    
+    public Record(Timestamp timestamp, int poiId, long infected, long death, long recovered) {
+        this.timestamp = timestamp;
+        this.poiId = poiId;
+        this.infected = infected;
+        this.death = death;
+        this.recovered = recovered;
+    }
 
     public int getId() {
         return id;

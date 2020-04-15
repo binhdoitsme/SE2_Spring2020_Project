@@ -2,6 +2,7 @@ package com.hanu.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +22,10 @@ import com.hanu.exception.ServerFailedException;
 @WebServlet(name = "poiId", urlPatterns = { "/stats/*" })
 public class RecordpoiIdServlet extends HttpServlet{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private RecordController controller;
 
 	public RecordpoiIdServlet() {
@@ -29,12 +34,16 @@ public class RecordpoiIdServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String getInfor = req.getPathInfo();
-		String poiId = getInfor.substring(1);
-		List<Record> records = controller.getByPoiID(Integer.parseInt(poiId));
-		writeAsJsonToResponse(records, resp);	
+		String getInfor = req.getPathInfo().substring(1);
+		String[] list = getInfor.split("/");
+		if(list.length == 1) {
+			List<Record> records = controller.getByPoiID(Integer.parseInt(list[0]));
+			writeAsJsonToResponse(records, resp);	
+		} else {
+			//to get by ID in poiID
+		}
 	}
-	
+
 	private void writeAsJsonToResponse(Object o, HttpServletResponse resp) throws IOException {
         resp.setHeader("Content-Type", "application/json");
         String json = new String();
