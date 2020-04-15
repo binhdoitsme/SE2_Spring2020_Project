@@ -154,7 +154,8 @@ public class Authenticator {
             String username = claims.get("username").toString();
             Date expiration = claims.getExpiration();
             return validateUsername(username) && validateExpiration(expiration);
-        } catch (UnsupportedJwtException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

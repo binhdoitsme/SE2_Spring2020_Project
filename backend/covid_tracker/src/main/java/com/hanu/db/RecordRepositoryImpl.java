@@ -1,23 +1,35 @@
 package com.hanu.db;
 
-import java.sql.SQLException;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Iterator;
 import java.util.List;
 
-
+import com.hanu.base.Mapper;
 import com.hanu.base.RepositoryImpl;
+import com.hanu.db.util.AggregationType;
+import com.hanu.db.util.GroupByType;
+import com.hanu.db.util.TimeframeType;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.repository.RecordRepository;
+import com.hanu.domain.repository.mapper.RecordMapper;
 import com.hanu.exception.InvalidQueryTypeException;
 import com.hanu.util.configuration.Configuration;
+import com.hanu.util.db.RecordToDeleteStringConverter;
+import com.hanu.util.db.RecordToUpdateStringConverter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implements RecordRepository {
     private static final String AGGREGATE_TEMPLATE = Configuration.get("db.aggregated.template");
     private static final String WORLD_TEMPLATE = Configuration.get("db.aggregated.world");
     private static final String FIELD_SUM_TEMPLATE = Configuration.get("db.aggregated.sum.fields");
     private static final String LATEST_LIMIT = Configuration.get("db.aggregated.latest");
+
+    private static final Logger logger = LoggerFactory.getLogger(RecordRepositoryImpl.class);
 
     @Override
     public List<Record> getAll() {
@@ -32,77 +44,68 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     }
 
     @Override
-    public void add(Record item) {
-        
-
-    }
-
-    @Override
-    public int add(Iterable<Record> items) {
-
+    public int add(Record item) {
         return 0;
     }
 
     @Override
-	public void remove(String id) {
-		String sql = RecordToDbConverter.removeRecordDb(id); 
+    public int add(List<Record> items) {
+        return 0;
+    }
+
+    @Override
+	public int remove(Integer id) {
 		try {
-			int rs = this.getConnector().connect().executeDelete(sql);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidQueryTypeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            List<Integer> ids = new ArrayList<>();
+            ids.add(id);
+            String sql = new RecordToDeleteStringConverter().forwardConvert(ids);
+            return getConnector().connect().executeDelete(sql);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return 0;
+        }
 	}
 
 	@Override
-	public int remove(Iterable<String> ids) {
-		Iterator<String> removeRecords= ids.iterator();
-	    while (removeRecords.hasNext()) {
-	    	remove(removeRecords.next());	    	
-		}
-		return 1;
+	public int remove(List<Integer> ids) {
+        try {
+            String sql = new RecordToDeleteStringConverter().forwardConvert(ids);
+            return getConnector().connect().executeDelete(sql);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return 0;
+        }
 	}
-
 	
 	@Override
-	public Record update(Record item) {
-		String sql = RecordToDbConverter.updateRecordDb(item);
-			try {
-				int rs = this.getConnector().connect().executeUpdate(sql);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvalidQueryTypeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
-		return item;
+	public int update(Record item) {
+        try {
+            String sql = new RecordToUpdateStringConverter().forwardConvert(item);
+            return getConnector().connect().executeUpdate(sql);
+        } catch (Exception e) {
+            logger.info("Error in item: $item".replace("$item", item.toString()));
+            logger.info("Exception type is $type".replace("$type", e.getClass().getName()));
+            return 0;
+        }
 	}
 
-
-
 	@Override
-	public Iterable<Record> update(Iterable<Record> items) {
-	    Iterator<Record> updateRecords= items.iterator();
-	    while (updateRecords.hasNext()) {
-	    	update(updateRecords.next());
-			}		
-		return items;
+	public int update(List<Record> items) {
+        int rowsUpdated = 0;
+        for (Record item : items) {
+            rowsUpdated += update(item);
+        }
+		return rowsUpdated;
 	}
 
     @Override
     public long count() {
-        
         return 0;
     }
 
     @Override
     public boolean exists(Integer id) {
-        
-        return false;
+        return true;
     }
 
     @Override
@@ -128,7 +131,7 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
                         WORLD_TEMPLATE 
                         : AGGREGATE_TEMPLATE.replace("$group_by", groupByType.toString().concat(","));
         
-        String limitStr = groupByType == null ? "" :
+        String limitStr = groupByType == null ? LATEST_LIMIT :
                             groupByType.equals(GroupByType.WORLD) ? "LIMIT 2" : LATEST_LIMIT;
         sql = sql.replace("$limit", type.isLatest() ? limitStr : "")
                 .replace("$timeframe", timeframeType == null ? "DAY" : timeframeType.toString())
@@ -141,9 +144,8 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 
     @Override
     public int getPoiIdByName(String name) throws SQLException, InvalidQueryTypeException {
-        return 0;
-        // return getConnector().connect()
-        //         .executeScalar("SELECT id FROM point_of_interest WHERE name='$name'".replace("$name", name));
+        return getConnector().connect()
+                .executeScalar("SELECT id FROM point_of_interest WHERE name='$name'".replace("$name", name));
     }
 
     @Override

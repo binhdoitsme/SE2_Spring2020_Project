@@ -1,9 +1,9 @@
 package com.hanu.controller;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,30 +11,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.hanu.base.Converter;
+import com.hanu.db.util.AggregationType;
+import com.hanu.db.util.GroupByType;
+import com.hanu.db.util.TimeframeType;
+import com.hanu.domain.converter.RecordDtoConverter;
+import com.hanu.domain.dto.RecordDto;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.usecase.AddManyRecordsUseCase;
 import com.hanu.domain.usecase.GetAggregatedRecordsUseCase;
+import com.hanu.domain.usecase.RemoveManyRecordUseCase;
+import com.hanu.domain.usecase.UpdateManyRecordUseCase;
+import com.hanu.exception.InvalidQueryTypeException;
 import com.hanu.exception.ServerFailedException;
 import com.hanu.util.db.NonQueryResult;
 import com.hanu.util.string.StringConvert;
-import com.hanu.domain.usecase.RemoveRecordUsecase;
-import com.hanu.domain.usecase.UpdateRecordUsecase;
-import com.hanu.domain.usecase.RemoveManyRecordUsecase;
-import com.hanu.domain.usecase.UpdateManyRecordUsecase;
-import com.hanu.exception.InvalidQueryTypeException;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RecordController {
 	public static final Logger logger = LoggerFactory.getLogger(RecordController.class);
-	private UpdateRecordUsecase UpdateRecordUsecase;
-	private RemoveRecordUsecase RemoveRecordUsecase;
-	private UpdateManyRecordUsecase UpdateManyRecordUsecase;
-	private RemoveManyRecordUsecase RemoveManyRecordUsecase;
 
     /**
      * Delegate to GetAggregatedRecords usecase
@@ -58,32 +57,39 @@ public class RecordController {
         }
     }
 
+    // split method
+    private Map<String, List<Record>> getRecordsPoiNameMap(String csv) {
+        // map csv to list of Records
+        String[] lines = csv.trim().split("\n");
+
+        Map<String, List<Record>> recordsByPoiName = new HashMap<>();
+
+        // get position of label
+        List<String> labels = Arrays.asList(lines[0].trim().split(","));
+        final int length = labels.size();
+        final int infectedPos = labels.indexOf("Confirmed");
+        final int deathPos = labels.indexOf("Deaths");
+        final int recoveredPos = labels.indexOf("Recovered");
+        final int datePos = labels.indexOf("Date");
+        final int countryPos = labels.indexOf("Country/Region");
+        final int provincePos = labels.indexOf("Province/State");
+
+        // parse
+        for (int i = 1; i < lines.length; i++) {
+            Record r = recordFromLineString(lines[i], length, infectedPos, deathPos, 
+                                        recoveredPos, countryPos, provincePos, datePos);
+            if (r == null) continue;
+            recordsByPoiName.putIfAbsent(r.getPoiName(), new ArrayList<>());
+            recordsByPoiName.get(r.getPoiName()).add(r);
+        }
+
+        return recordsByPoiName;
+    }
+
     public Object addBatch(String csv) {
         Object result = null;
         try {
-            // map csv to list of Records
-            String[] lines = csv.trim().split("\n");
-
-            Map<String, List<Record>> recordsByPoiName = new HashMap<>();
-
-            // get position of label
-            List<String> labels = Arrays.asList(lines[0].trim().split(","));
-            final int length = labels.size();
-            final int infectedPos = labels.indexOf("Confirmed");
-            final int deathPos = labels.indexOf("Deaths");
-            final int recoveredPos = labels.indexOf("Recovered");
-            final int datePos = labels.indexOf("Date");
-            final int countryPos = labels.indexOf("Country/Region");
-            final int provincePos = labels.indexOf("Province/State");
-
-            // parse
-            for (int i = 1; i < lines.length; i++) {
-                Record r = recordFromLineString(lines[i], length, infectedPos, deathPos, 
-                                            recoveredPos, countryPos, provincePos, datePos);
-                if (r == null) continue;
-                recordsByPoiName.putIfAbsent(r.getPoiName(), new ArrayList<>());
-                recordsByPoiName.get(r.getPoiName()).add(r);
-            }
+            Map<String, List<Record>> recordsByPoiName = getRecordsPoiNameMap(csv);
 
             // add
             int affectedRows = new AddManyRecordsUseCase().handle(recordsByPoiName);
@@ -112,51 +118,55 @@ public class RecordController {
         return new Record(0, timestamp, 0, infected, death, recovered).poiName(poiName);
     }
 
-	public RecordController() {
-		super();
-		UpdateRecordUsecase = new UpdateRecordUsecase();
-		RemoveRecordUsecase = new RemoveRecordUsecase();
-		UpdateManyRecordUsecase = new UpdateManyRecordUsecase();
-		RemoveManyRecordUsecase = new RemoveManyRecordUsecase();
-	}
+    // changed: many+single
+    // removed dependency on Gson, replaced by org.json
+	public Object updateRecords(String input) throws SQLException, InvalidQueryTypeException {
+        UpdateManyRecordUseCase usecase = new UpdateManyRecordUseCase();
 
-	public void updateRecords(String input) throws SQLException, InvalidQueryTypeException {
-		Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd' 'HH:mm:ss").create();
-		List<Record> updateRecords = new ArrayList<Record>();
-		try {
-			Iterable<Record> recordArray = gson.fromJson(input, new TypeToken<ArrayList<Record>>() {
-			}.getType());
-			for (Record record : recordArray) {
-				try {
-					updateRecords.add(record);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-			UpdateManyRecordUsecase.handle(updateRecords);
-		} catch (Exception e) {
-			Record record = gson.fromJson(input, Record.class);
-			UpdateRecordUsecase.handle(record);
-		}
-	}
+        List<Record> records = parseRecordsFromString(input);
+		int rowsAffected = usecase.handle(records);
+        return new NonQueryResult(rowsAffected);
+    }
+    
+    // added
+    private List<Record> parseRecordsFromString(String input) {
+        // parsing
+        List<Record> updateRecords = new ArrayList<Record>();
+        if (input.startsWith("[")) {
+            // array case
+            JSONArray array = new JSONArray(input);
+            for (Object item : array) {
+                JSONObject obj = (JSONObject) item;
+                updateRecords.add(new Record(
+                    obj.getInt("id"),
+                    obj.getInt("infected"),
+                    obj.getInt("death"),
+                    obj.getInt("recovered")
+                ));
+            }
+        } else {
+            JSONObject obj = new JSONObject(input);
+            updateRecords.add(new Record(
+                obj.getInt("id"),
+                obj.getInt("infected"),
+                obj.getInt("death"),
+                obj.getInt("recovered")
+            ));
+        }
+        return updateRecords;
+    }
 
-	public void removeRecords(String input) {
-		Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd' 'HH:mm:ss").create();
-		List<String> recordIDs = new ArrayList<>();
-		try {
-			Iterable<Record> recordArray = gson.fromJson(input, new TypeToken<ArrayList<Record>>() {
-			}.getType());
-			for (Record record : recordArray) {
-				try {
-					recordIDs.add(String.valueOf(record.getId()));
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-			RemoveManyRecordUsecase.handle(recordIDs);
-		} catch (Exception e) {
-			Record record = gson.fromJson(input, Record.class);
-			RemoveRecordUsecase.handle(String.valueOf(record.getId()));
-		}
+    // changed: Collapse many+single => many
+    // remove dependency on gson
+	public Object removeRecords(String input) {
+        RemoveManyRecordUseCase usecase = new RemoveManyRecordUseCase();
+        
+        // input => list<int>
+        List<Integer> ids = new ArrayList<>();
+        String[] idStrings = input.trim().replace("[", "").replace("]", "").split(",");
+        for (String id : idStrings) {
+            ids.add(Integer.parseInt(id.trim()));
+        }
+        return usecase.handle(ids);
 	}
 }

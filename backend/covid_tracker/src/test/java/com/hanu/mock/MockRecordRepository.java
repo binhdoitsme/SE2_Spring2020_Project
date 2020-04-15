@@ -39,35 +39,17 @@ public class MockRecordRepository implements RecordRepository {
     }
 
     @Override
-    public void add(Record item) {
+    public int add(Record item) {
         records.put(item.getId(), item);
+        return 0;
     }
 
     @Override
-    public int add(Iterable<Record> items) {
+    public int add(List<Record> items) {
         items.forEach(itm -> {
             records.put(itm.getId(), itm);
         });
         return 0;
-    }
-
-    @Override
-    public void remove(Record item) {
-    }
-
-    @Override
-    public int remove(Iterable<Record> items) {
-        return 0;
-    }
-
-    @Override
-    public Record update(Record item) {
-        return null;
-    }
-
-    @Override
-    public Iterable<Record> update(Iterable<Record> items) {
-        return null;
     }
 
     @Override
@@ -92,8 +74,32 @@ public class MockRecordRepository implements RecordRepository {
 
     @Override
     public Date getLatestDate() throws SQLException, InvalidQueryTypeException {
-        // TODO Auto-generated method stub
+
         return null;
+    }
+
+    @Override
+    public int remove(Integer id) {
+
+        return 0;
+    }
+
+    @Override
+    public int remove(List<Integer> ids) {
+
+        return 0;
+    }
+
+    @Override
+    public int update(Record item) {
+
+        return 0;
+    }
+
+    @Override
+    public int update(List<Record> items) {
+
+        return 0;
     }
 
 }

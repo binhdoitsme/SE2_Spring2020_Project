@@ -38,7 +38,7 @@ public class UserRepositoryImpl extends RepositoryImpl<User, String> implements 
     @Override
     public User getById(String id) {
         try {
-            String sql = "SELECT * FROM user WHERE id = $id".replace("$id", id);
+            String sql = "SELECT * FROM user WHERE username = '$id'".replace("$id", id);
             ResultSet rs = this.getConnector().connect().executeSelect(sql);
             UserMapper mapper = new UserMapper();
             rs.next();
@@ -55,32 +55,32 @@ public class UserRepositoryImpl extends RepositoryImpl<User, String> implements 
     }
 
     @Override
-    public void add(User item) {
+    public int add(User item) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public int add(Iterable<User> items) {
+    public int add(List<User> items) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void remove(User item) {
+	public int remove(String id) {
+        throw new UnsupportedOperationException();		
+	}
+
+	@Override
+	public int remove(List<String> ids) {
+        throw new UnsupportedOperationException();
+	}
+
+    @Override
+    public int update(User item) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public int remove(Iterable<User> items) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public User update(User item) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Iterable<User> update(Iterable<User> items) {
+    public int update(List<User> items) {
         throw new UnsupportedOperationException();
     }
 
@@ -88,16 +88,4 @@ public class UserRepositoryImpl extends RepositoryImpl<User, String> implements 
     public long count() {
         throw new UnsupportedOperationException();
     }
-
-	@Override
-	public void remove(String id) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int remove(Iterable<String> ids) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

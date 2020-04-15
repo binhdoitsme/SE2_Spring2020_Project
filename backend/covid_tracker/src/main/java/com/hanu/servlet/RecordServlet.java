@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,10 +26,6 @@ import com.hanu.util.configuration.Configuration;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.hanu.controller.RecordController;
 
 @WebServlet(name = "record", urlPatterns = "/stats")
 public class RecordServlet extends HttpServlet {
@@ -42,54 +37,53 @@ public class RecordServlet extends HttpServlet {
     private static final String CONTINENT = "continent";
     private static final String LATEST = "latest";
     
-    private RecordController controller;
-
-	private static final long serialVersionUID = 3234304044417212560L;
-
 	private RecordController controller;
 
 	public RecordServlet() {
 		controller = new RecordController();
-	}
+    }
 
-	@Override
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		BufferedReader reader = req.getReader();
-		StringBuilder body = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			body.append(line).append("\n");
-		}
-		String updateRecords = body.toString();
-		// jsonString Array -> list of record
-		try {
-			controller.updateRecords(updateRecords);
-			resp.setStatus(200);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			resp.setStatus(500);
-		}
-	}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // get all request params
+        List<String> queryParamNames = Collections.list(req.getParameterNames());
+
+        if (queryParamNames.isEmpty()) {
+            // GET /stats 
+            // will be done by others
+            return;
+        } else {
+            List<RecordDto> result = new LinkedList<>();
+            String groupBy = req.getParameter(GROUP_BY);
+            String timeframe = req.getParameter(TIMEFRAME);
+            String continent = req.getParameter(CONTINENT);
+            String latest = req.getParameter(LATEST);
+
+            if (groupBy == null && timeframe == null && latest == null) {
+                // GET by continent here
+            } else {
+                List<RecordDto> aggregateResult = controller.getAggregatedRecords(groupBy, timeframe, latest, continent);
+                result.addAll(aggregateResult);
+            }
+
+            writeAsJsonToResponse(result, resp);
+            return;
+        }
+    }
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		BufferedReader reader = req.getReader();
 		StringBuilder body = new StringBuilder();
 		String line;
 		while ((line = reader.readLine()) != null) {
 			body.append(line).append("\n");
 		}
-		String removeRecords = body.toString();
-		// jsonString Array -> list of record
-		try {
-			controller.removeRecords(removeRecords);
-			resp.setStatus(200);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			resp.setStatus(500);
-		}
+        String removeRecords = body.toString();
+        System.out.println(body);
+        
+        Object result = controller.removeRecords(removeRecords);
+        writeAsJsonToResponse(result, resp);
 	}
 
     private void writeAsJsonToResponse(Object o, HttpServletResponse resp) throws IOException {
@@ -101,7 +95,13 @@ public class RecordServlet extends HttpServlet {
             } else {
                 json = new ObjectMapper().writeValueAsString(o);
             }
-            resp.setStatus(200);
+            if (o instanceof ServerFailedException) {
+                resp.setStatus(500);
+            } else if (o instanceof UnauthorizedException) {
+                resp.setStatus(400);
+            } else {
+                resp.setStatus(200);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             json = new ServerFailedException().toString();
@@ -143,13 +143,40 @@ public class RecordServlet extends HttpServlet {
             writeAsJsonToResponse(new UnauthorizedException(), resp);
             return;
         } else {
-            String remoteDataUrl = Configuration.get("io.remotedatasource");
-            String remoteData = getTextDataFromUrl(remoteDataUrl);
-            
-            // delgate to controller
-            Object adđResult = controller.addBatch(remoteData);
-            writeAsJsonToResponse(adđResult, resp);
-            return;
+            // get body
+            BufferedReader reader = req.getReader();
+            StringBuilder bodyStringBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                bodyStringBuilder.append(line).append("\n");
+            }
+            String body = bodyStringBuilder.toString();
+
+            if (body == null) {
+                String remoteDataUrl = Configuration.get("io.remotedatasource");
+                String remoteData = getTextDataFromUrl(remoteDataUrl);
+                
+                // delgate to controller
+                Object adđResult = controller.addBatch(remoteData);
+                writeAsJsonToResponse(adđResult, resp);
+                return;
+            } else {
+                updateManually(body, req, resp);
+            }
+        }
+    }
+
+    private void updateManually(String body, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		try {
+            // jsonString Array -> list of record
+            String updateRecords = body.toString();
+            Object result = controller.updateRecords(updateRecords);
+            resp.setStatus(200);
+            writeAsJsonToResponse(result, resp);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            resp.setStatus(500);
+            writeAsJsonToResponse(new ServerFailedException(), resp);
         }
     }
 }

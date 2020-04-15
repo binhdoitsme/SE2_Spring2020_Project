@@ -2,7 +2,6 @@ package com.hanu.domain.usecase;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,8 +17,7 @@ public class AddManyRecordsUseCase implements RequestHandler<Map<String, List<Re
     @Inject
     private RecordRepository repository;
 
-    public AddManyRecordsUseCase() {
-    }
+    public AddManyRecordsUseCase() { }
 
     @Override
     public Integer handle(Map<String, List<Record>> input) throws SQLException, InvalidQueryTypeException {
@@ -27,11 +25,12 @@ public class AddManyRecordsUseCase implements RequestHandler<Map<String, List<Re
         Date latestDate = repository.getLatestDate();
         for (String poiName : input.keySet()) {
             int poiId = repository.getPoiIdByName(poiName);
-            Collection<Record> values = input.get(poiName)
-                                            .stream()
-                                            .map(r -> r.poiId(poiId))
-                                            .filter(r -> r.getTimestamp().after(latestDate))
-                                            .collect(Collectors.toSet());
+            List<Record> values = input.get(poiName)
+                                        .stream()
+                                        .map(r -> r.poiId(poiId))
+                                        .filter(r -> r.getTimestamp().after(latestDate))
+                                        .distinct()
+                                        .collect(Collectors.toList());
             if (values.isEmpty()) continue;
             rowsAffected += repository.add(values);
         }
