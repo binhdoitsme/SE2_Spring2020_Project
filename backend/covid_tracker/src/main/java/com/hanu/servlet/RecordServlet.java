@@ -73,16 +73,17 @@ public class RecordServlet extends HttpServlet {
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		BufferedReader reader = req.getReader();
-		StringBuilder body = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			body.append(line).append("\n");
-		}
-        String removeRecords = body.toString();
-        System.out.println(body);
+        // request parameter: authToken
+        String authToken = req.getParameter("authToken");
+        boolean authenticated = new Authenticator().validateJwt(authToken);
+        if (!authenticated) {
+            writeAsJsonToResponse(new UnauthorizedException(), resp);
+            return;
+        }
+
+		String body = getRequestBody(req);
         
-        Object result = controller.removeRecords(removeRecords);
+        Object result = controller.removeRecords(body);
         writeAsJsonToResponse(result, resp);
 	}
 
@@ -110,15 +111,15 @@ public class RecordServlet extends HttpServlet {
         resp.getWriter().write(json);
     }
 
-    // private String getRequestBody(HttpServletRequest req) throws IOException {
-    //     BufferedReader reader = req.getReader();
-    //     StringBuilder body = new StringBuilder();
-    //     String line;
-    //     while ((line = reader.readLine())!= null) {
-    //         body.append(line).append("\n");
-    //     }
-    //     return body.toString();
-    // }
+    private String getRequestBody(HttpServletRequest req) throws IOException {
+        BufferedReader reader = req.getReader();
+        StringBuilder body = new StringBuilder();
+        String line;
+        while ((line = reader.readLine())!= null) {
+            body.append(line).append("\n");
+        }
+        return body.toString();
+    }
 
     private String getTextDataFromUrl(String url) throws IOException, MalformedURLException {
         URL link = new URL(url);
