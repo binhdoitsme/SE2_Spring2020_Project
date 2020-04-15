@@ -8,8 +8,8 @@ public interface Repository<T, ID extends Serializable> {
     T getById(ID id);
     void add(T item);
     void add(Iterable<T> items);
-    void remove(T item);
-    int remove(Iterable<T> items);
+    void remove(ID id);
+    int remove(Iterable<ID> ids);
     T update(T item);
     Iterable<T> update(Iterable<T> items);
     long count();

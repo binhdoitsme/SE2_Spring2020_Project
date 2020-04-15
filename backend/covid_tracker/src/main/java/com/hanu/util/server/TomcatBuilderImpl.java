@@ -11,7 +11,7 @@ import java.util.List;
 
 public class TomcatBuilderImpl implements TomcatBuilder {
     // constants
-    private static final int DEFAULT_PORT = 9808;
+    private static final int DEFAULT_PORT = 9858;
     private static final String DEFAULT_HOSTNAME = "localhost";
     private static final String DEFAULT_APP_BASE = ".";
     private static final String TMP_DIR = System.getProperty("java.io.tmpdir");

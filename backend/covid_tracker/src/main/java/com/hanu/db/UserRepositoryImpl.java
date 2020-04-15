@@ -65,16 +65,6 @@ public class UserRepositoryImpl extends RepositoryImpl<User, String> implements 
     }
 
     @Override
-    public void remove(User item) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int remove(Iterable<User> items) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public User update(User item) {
         throw new UnsupportedOperationException();
     }
@@ -88,4 +78,16 @@ public class UserRepositoryImpl extends RepositoryImpl<User, String> implements 
     public long count() {
         throw new UnsupportedOperationException();
     }
+
+	@Override
+	public void remove(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int remove(Iterable<String> ids) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

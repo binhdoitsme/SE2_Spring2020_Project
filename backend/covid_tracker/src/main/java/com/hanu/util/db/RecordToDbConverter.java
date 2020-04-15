@@ -13,16 +13,15 @@ public class RecordToDbConverter extends Converter<Record, String> {
 	}
 	
 	public static String updateRecordDb(Record updateRecord) {
-		String updateSql = "Update Record Set timestamp = '" + updateRecord.getTimestamp() 
-													+ "' , infected = '" + updateRecord.getInfected()
+		String updateSql = "Update Record Set infected = '" + updateRecord.getInfected()
 													+ "' , death = '" + updateRecord.getDeath()
 													+ "' , recovered = '" + updateRecord.getRecovered()
 													+ "' where id = '" + updateRecord.getId() + "' ;";
 		return updateSql;
 	}
 	
-	public static String removeRecordDb(Record removeRecord) {
-		String removeSql = "Delete from Record where id = '" + removeRecord.getId() + "' ;";
+	public static String removeRecordDb(String id) {
+		String removeSql = "Delete from Record where id = '" + id + "' ;";
 		return removeSql;
 	}
 }
