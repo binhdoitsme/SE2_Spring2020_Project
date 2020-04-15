@@ -2,6 +2,7 @@ package com.hanu.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,9 +42,9 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     }
 
     @Override
-    public void add(Iterable<Record> items) {
-        
+    public int add(Iterable<Record> items) {
 
+        return 0;
     }
 
     @Override
@@ -53,9 +54,8 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     }
 
     @Override
-    public void remove(Iterable<Record> items) {
-        
-
+    public int remove(Iterable<Record> items) {
+        return 0;
     }
 
     @Override
@@ -116,4 +116,16 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
         return sql;
     }
 
+    @Override
+    public int getPoiIdByName(String name) throws SQLException, InvalidQueryTypeException {
+        return 0;
+        // return getConnector().connect()
+        //         .executeScalar("SELECT id FROM point_of_interest WHERE name='$name'".replace("$name", name));
+    }
+
+    @Override
+    public Date getLatestDate() throws SQLException, InvalidQueryTypeException {
+        return getConnector().connect()
+                    .executeScalar("SELECT date(max(timestamp)) FROM record");
+    }
 }
