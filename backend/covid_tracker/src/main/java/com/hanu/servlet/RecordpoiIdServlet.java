@@ -34,13 +34,26 @@ public class RecordpoiIdServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		List<Record> records = null;
 		String getInfor = req.getPathInfo().substring(1);
 		String[] list = getInfor.split("/");
+		records = controller.getByPoiID(Integer.parseInt(list[0]));
 		if(list.length == 1) {
-			List<Record> records = controller.getByPoiID(Integer.parseInt(list[0]));
 			writeAsJsonToResponse(records, resp);	
+		} else if(list.length == 2) {
+			try {
+				List<Record> getbyID = new ArrayList<Record>();
+				for(Record record : records) {
+					if(record.getId() == Integer.parseInt(list[1])) {
+						getbyID.add(record);
+					}
+				}
+				writeAsJsonToResponse(getbyID, resp);
+			} catch (Exception e) {
+				writeAsJsonToResponse(new ArrayList<Record>(), resp);
+			}
 		} else {
-			//to get by ID in poiID
+			writeAsJsonToResponse(new ArrayList<Record>(), resp);
 		}
 	}
 
