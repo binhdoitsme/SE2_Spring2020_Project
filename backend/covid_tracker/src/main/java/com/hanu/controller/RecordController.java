@@ -3,6 +3,7 @@ package com.hanu.controller;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,25 +11,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.hanu.base.Converter;
-import com.hanu.db.util.AggregationType;
-import com.hanu.db.util.GroupByType;
-import com.hanu.db.util.TimeframeType;
-import com.hanu.domain.converter.RecordDtoConverter;
-import com.hanu.domain.dto.RecordDto;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.usecase.AddManyRecordsUseCase;
 import com.hanu.domain.usecase.GetAggregatedRecordsUseCase;
 import com.hanu.exception.ServerFailedException;
 import com.hanu.util.db.NonQueryResult;
 import com.hanu.util.string.StringConvert;
+import com.hanu.domain.usecase.RemoveRecordUsecase;
+import com.hanu.domain.usecase.UpdateRecordUsecase;
+import com.hanu.domain.usecase.RemoveManyRecordUsecase;
+import com.hanu.domain.usecase.UpdateManyRecordUsecase;
+import com.hanu.exception.InvalidQueryTypeException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RecordController {
-    public static final Logger logger = LoggerFactory.getLogger(RecordController.class);
-    // other methods written by others...
+	public static final Logger logger = LoggerFactory.getLogger(RecordController.class);
+	private UpdateRecordUsecase UpdateRecordUsecase;
+	private RemoveRecordUsecase RemoveRecordUsecase;
+	private UpdateManyRecordUsecase UpdateManyRecordUsecase;
+	private RemoveManyRecordUsecase RemoveManyRecordUsecase;
 
     /**
      * Delegate to GetAggregatedRecords usecase
@@ -105,4 +111,52 @@ public class RecordController {
         Timestamp timestamp = new Timestamp(date);
         return new Record(0, timestamp, 0, infected, death, recovered).poiName(poiName);
     }
+
+	public RecordController() {
+		super();
+		UpdateRecordUsecase = new UpdateRecordUsecase();
+		RemoveRecordUsecase = new RemoveRecordUsecase();
+		UpdateManyRecordUsecase = new UpdateManyRecordUsecase();
+		RemoveManyRecordUsecase = new RemoveManyRecordUsecase();
+	}
+
+	public void updateRecords(String input) throws SQLException, InvalidQueryTypeException {
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd' 'HH:mm:ss").create();
+		List<Record> updateRecords = new ArrayList<Record>();
+		try {
+			Iterable<Record> recordArray = gson.fromJson(input, new TypeToken<ArrayList<Record>>() {
+			}.getType());
+			for (Record record : recordArray) {
+				try {
+					updateRecords.add(record);
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+			UpdateManyRecordUsecase.handle(updateRecords);
+		} catch (Exception e) {
+			Record record = gson.fromJson(input, Record.class);
+			UpdateRecordUsecase.handle(record);
+		}
+	}
+
+	public void removeRecords(String input) {
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd' 'HH:mm:ss").create();
+		List<String> recordIDs = new ArrayList<>();
+		try {
+			Iterable<Record> recordArray = gson.fromJson(input, new TypeToken<ArrayList<Record>>() {
+			}.getType());
+			for (Record record : recordArray) {
+				try {
+					recordIDs.add(String.valueOf(record.getId()));
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+			RemoveManyRecordUsecase.handle(recordIDs);
+		} catch (Exception e) {
+			Record record = gson.fromJson(input, Record.class);
+			RemoveRecordUsecase.handle(String.valueOf(record.getId()));
+		}
+	}
 }

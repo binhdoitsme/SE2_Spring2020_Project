@@ -1,19 +1,15 @@
 package com.hanu.db;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 
-import com.hanu.base.Mapper;
+
 import com.hanu.base.RepositoryImpl;
-import com.hanu.db.util.AggregationType;
-import com.hanu.db.util.GroupByType;
-import com.hanu.db.util.TimeframeType;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.repository.RecordRepository;
-import com.hanu.domain.repository.mapper.RecordMapper;
 import com.hanu.exception.InvalidQueryTypeException;
 import com.hanu.util.configuration.Configuration;
 
@@ -48,27 +44,54 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     }
 
     @Override
-    public void remove(Record item) {
-        
+	public void remove(String id) {
+		String sql = RecordToDbConverter.removeRecordDb(id); 
+		try {
+			int rs = this.getConnector().connect().executeDelete(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidQueryTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
-    }
+	@Override
+	public int remove(Iterable<String> ids) {
+		Iterator<String> removeRecords= ids.iterator();
+	    while (removeRecords.hasNext()) {
+	    	remove(removeRecords.next());	    	
+		}
+		return 1;
+	}
 
-    @Override
-    public int remove(Iterable<Record> items) {
-        return 0;
-    }
+	
+	@Override
+	public Record update(Record item) {
+		String sql = RecordToDbConverter.updateRecordDb(item);
+			try {
+				int rs = this.getConnector().connect().executeUpdate(sql);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidQueryTypeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+		return item;
+	}
 
-    @Override
-    public Record update(Record item) {
-        
-        return null;
-    }
 
-    @Override
-    public Iterable<Record> update(Iterable<Record> items) {
-        
-        return null;
-    }
+
+	@Override
+	public Iterable<Record> update(Iterable<Record> items) {
+	    Iterator<Record> updateRecords= items.iterator();
+	    while (updateRecords.hasNext()) {
+	    	update(updateRecords.next());
+			}		
+		return items;
+	}
 
     @Override
     public long count() {

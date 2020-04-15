@@ -88,4 +88,16 @@ public class UserRepositoryImpl extends RepositoryImpl<User, String> implements 
     public long count() {
         throw new UnsupportedOperationException();
     }
+
+	@Override
+	public void remove(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int remove(Iterable<String> ids) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
