@@ -19,14 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RecordController {
-    public static final Logger logger = LoggerFactory.getLogger(RecordController.class);
-    private UpdateRecordUsecase UpdateRecordUsecase;
-    private RemoveRecordUsecase RemoveRecordUsecase;
-    private UpdateManyRecordUsecase UpdateManyRecordUsecase;
-    private RemoveManyRecordUsecase RemoveManyRecordUsecase;
-    
-        
-    public RecordController() {
+	public static final Logger logger = LoggerFactory.getLogger(RecordController.class);
+	private UpdateRecordUsecase UpdateRecordUsecase;
+	private RemoveRecordUsecase RemoveRecordUsecase;
+	private UpdateManyRecordUsecase UpdateManyRecordUsecase;
+	private RemoveManyRecordUsecase RemoveManyRecordUsecase;
+
+	public RecordController() {
 		super();
 		UpdateRecordUsecase = new UpdateRecordUsecase();
 		RemoveRecordUsecase = new RemoveRecordUsecase();
@@ -34,49 +33,43 @@ public class RecordController {
 		RemoveManyRecordUsecase = new RemoveManyRecordUsecase();
 	}
 
-    
-    
-	public void updateRecords(BufferedReader reader) throws SQLException, InvalidQueryTypeException {		
+	public void updateRecords(String input) throws SQLException, InvalidQueryTypeException {
 		Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd' 'HH:mm:ss").create();
 		List<Record> updateRecords = new ArrayList<Record>();
-    	try {
-    		Iterable<Record> recordArray = gson.fromJson(reader, new TypeToken<ArrayList<Record>>(){}.getType());    		
-    		for (Record record : recordArray) {
-    	        try {	        	
-    	        	updateRecords.add(record);	            
-    	        } catch (Exception e) {
-    	        	logger.error(e.getMessage(), e);
-    	        }    	        
-    		} 
-    		UpdateManyRecordUsecase.handle(updateRecords);  	
+		try {
+			Iterable<Record> recordArray = gson.fromJson(input, new TypeToken<ArrayList<Record>>() {
+			}.getType());
+			for (Record record : recordArray) {
+				try {
+					updateRecords.add(record);
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+			UpdateManyRecordUsecase.handle(updateRecords);
 		} catch (Exception e) {
-			Record record = gson.fromJson(reader, Record.class);		
-			UpdateRecordUsecase.handle(record);			
-		}	    	
-    }
-	
-    
-    public void removeRecords(BufferedReader reader) {
-    	Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd' 'HH:mm:ss").create();
+			Record record = gson.fromJson(input, Record.class);
+			UpdateRecordUsecase.handle(record);
+		}
+	}
+
+	public void removeRecords(String input) {
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-mm-dd' 'HH:mm:ss").create();
 		List<String> recordIDs = new ArrayList<>();
 		try {
-    		Iterable<Record> recordArray = gson.fromJson(reader, new TypeToken<ArrayList<Record>>(){}.getType());    		
-    		for (Record record : recordArray) {
-    	        try {	        	
-    	        	recordIDs.add(String.valueOf(record.getId()));            
-    	        } catch (Exception e) {
-    	        	logger.error(e.getMessage(), e);
-    	        }   	        
-    		}
-    		RemoveManyRecordUsecase.handle(recordIDs);
+			Iterable<Record> recordArray = gson.fromJson(input, new TypeToken<ArrayList<Record>>() {
+			}.getType());
+			for (Record record : recordArray) {
+				try {
+					recordIDs.add(String.valueOf(record.getId()));
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+			RemoveManyRecordUsecase.handle(recordIDs);
 		} catch (Exception e) {
-			try {
-				Record record = gson.fromJson(reader, Record.class);
-				RemoveRecordUsecase.handle(String.valueOf(record.getId()));
-			} catch (Exception e2) {
-				logger.error(e.getMessage(), e);
-			}		
-		}		    
-		}   	
-    }
-
+			Record record = gson.fromJson(input, Record.class);
+			RemoveRecordUsecase.handle(String.valueOf(record.getId()));
+		}
+	}
+}
