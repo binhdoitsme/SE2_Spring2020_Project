@@ -169,4 +169,9 @@ public class RecordController {
         }
         return usecase.handle(ids);
 	}
+
+	public List<Record> getRecordByContinent(String continent) throws Exception {
+		// TODO Auto-generated method stub
+		return new GetRecordByContinentUseCase().handle(continent);
+	}
 }

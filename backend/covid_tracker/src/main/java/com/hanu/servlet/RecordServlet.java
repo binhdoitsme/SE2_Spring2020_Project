@@ -61,6 +61,13 @@ public class RecordServlet extends HttpServlet {
 
             if (groupBy == null && timeframe == null && latest == null) {
                 // GET by continent here
+		List<Record> recordByContinent = controller.getRecordByContinent(continent);
+					writeAsJsonToResponse(recordByContinent, resp);
+					 return;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
             } else {
                 List<RecordDto> aggregateResult = controller.getAggregatedRecords(groupBy, timeframe, latest, continent);
                 result.addAll(aggregateResult);
