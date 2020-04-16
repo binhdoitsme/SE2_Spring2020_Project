@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanu.controller.RecordController;
 import com.hanu.domain.dto.RecordDto;
+import com.hanu.domain.model.Record;
 import com.hanu.exception.ServerFailedException;
 import com.hanu.exception.UnauthorizedException;
 import com.hanu.util.authentication.Authenticator;
@@ -61,13 +62,14 @@ public class RecordServlet extends HttpServlet {
 
             if (groupBy == null && timeframe == null && latest == null) {
                 // GET by continent here
-		List<Record> recordByContinent = controller.getRecordByContinent(continent);
-					writeAsJsonToResponse(recordByContinent, resp);
-					 return;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
+                try {
+                    List<Record> recordByContinent = controller.getRecordByContinent(continent);
+                    writeAsJsonToResponse(recordByContinent, resp);
+                    return;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    writeAsJsonToResponse(new ServerFailedException(), resp);
+                }
             } else {
                 List<RecordDto> aggregateResult = controller.getAggregatedRecords(groupBy, timeframe, latest, continent);
                 result.addAll(aggregateResult);

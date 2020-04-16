@@ -28,6 +28,9 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     private static final String WORLD_TEMPLATE = Configuration.get("db.aggregated.world");
     private static final String FIELD_SUM_TEMPLATE = Configuration.get("db.aggregated.sum.fields");
     private static final String LATEST_LIMIT = Configuration.get("db.aggregated.latest");
+    private static final String CONTINENT_TEMPLATE = Configuration.get("db.nonaggregate.continent");
+    private static final String LATEST_DATE = Configuration.get("db.scalar.latestdate");
+    private static final String POI_ID_FROM_NAME = Configuration.get("db.scalar.poi_id");
 
     private static final Logger logger = LoggerFactory.getLogger(RecordRepositoryImpl.class);
 
@@ -145,35 +148,24 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 	@Override
 	public List<Record> getRecordByContinent(String continent) throws SQLException, InvalidQueryTypeException {
 		List<Record> records = new ArrayList<>();
-		String query = "SELECT r.id id, r.poi_id poi_id, r.timestamp timestamp, r.death death," 
-				+" r.infected infected, r.recovered recovered,"
-				+" p.name poi_name , p.continent continent "
-				+" from record r "
-				+" inner join point_of_interest p "
-				+" on r.poi_id = p.id  "
-				+" WHERE continent = '"+continent+"'"
-				+" group by poi_name, p.continent ";
+		String query = CONTINENT_TEMPLATE.replace("$continent", continent);
 
-		try {
-			ResultSet rs = this.getConnector().connect().executeSelect(query);
-			while(rs.next()) {
-				records.add(RecordMapper.resultToRecord(rs));
-			}
-		} catch (SQLException | InvalidQueryTypeException e) {				
-			e.printStackTrace();
-		}			
+        ResultSet rs = this.getConnector().connect().executeSelect(query);
+        while (rs.next()) {
+            records.add(RecordMapper.resultToRecord(rs));
+        }
 		return records;
 	}
 
     @Override
     public int getPoiIdByName(String name) throws SQLException, InvalidQueryTypeException {
         return getConnector().connect()
-                .executeScalar("SELECT id FROM point_of_interest WHERE name='$name'".replace("$name", name));
+                .executeScalar(POI_ID_FROM_NAME.replace("$name", name));
     }
 
     @Override
     public Date getLatestDate() throws SQLException, InvalidQueryTypeException {
         return getConnector().connect()
-                    .executeScalar("SELECT date(max(timestamp)) FROM record");
+                    .executeScalar(LATEST_DATE);
     }
 }

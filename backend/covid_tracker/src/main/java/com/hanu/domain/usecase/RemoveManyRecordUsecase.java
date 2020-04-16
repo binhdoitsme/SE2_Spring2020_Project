@@ -2,9 +2,6 @@ package com.hanu.domain.usecase;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.hanu.base.RequestHandler;
 import com.hanu.db.RecordRepositoryImpl;
 import com.hanu.domain.repository.RecordRepository;

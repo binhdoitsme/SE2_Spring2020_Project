@@ -20,6 +20,7 @@ import com.hanu.domain.dto.RecordDto;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.usecase.AddManyRecordsUseCase;
 import com.hanu.domain.usecase.GetAggregatedRecordsUseCase;
+import com.hanu.domain.usecase.GetRecordByContinentUseCase;
 import com.hanu.domain.usecase.RemoveManyRecordUseCase;
 import com.hanu.domain.usecase.UpdateManyRecordUseCase;
 import com.hanu.exception.InvalidQueryTypeException;
@@ -171,7 +172,6 @@ public class RecordController {
 	}
 
 	public List<Record> getRecordByContinent(String continent) throws Exception {
-		// TODO Auto-generated method stub
 		return new GetRecordByContinentUseCase().handle(continent);
 	}
 }

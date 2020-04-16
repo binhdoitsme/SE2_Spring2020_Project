@@ -8,7 +8,7 @@ import com.hanu.util.configuration.Configuration;
 
 public class RecordToDeleteStringConverter extends Converter<List<Integer>, String> {
 
-    private static final String DELETE_RECORD_TEMPLATE = Configuration.get("db.delete.condition");
+    private static final String DELETE_RECORD_TEMPLATE = Configuration.get("db.record.deletecondition");
 
     public RecordToDeleteStringConverter() {
         super(RecordToDeleteStringConverter::removeRecordDb, null);

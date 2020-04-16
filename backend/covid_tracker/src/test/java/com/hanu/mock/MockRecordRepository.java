@@ -102,4 +102,10 @@ public class MockRecordRepository implements RecordRepository {
         return 0;
     }
 
+    @Override
+    public List<Record> getRecordByContinent(String continent) throws SQLException, InvalidQueryTypeException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
