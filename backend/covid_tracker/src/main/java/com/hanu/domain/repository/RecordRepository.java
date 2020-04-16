@@ -15,4 +15,5 @@ public interface RecordRepository extends Repository<Record, Integer> {
     List<Record> getAggregatedRecords(AggregationType type) throws SQLException, InvalidQueryTypeException;
     int getPoiIdByName(String poiName) throws SQLException, InvalidQueryTypeException;
     Date getLatestDate() throws SQLException, InvalidQueryTypeException;
+    List<Record> getRecordByContinent(String continent) throws SQLException, InvalidQueryTypeException;
 }

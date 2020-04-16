@@ -142,6 +142,29 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
         return sql;
     }
 
+	@Override
+	public List<Record> getRecordByContinent(String continent) throws SQLException, InvalidQueryTypeException {
+		List<Record> records = new ArrayList<>();
+		String query = "SELECT r.id id, r.poi_id poi_id, r.timestamp timestamp, r.death death," 
+				+" r.infected infected, r.recovered recovered,"
+				+" p.name poi_name , p.continent continent "
+				+" from record r "
+				+" inner join point_of_interest p "
+				+" on r.poi_id = p.id  "
+				+" WHERE continent = '"+continent+"'"
+				+" group by poi_name, p.continent ";
+
+		try {
+			ResultSet rs = this.getConnector().connect().executeSelect(query);
+			while(rs.next()) {
+				records.add(RecordMapper.resultToRecord(rs));
+			}
+		} catch (SQLException | InvalidQueryTypeException e) {				
+			e.printStackTrace();
+		}			
+		return records;
+	}
+
     @Override
     public int getPoiIdByName(String name) throws SQLException, InvalidQueryTypeException {
         return getConnector().connect()
