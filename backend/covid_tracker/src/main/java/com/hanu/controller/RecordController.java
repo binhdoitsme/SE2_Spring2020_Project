@@ -15,6 +15,7 @@ import com.hanu.domain.usecase.AddRecordUseCase;
 import com.hanu.domain.usecase.GetAggregatedRecordsUseCase;
 import com.hanu.domain.usecase.GetAllByPoiIdUseCase;
 import com.hanu.domain.usecase.GetAllRecordUseCase;
+import com.hanu.domain.usecase.GetPointOfInterestByIdUseCase;
 import com.hanu.util.string.StringConvert;
 
 import org.slf4j.Logger;
@@ -61,6 +62,22 @@ public class RecordController {
     
     //addRecord
     public int addRecord(List<Record> records) {
-    	return new AddRecordUseCase().handle(records);
+    	if (checkPoi(records)) {
+    		return new AddRecordUseCase().handle(records);
+    	} else {
+    		return -1;
+    	}
+    }
+   
+    private boolean checkPoi(List<Record> records) {
+    	List<Integer> id = new ArrayList<Integer>();
+    	for(Record record : records) {
+    		try {
+    			new GetPointOfInterestByIdUseCase().handle(record.getPoiId());
+    		}catch (Exception e) {
+    			return false;
+    		}
+    	}
+    	return true;
     }
 }

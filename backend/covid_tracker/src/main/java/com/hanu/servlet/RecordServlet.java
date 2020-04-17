@@ -20,7 +20,11 @@ import com.hanu.controller.RecordController;
 import com.hanu.domain.dto.RecordDto;
 import com.hanu.domain.model.Record;
 import com.hanu.exception.ServerFailedException;
+import com.hanu.exception.UnauthorizedException;
+import com.hanu.util.authentication.Authenticator;
 import com.mysql.cj.xdevapi.JsonArray;
+
+import javassist.expr.NewArray;
 
 import org.json.HTTP;
 import org.json.JSONArray;
@@ -104,15 +108,10 @@ public class RecordServlet extends HttpServlet {
     
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	String authToken = null;
-    	List<String> queryParamNames = Collections.list(req.getParameterNames());
-    	JSONObject jsonObject = HTTP.toJSONObject(getRequestBody(req));
-    	try {
-    		authToken = jsonObject.getString("authToken");
-    	} catch (Exception e) {
-    		authToken = null;
-    	}
-    	if(authToken != null) {
+    	String authToken = req.getParameter("authToken");
+    	boolean authenticated = new Authenticator().validateJwt(authToken);
+    	if(authenticated) {
+    		JSONObject jsonObject = HTTP.toJSONObject(getRequestBody(req));
     		JSONArray jsonArray = (JSONArray) jsonObject.get("record");
     		List<Record> records = new ArrayList<Record>();
     		for( int i = 0; i < jsonArray.length(); i++) {
@@ -123,12 +122,9 @@ public class RecordServlet extends HttpServlet {
     									js.getLong("death"), 
     									js.getLong("recovered")));
     		}
-    		
-    		addRecords(records);
+    		controller.addRecord(records);
+    	} else {
+    		writeAsJsonToResponse(new UnauthorizedException(), resp);
     	}
-    }
-    
-    private void addRecords(List<Record> records) {
-    	controller.addRecord(records);
     }
 }

@@ -55,32 +55,32 @@ public class UserRepositoryImpl extends RepositoryImpl<User, String> implements 
     }
 
     @Override
-    public void add(User item) {
+    public int add(User item) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void add(Iterable<User> items) {
+    public int add(List<User> items) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void remove(User item) {
+    public int remove(User item) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void remove(Iterable<User> items) {
+    public int remove(List<User> items) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public User update(User item) {
+    public int update(User item) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Iterable<User> update(Iterable<User> items) {
+    public int update(Iterable<User> items) {
         throw new UnsupportedOperationException();
     }
 

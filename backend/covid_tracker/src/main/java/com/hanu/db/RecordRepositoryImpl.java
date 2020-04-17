@@ -2,7 +2,6 @@ package com.hanu.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,24 +72,25 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 	}
     
     @Override
-	public void add(Record item) {
-		String query = new String("INSERT INTO record VALUES $values")
+	public int add(Record item) {
+		String query = new String("INSERT INTO record(timestamp,poi_id,effected, death, recorvered) VALUES $values")
 								.replace("$values",RecordToDbConverter.forwardConverter(item));
 		try {
-			this.getConnector().connect().executeInsert(query);
+			return this.getConnector().connect().executeInsert(query);
 		} catch (SQLException | InvalidQueryTypeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return 0;
 	}
 
     @Override
-	public void add(Iterable<Record> items) {
+	public int add(List<Record> items) {
 		ArrayList<String> insertValueStrings = new ArrayList<String>();
 		for (Record record : items) {
 			insertValueStrings.add(RecordToDbConverter.forwardConverter(record));
 		}
-		String query = new String("INSERT INTO record VALUES $values")
+		String query = new String("INSERT INTO record(timestamp,poi_id,effected, death, recorvered) VALUES $values")
 								.replace("$values", String.join(",",insertValueStrings));
 		try {
 			this.getConnector().connect().executeInsert(query);
@@ -98,31 +98,29 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return 0;
 	}
     
 
     @Override
-    public void remove(Record item) {
-        
-
+    public int remove(Record item) {
+		return 0;
     }
 
     @Override
-    public void remove(Iterable<Record> items) {
-        
-
+    public int remove(List<Record> items) {
+		return 0;
     }
 
     @Override
-    public Record update(Record item) {
-        
-        return null;
+    public int update(Record item) {   
+        return 0;
     }
 
     @Override
-    public Iterable<Record> update(Iterable<Record> items) {
+    public int update(Iterable<Record> items) {
         
-        return null;
+        return 0;
     }
 
     @Override

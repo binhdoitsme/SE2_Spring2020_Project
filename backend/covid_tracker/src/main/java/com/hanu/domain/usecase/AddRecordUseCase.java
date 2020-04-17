@@ -16,8 +16,7 @@ public class AddRecordUseCase implements RequestHandler<List<Record>, Integer> {
 	public Integer handle(List<Record> input) {
 		// TODO Auto-generated method stub
 		try {
-			repositoty.add(input);
-			return 1;
+			return repositoty.add(input);
 		} catch (Exception e){
 			e.printStackTrace();
 			return -1;

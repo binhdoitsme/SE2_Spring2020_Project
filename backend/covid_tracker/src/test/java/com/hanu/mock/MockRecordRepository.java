@@ -38,31 +38,35 @@ public class MockRecordRepository implements RecordRepository {
     }
 
     @Override
-    public void add(Record item) {
+    public int add(Record item) {
         records.put(item.getId(), item);
+		return 0;
     }
 
     @Override
-    public void add(Iterable<Record> items) {
+    public int add(List<Record> items) {
         items.forEach(itm -> {
             records.put(itm.getId(), itm);
         });
+		return 0;
     }
 
     @Override
-    public void remove(Record item) { }
+    public int remove(Record item) {
+		return 0; }
 
     @Override
-    public void remove(Iterable<Record> items) { }
+    public int remove(List<Record> items) {
+		return 0; }
 
     @Override
-    public Record update(Record item) {
-        return null;
+    public int update(Record item) {
+        return 0;
     }
 
     @Override
-    public Iterable<Record> update(Iterable<Record> items) {
-        return null;
+    public int update(Iterable<Record> items) {
+        return 0;
     }
 
     @Override
