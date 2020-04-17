@@ -73,7 +73,7 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     
     @Override
 	public int add(Record item) {
-		String query = new String("INSERT INTO record(timestamp,poi_id,effected, death, recorvered) VALUES $values")
+		String query = new String("INSERT INTO record(timestamp,poi_id,infected, death, recovered) VALUES $values")
 								.replace("$values",RecordToDbConverter.forwardConverter(item));
 		try {
 			return this.getConnector().connect().executeInsert(query);
@@ -90,7 +90,7 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 		for (Record record : items) {
 			insertValueStrings.add(RecordToDbConverter.forwardConverter(record));
 		}
-		String query = new String("INSERT INTO record(timestamp,poi_id,effected, death, recorvered) VALUES $values")
+		String query = new String("INSERT INTO record(timestamp,poi_id,infected, death, recovered) VALUES $values")
 								.replace("$values", String.join(",",insertValueStrings));
 		try {
 			this.getConnector().connect().executeInsert(query);

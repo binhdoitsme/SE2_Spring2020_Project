@@ -105,9 +105,9 @@ public class PointOfInterestRepositoryImpl  extends RepositoryImpl<PointOfIntere
 	@Override
 	public int update(PointOfInterest item) {
 		String query = "UPDATE point_of_interest SET $value WHERE id = " + "\'" + item.getId() + "\'";
-		query.replace("$value", PointOfInterestToDbConverter.forwardUpdateConverter(item));
+		String newQuery = query.replace("$value", PointOfInterestToDbConverter.forwardUpdateConverter(item));
 		try {
-			return this.getConnector().connect().executeUpdate(query);
+			return this.getConnector().connect().executeUpdate(newQuery);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

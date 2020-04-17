@@ -13,15 +13,15 @@ public class PointOfInterestToDbConverter extends Converter<PointOfInterest, Str
 	}
 
 	public static String forwardConverter(PointOfInterest p) {
-		return new String("($name,$code,$continent)")
+		return new String("(0,$name,$code,$continent)")
 				.replace("$name", "\'" + p.getName() + "\'")
-				.replace("$code", "" + p.getCode() +  "\'")
+				.replace("$code", "\'" + p.getCode() +  "\'")
 				.replace("$continent", "\'" + p.getContinent() + "\'");
 	}
 	public static String forwardUpdateConverter(PointOfInterest p) {
 		return new String("name = $name, code = $code, continent = $continent")
 				.replace("$name","\'" + p.getName() + "\'")
-				.replace("$code", "" + p.getCode() +  "\'")
+				.replace("$code", "\'" + p.getCode() +  "\'")
 				.replace("$continent", "\'" + p.getContinent() + "\'");
 	}
 }

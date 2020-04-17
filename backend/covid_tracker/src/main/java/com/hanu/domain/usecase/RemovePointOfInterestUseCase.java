@@ -16,6 +16,4 @@ public class RemovePointOfInterestUseCase implements RequestHandler<List<PointOf
 	public Integer handle(List<PointOfInterest> input) {
 		return repository.remove(input);
 	}
-	
-	
 }

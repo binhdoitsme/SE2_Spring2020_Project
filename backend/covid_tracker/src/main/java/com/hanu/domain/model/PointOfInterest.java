@@ -12,6 +12,12 @@ public class PointOfInterest {
 		this.code = code;
 		this.continent = continent;
 	}
+	
+	public PointOfInterest( String name, String code, String continent) {
+		this.name = name;
+		this.code = code;
+		this.continent = continent;
+	}
 
 	public int getId() {
 		return id;

@@ -11,7 +11,8 @@ public class RecordToDbConverter extends Converter<Record, String> {
 		// TODO Auto-generated constructor stub
 	}
 	public static String forwardConverter(Record record) {
-		return new String("($timestamp,$poiID,$infected, $death, $recovered)")
+		return new String("($timestamp,$poi_id,$infected, $death, $recovered)")
+								.replace("$poi_id", "\'" + record.getPoiId() + "\'")
 								.replace("$timestamp", "\'" + record.getTimestamp() + "\'")
 								.replace("$infected", "\'" + record.getInfected() + "\'")
 								.replace("$death", "\'" + record.getDeath() + "\'")

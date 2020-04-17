@@ -50,10 +50,10 @@ public class RecordpoiIdServlet extends HttpServlet{
 				}
 				writeAsJsonToResponse(getbyID, resp);
 			} catch (Exception e) {
-				writeAsJsonToResponse(new ArrayList<Record>(), resp);
+				resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
 		} else {
-			writeAsJsonToResponse(new ArrayList<Record>(), resp);
+			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
 

@@ -110,13 +110,14 @@ public class RecordServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	String authToken = req.getParameter("authToken");
     	boolean authenticated = new Authenticator().validateJwt(authToken);
-    	if(authenticated) {
-    		JSONObject jsonObject = HTTP.toJSONObject(getRequestBody(req));
-    		JSONArray jsonArray = (JSONArray) jsonObject.get("record");
+    	if(authenticated) {		
+    		// get json from request and log it out
+    		String body = getRequestBody(req);
+    		JSONArray array = new JSONArray(body);
     		List<Record> records = new ArrayList<Record>();
-    		for( int i = 0; i < jsonArray.length(); i++) {
-    			JSONObject js = (JSONObject) jsonArray.get(i);
-    			records.add(new Record(Timestamp.valueOf(js.getString("timestamp")), 
+    		for( int i = 0; i < array.length(); i++) {
+    			JSONObject js = (JSONObject) array.get(i);
+    			records.add(new Record(new Timestamp(js.getLong("timestamp")), 
     									js.getInt("poiId"), 
     									js.getLong("infected"), 
     									js.getLong("death"), 

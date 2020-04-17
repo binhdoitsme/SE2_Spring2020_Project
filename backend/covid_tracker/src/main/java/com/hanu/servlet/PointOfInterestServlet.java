@@ -26,7 +26,7 @@ import com.hanu.exception.UnauthorizedException;
 import com.hanu.util.authentication.Authenticator;
 import com.mysql.cj.x.protobuf.MysqlxCrud.Collection;
 
-@WebServlet(name = "POI", urlPatterns = "/points" )
+@WebServlet(name = "POI", urlPatterns = "/*" )
 public class PointOfInterestServlet extends HttpServlet {
 	/**
 	 * 
@@ -34,20 +34,24 @@ public class PointOfInterestServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private PointOfInterestController controller;
 	public PointOfInterestServlet() {
-		// TODO Auto-generated constructor stub
 		controller = new PointOfInterestController();
 	}
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		List<String> queryParamNames = Collections.list(req.getParameterNames());
-		if(queryParamNames.isEmpty()) {
+		String path = req.getPathInfo().substring(1);
+		String[] split = path.split("/");
+		if(split.length == 1 && split[0].equals("points")) {
 			List<PointOfInterest> list = controller.getAll();
 			writeAsJsonToResponse(list, resp);
-		} else if (req.getParameter("id") != null) {
-			int id = Integer.parseInt(req.getParameter("id"));
-			PointOfInterest p = controller.getById(id);
-			writeAsJsonToResponse(p, resp);
+		} else if (split.length == 2 && split[0].equals("points")){
+			try {
+				PointOfInterest p = controller.getById(Integer.parseInt(split[1]));
+				writeAsJsonToResponse(p, resp);
+			} catch(Exception e) {
+				resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			}
 		}
 	}
 	
@@ -83,12 +87,12 @@ public class PointOfInterestServlet extends HttpServlet {
     	String authToken = req.getParameter("authToken");
     	boolean authenticated = new Authenticator().validateJwt(authToken);
     	if(authenticated) { 
-    		JSONObject jsonObject = HTTP.toJSONObject(getRequestBody(req));
-    		JSONArray jsonArray = (JSONArray) jsonObject.get("PointOfInterest");
+    		String body = getRequestBody(req);
+    		JSONArray array = new JSONArray(body);
     		List<PointOfInterest> pointOfInterests = new ArrayList<PointOfInterest>();
-    		for( int i = 0; i < jsonArray.length(); i++) {
-    			JSONObject js = (JSONObject) jsonArray.get(i);
-    			pointOfInterests.add(new PointOfInterest(js.getInt("id"), js.getString("name"), js.getString("code"), js.getString("continent")));
+    		for( int i = 0; i < array.length(); i++) {
+    			JSONObject js = (JSONObject) array.get(i);
+    			pointOfInterests.add(new PointOfInterest(js.getString("name"), js.getString("code"), js.getString("continent")));
     		}
     		controller.add(pointOfInterests);
     	} else {
@@ -101,11 +105,11 @@ public class PointOfInterestServlet extends HttpServlet {
     	String authToken = req.getParameter("authToken");
     	boolean authenticated = new Authenticator().validateJwt(authToken);
     	if(authenticated) { 
-    		JSONObject jsonObject = HTTP.toJSONObject(getRequestBody(req));
-    		JSONArray jsonArray = (JSONArray) jsonObject.get("PointOfInterest");
+    		String body = getRequestBody(req);
+    		JSONArray array = new JSONArray(body);
     		List<PointOfInterest> pointOfInterests = new ArrayList<PointOfInterest>();
-    		for( int i = 0; i < jsonArray.length(); i++) {
-    			JSONObject js = (JSONObject) jsonArray.get(i);
+    		for( int i = 0; i < array.length(); i++) {
+    			JSONObject js = (JSONObject) array.get(i);
     			pointOfInterests.add(new PointOfInterest(js.getInt("id"), js.getString("name"), js.getString("code"), js.getString("continent")));
     		}
     		controller.update(pointOfInterests);
@@ -116,7 +120,19 @@ public class PointOfInterestServlet extends HttpServlet {
     
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	// TODO Auto-generated method stub
-    	super.doDelete(req, resp);
+    	String authToken = req.getParameter("authToken");
+    	boolean authenticated = new Authenticator().validateJwt(authToken);
+    	if(authenticated) { 
+    		String body = getRequestBody(req);
+    		JSONArray array = new JSONArray(body);
+    		List<PointOfInterest> pointOfInterests = new ArrayList<PointOfInterest>();
+    		for( int i = 0; i < array.length(); i++) {
+    			JSONObject js = (JSONObject) array.get(i);
+    			pointOfInterests.add(new PointOfInterest(js.getInt("id"), js.getString("name"), js.getString("code"), js.getString("continent")));
+    		}
+    		controller.remove(pointOfInterests);
+    	} else {
+    		writeAsJsonToResponse(new UnauthorizedException(), resp);
+    	}
     }
 }
