@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ import com.hanu.exception.UnauthorizedException;
 import com.hanu.util.authentication.Authenticator;
 import com.hanu.util.configuration.Configuration;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +39,11 @@ public class RecordServlet extends HttpServlet {
     private static final String TIMEFRAME = "timeframe";
     private static final String CONTINENT = "continent";
     private static final String LATEST = "latest";
-    
-	private RecordController controller;
 
-	public RecordServlet() {
-		controller = new RecordController();
+    private RecordController controller;
+
+    public RecordServlet() {
+        controller = new RecordController();
     }
 
     @Override
@@ -50,8 +52,9 @@ public class RecordServlet extends HttpServlet {
         List<String> queryParamNames = Collections.list(req.getParameterNames());
 
         if (queryParamNames.isEmpty()) {
-            // GET /stats 
-            // will be done by others
+            // GET /stats
+            List<Record> allRecords = controller.getRecords();
+            writeAsJsonToResponse(allRecords, resp);
             return;
         } else {
             List<RecordDto> result = new LinkedList<>();
@@ -71,7 +74,8 @@ public class RecordServlet extends HttpServlet {
                     writeAsJsonToResponse(new ServerFailedException(), resp);
                 }
             } else {
-                List<RecordDto> aggregateResult = controller.getAggregatedRecords(groupBy, timeframe, latest, continent);
+                List<RecordDto> aggregateResult = controller.getAggregatedRecords(groupBy, timeframe, latest,
+                        continent);
                 result.addAll(aggregateResult);
             }
 
@@ -80,8 +84,8 @@ public class RecordServlet extends HttpServlet {
         }
     }
 
-	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // request parameter: authToken
         String authToken = req.getParameter("authToken");
         boolean authenticated = new Authenticator().validateJwt(authToken);
@@ -90,11 +94,11 @@ public class RecordServlet extends HttpServlet {
             return;
         }
 
-		String body = getRequestBody(req);
-        
+        String body = getRequestBody(req);
+
         Object result = controller.removeRecords(body);
         writeAsJsonToResponse(result, resp);
-	}
+    }
 
     private void writeAsJsonToResponse(Object o, HttpServletResponse resp) throws IOException {
         resp.setHeader("Content-Type", "application/json");
@@ -124,7 +128,7 @@ public class RecordServlet extends HttpServlet {
         BufferedReader reader = req.getReader();
         StringBuilder body = new StringBuilder();
         String line;
-        while ((line = reader.readLine())!= null) {
+        while ((line = reader.readLine()) != null) {
             body.append(line).append("\n");
         }
         return body.toString();
@@ -135,7 +139,7 @@ public class RecordServlet extends HttpServlet {
         BufferedReader reader = new BufferedReader(new InputStreamReader(link.openConnection().getInputStream()));
         StringBuilder content = new StringBuilder();
         String line;
-        while ((line = reader.readLine())!= null) {
+        while ((line = reader.readLine()) != null) {
             content.append(line).append("\n");
         }
         return content.toString();
@@ -154,21 +158,15 @@ public class RecordServlet extends HttpServlet {
             return;
         } else {
             // get body
-            BufferedReader reader = req.getReader();
-            StringBuilder bodyStringBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                bodyStringBuilder.append(line).append("\n");
-            }
-            String body = bodyStringBuilder.toString();
+            String body = getRequestBody(req);
 
-            if (body == null) {
-                String remoteDataUrl = Configuration.get("io.remotedatasource");
+            if (body.equals("")) {
+                String remoteDataUrl = Configuration.get("io.remote.countries");
                 String remoteData = getTextDataFromUrl(remoteDataUrl);
-                
+
                 // delgate to controller
-                Object adđResult = controller.addBatch(remoteData);
-                writeAsJsonToResponse(adđResult, resp);
+                Object addResult = controller.addBatch(remoteData);
+                writeAsJsonToResponse(addResult, resp);
                 return;
             } else {
                 updateManually(body, req, resp);
@@ -177,7 +175,7 @@ public class RecordServlet extends HttpServlet {
     }
 
     private void updateManually(String body, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		try {
+        try {
             // jsonString Array -> list of record
             String updateRecords = body.toString();
             Object result = controller.updateRecords(updateRecords);
@@ -187,6 +185,19 @@ public class RecordServlet extends HttpServlet {
             logger.error(e.getMessage(), e);
             resp.setStatus(500);
             writeAsJsonToResponse(new ServerFailedException(), resp);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String authToken = req.getParameter("authToken");
+        boolean authenticated = new Authenticator().validateJwt(authToken);
+        if (authenticated) {
+            // get json from request and log it out
+            String body = getRequestBody(req);
+            controller.addRecordFromBody(body);
+        } else {
+            writeAsJsonToResponse(new UnauthorizedException(), resp);
         }
     }
 }

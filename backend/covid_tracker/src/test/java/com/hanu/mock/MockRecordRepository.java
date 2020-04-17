@@ -108,4 +108,10 @@ public class MockRecordRepository implements RecordRepository {
         return null;
     }
 
+	@Override
+	public List<Record> getByPoiID(int input) throws SQLException, InvalidQueryTypeException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

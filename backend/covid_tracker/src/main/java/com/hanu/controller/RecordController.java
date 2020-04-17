@@ -3,10 +3,11 @@ package com.hanu.controller;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,7 +20,10 @@ import com.hanu.domain.converter.RecordDtoConverter;
 import com.hanu.domain.dto.RecordDto;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.usecase.AddManyRecordsUseCase;
+import com.hanu.domain.usecase.AddRecordUseCase;
 import com.hanu.domain.usecase.GetAggregatedRecordsUseCase;
+import com.hanu.domain.usecase.GetAllByPoiIdUseCase;
+import com.hanu.domain.usecase.GetAllRecordUseCase;
 import com.hanu.domain.usecase.GetRecordByContinentUseCase;
 import com.hanu.domain.usecase.RemoveManyRecordUseCase;
 import com.hanu.domain.usecase.UpdateManyRecordUseCase;
@@ -61,7 +65,8 @@ public class RecordController {
     // split method
     private Map<String, List<Record>> getRecordsPoiNameMap(String csv) {
         // map csv to list of Records
-        String[] lines = csv.trim().split("\n");
+        String[] lines = csv.trim().replace("\"Korea, South\"", "South Korea").split("\n");
+        logger.info("Line cnt: " + lines.length);
 
         Map<String, List<Record>> recordsByPoiName = new HashMap<>();
 
@@ -72,18 +77,17 @@ public class RecordController {
         final int deathPos = labels.indexOf("Deaths");
         final int recoveredPos = labels.indexOf("Recovered");
         final int datePos = labels.indexOf("Date");
-        final int countryPos = labels.indexOf("Country/Region");
-        final int provincePos = labels.indexOf("Province/State");
+        final int countryPos = labels.indexOf("Country");
+        // final int provincePos = labels.indexOf("Province/State");
 
         // parse
         for (int i = 1; i < lines.length; i++) {
             Record r = recordFromLineString(lines[i], length, infectedPos, deathPos, 
-                                        recoveredPos, countryPos, provincePos, datePos);
+                                        recoveredPos, countryPos, datePos);
             if (r == null) continue;
             recordsByPoiName.putIfAbsent(r.getPoiName(), new ArrayList<>());
             recordsByPoiName.get(r.getPoiName()).add(r);
         }
-
         return recordsByPoiName;
     }
 
@@ -104,19 +108,21 @@ public class RecordController {
     }
 
     private Record recordFromLineString(String line, int length, int infectedPos, int deathPos, int recoveredPos,
-            int countryPos, int provincePos, int datePos) {
+            int countryPos, int datePos) {
         String[] elements = line.trim().split(",");
-        if (elements.length != length)
+        if (elements.length != length) {
+            logger.info(Arrays.toString(elements));
             return null;
+        }
         int infected = elements[infectedPos].isEmpty() ? 0 : new Integer(elements[infectedPos]);
         int death = elements[deathPos].isEmpty() ? 0 : new Integer(elements[deathPos]);
         int recovered = elements[recoveredPos].isEmpty() ? 0 : new Integer(elements[recoveredPos]);
         String country = elements[countryPos];
-        String province = elements[provincePos];
-        String poiName = province.isEmpty() ? country : province;
-        long date = LocalDate.parse(elements[datePos]).atTime(23, 00).toEpochSecond(ZoneOffset.ofHours(0));
-        Timestamp timestamp = new Timestamp(date);
-        return new Record(0, timestamp, 0, infected, death, recovered).poiName(poiName);
+        // String province = elements[provincePos];
+        // String poiName = province.isEmpty() ? country : province;
+        LocalDateTime date = LocalDate.parse(elements[datePos]).atTime(23, 00);
+        Timestamp timestamp = Timestamp.valueOf(date);
+        return new Record(0, timestamp, 0, infected, death, recovered).poiName(country);
     }
 
     // changed: many+single
@@ -174,4 +180,26 @@ public class RecordController {
 	public List<Record> getRecordByContinent(String continent) throws Exception {
 		return new GetRecordByContinentUseCase().handle(continent);
 	}
+    
+    // getAllRecord
+    public List<Record> getRecords() {
+    	return new GetAllRecordUseCase().handle(null);
+    }
+    
+    // getAllRecordByPoiID
+    public List<Record> getByPoiID(int input){
+    	return new GetAllByPoiIdUseCase().handle(input);
+    }
+    
+    // addRecord
+    public int addRecordFromBody(String body) {
+        JSONArray array = new JSONArray(body);
+        List<Record> records = new LinkedList<Record>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject js = (JSONObject) array.get(i);
+            records.add(new Record(new Timestamp(js.getLong("timestamp")), js.getInt("poiId"), js.getLong("infected"),
+                    js.getLong("death"), js.getLong("recovered")));
+        }
+        return new AddRecordUseCase().handle(records);
+    }
 }

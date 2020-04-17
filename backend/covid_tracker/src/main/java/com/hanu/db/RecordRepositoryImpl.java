@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.hanu.base.Converter;
 import com.hanu.base.Mapper;
 import com.hanu.base.RepositoryImpl;
 import com.hanu.db.util.AggregationType;
@@ -17,6 +18,7 @@ import com.hanu.domain.repository.RecordRepository;
 import com.hanu.domain.repository.mapper.RecordMapper;
 import com.hanu.exception.InvalidQueryTypeException;
 import com.hanu.util.configuration.Configuration;
+import com.hanu.util.db.RecordToCreateStringConverter;
 import com.hanu.util.db.RecordToDeleteStringConverter;
 import com.hanu.util.db.RecordToUpdateStringConverter;
 
@@ -35,26 +37,35 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     private static final Logger logger = LoggerFactory.getLogger(RecordRepositoryImpl.class);
 
     @Override
-    public List<Record> getAll() {
-        
-        return null;
-    }
+	public List<Record> getAll() {
+        List<Record> records = new ArrayList<>();
+        Mapper<Record> mapper = new RecordMapper();
+		String query = "SELECT * FROM record";
+		try {
+			ResultSet rs = this.getConnector().connect().connect().executeSelect(query);
+			while(rs.next()) {
+				records.add(mapper.forwardConvert(rs));
+			}
+		} catch (SQLException | InvalidQueryTypeException e) {
+			e.printStackTrace();
+		}
+		return records;
+	}
 
     @Override
-    public Record getById(Integer id) {
-        
-        return null;
-    }
-
-    @Override
-    public int add(Record item) {
-        return 0;
-    }
-
-    @Override
-    public int add(List<Record> items) {
-        return 0;
-    }
+	public Record getById(Integer id) {
+        Mapper<Record> mapper = new RecordMapper();
+		Record record = null;
+		String query = "SELECT * FROM record INNER JOIN point_of_interest ON record.poi_id = point_of_interest.id"
+				+  " WHERE id = " + "\'" +id + "\'";
+		try {
+			ResultSet rs = this.getConnector().connect().executeSelect(query);
+			record = mapper.forwardConvert(rs);
+		} catch (SQLException | InvalidQueryTypeException e) {
+			e.printStackTrace();
+		}
+		return record;
+	}
 
     @Override
 	public int remove(Integer id) {
@@ -100,7 +111,52 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
         }
 		return rowsUpdated;
 	}
+	public List<Record> getByPoiID(int input) throws SQLException, InvalidQueryTypeException {
+		List<Record> records = new ArrayList<>();
+		String query = "SELECT *, name poi_name FROM record INNER JOIN point_of_interest ON record.poi_id = point_of_interest.id"
+                +  " WHERE poi_id = '$input'".replace("$input", String.valueOf(input));
+        Mapper<Record> mapper = new RecordMapper();
+		try {
+			ResultSet rs = this.getConnector().connect().executeSelect(query);
+			while(rs.next()) {
+				records.add(mapper.forwardConvert(rs));
+			}
+		} catch (SQLException | InvalidQueryTypeException e) {				
+			e.printStackTrace();
+		}			
+		return records;
+	}
+    
+    @Override
+	public int add(Record item) {
+        String values = new RecordToCreateStringConverter().forwardConvert(item);
+		String query = new String("INSERT INTO record(timestamp,poi_id,infected, death, recovered) VALUES $values")
+								.replace("$values", values);
+		try {
+			return this.getConnector().connect().executeInsert(query);
+		} catch (SQLException | InvalidQueryTypeException e) {
+            e.printStackTrace();
+            return 0;
+		}
+	}
 
+    @Override
+	public int add(List<Record> items) {
+        Converter<Record, String> recordToValuesConverter = new RecordToCreateStringConverter();
+		ArrayList<String> insertValueStrings = new ArrayList<String>();
+		for (Record record : items) {
+			insertValueStrings.add(recordToValuesConverter.forwardConvert(record));
+		}
+		String query = new String("INSERT INTO record(timestamp,poi_id,infected, death, recovered) VALUES $values")
+								.replace("$values", String.join(",",insertValueStrings));
+		try {
+			return this.getConnector().connect().executeInsert(query);
+		} catch (SQLException | InvalidQueryTypeException e) {
+            e.printStackTrace();
+            return 0;
+		}	
+	}
+    
     @Override
     public long count() {
         return 0;
@@ -137,11 +193,12 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
         String limitStr = groupByType == null ? LATEST_LIMIT :
                             groupByType.equals(GroupByType.WORLD) ? "LIMIT 2" : LATEST_LIMIT;
         sql = sql.replace("$limit", type.isLatest() ? limitStr : "")
-                .replace("$timeframe", timeframeType == null ? "DAY" : timeframeType.toString())
+                .replace("$timeframe", timeframeType == null ? "DATE" : timeframeType.toString())
                 .replace("$continent_clause", continent.isEmpty() ? 
-                        "AND continent in ('asia', 'america', 'europe', 'africa')"
-                        : "AND continent = '$continent'".replace("$continent", continent))
-                .replace("$fields", groupByType == GroupByType.CONTINENT ? FIELD_SUM_TEMPLATE : "*");
+                        "" : "AND continent = '$continent'".replace("$continent", continent))
+                .replace("$fields", groupByType == GroupByType.CONTINENT ? FIELD_SUM_TEMPLATE
+                                                : "r.id id, timestamp, poi_id, infected, death, " +
+                                                "recovered, code, continent, mts, name poi_name");
         return sql;
     }
 
@@ -159,13 +216,19 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 
     @Override
     public int getPoiIdByName(String name) throws SQLException, InvalidQueryTypeException {
-        return getConnector().connect()
-                .executeScalar(POI_ID_FROM_NAME.replace("$name", name));
+        Integer id = getConnector().connect()
+                        .executeScalar(POI_ID_FROM_NAME.replace("$name", name));
+        if (id == null) {
+            return -1;
+        }
+        return id;
     }
 
     @Override
     public Date getLatestDate() throws SQLException, InvalidQueryTypeException {
-        return getConnector().connect()
-                    .executeScalar(LATEST_DATE);
+        Date date = getConnector().connect()
+                        .executeScalar(LATEST_DATE);
+        date = date == null ? new Date(0) : date;
+        return date;
     }
 }

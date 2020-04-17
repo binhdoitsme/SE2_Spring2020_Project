@@ -1,7 +1,7 @@
 package com.hanu.db.util;
 
 public enum TimeframeType {
-    DAY,
+    DATE,
     WEEK,
     MONTH,
     QUARTER,

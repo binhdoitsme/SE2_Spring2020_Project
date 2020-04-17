@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 
+import com.hanu.db.PointOfInterestRepositoryImpl;
 import com.hanu.db.RecordRepositoryImpl;
 import com.hanu.db.UserRepositoryImpl;
+import com.hanu.domain.repository.PointOfInterestRepository;
 import com.hanu.domain.repository.RecordRepository;
 import com.hanu.domain.repository.UserRepository;
 import com.hanu.util.configuration.Configuration;
@@ -38,6 +40,7 @@ public class Startup {
         container.addDependency(DbConnector.class, new DbConnectorImpl());
         container.addDependency(UserRepository.class, new UserRepositoryImpl());
         container.addDependency(RecordRepository.class, new RecordRepositoryImpl());
+        container.addDependency(PointOfInterestRepository.class, new PointOfInterestRepositoryImpl());
         return this;
     }
 
