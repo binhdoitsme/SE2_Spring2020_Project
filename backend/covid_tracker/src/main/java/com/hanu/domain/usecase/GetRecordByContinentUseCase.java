@@ -13,11 +13,11 @@ import com.hanu.util.di.Inject;
 public class GetRecordByContinentUseCase implements RequestHandler<String, List<Record>> {
 
 	@Inject
-	private RecordRepository repo; 
+	private RecordRepository repository; 
 	@Override
 	public List<Record> handle(String continent)  {
 		try {
-			return repo.getRecordByContinent(continent);
+			return repository.getRecordByContinent(continent);
 		} catch (SQLException | InvalidQueryTypeException e) {
 			return new ArrayList<Record>();
 		}

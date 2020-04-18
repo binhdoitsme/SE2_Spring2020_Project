@@ -174,7 +174,7 @@ public class RecordController {
         for (String id : idStrings) {
             ids.add(Integer.parseInt(id.trim()));
         }
-        return usecase.handle(ids);
+        return new NonQueryResult(usecase.handle(ids));
 	}
 
 	public List<Record> getRecordByContinent(String continent) throws Exception {

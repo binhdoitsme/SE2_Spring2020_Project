@@ -10,12 +10,12 @@ import com.hanu.util.di.Inject;
 public class AddPointOfInterestUseCase implements RequestHandler<List<PointOfInterest>, Integer> {
 
 	@Inject
-    private PointOfInterestRepository repositoty ;
+	private PointOfInterestRepository repository;
 	
 	@Override
 	public Integer handle(List<PointOfInterest> input) {
 		try {
-			return repositoty.add(input);
+			return repository.add(input);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1;

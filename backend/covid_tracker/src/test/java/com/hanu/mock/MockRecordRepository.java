@@ -3,6 +3,7 @@ package com.hanu.mock;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import com.hanu.exception.InvalidQueryTypeException;
 
 public class MockRecordRepository implements RecordRepository {
 
-    public final Map<Integer, Record> records = new HashMap<Integer, Record>() {
+    public static final Map<Integer, Record> records = new HashMap<Integer, Record>() {
 
         private static final long serialVersionUID = 5403964494677058636L;
 
@@ -64,7 +65,7 @@ public class MockRecordRepository implements RecordRepository {
 
     @Override
     public List<Record> getAggregatedRecords(AggregationType type) {
-        return records.values().stream().collect(Collectors.toList());
+        return records.values().stream().sorted((r1, r2) -> (new Integer(r1.getId()).compareTo(new Integer(r2.getId())))).collect(Collectors.toList());
     }
 
     @Override
@@ -86,7 +87,6 @@ public class MockRecordRepository implements RecordRepository {
 
     @Override
     public int remove(List<Integer> ids) {
-
         return 0;
     }
 
@@ -104,14 +104,12 @@ public class MockRecordRepository implements RecordRepository {
 
     @Override
     public List<Record> getRecordByContinent(String continent) throws SQLException, InvalidQueryTypeException {
-        // TODO Auto-generated method stub
-        return null;
+		return new ArrayList<>();
     }
 
 	@Override
 	public List<Record> getByPoiID(int input) throws SQLException, InvalidQueryTypeException {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<>();
 	}
 
 }
