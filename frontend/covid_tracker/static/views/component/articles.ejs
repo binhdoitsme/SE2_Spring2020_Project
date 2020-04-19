@@ -1,0 +1,13 @@
+<div class="card-column" style="column-count: 1;">
+    <h6 class="text-light">Latest news</h6>
+    <% articles.forEach(article => { %>
+    <div class="card bg-dark text-light">
+        <img class="card-img-top" onclick="window.location.href='<%- article.link.href %>'"
+            src="<%- article.imgUrl.href %>" alt="img" style="object-fit: cover; height: 80px;">
+        <div class="card-body p-2">
+            <a class="card-title text-light" href="<%- article.link.href %>"> <%- article.title %> </a>
+            <p class="card-text text-light"><%- `By: ${article.provider}` %></p>
+        </div>
+    </div>
+    <% }) %>
+</div>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Homepage</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="js/jquery-jvectormap-2.0.5.css">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="js/jquery-jvectormap-2.0.5.min.js"></script>
+    <script src="https://jvectormap.com/js/jquery-jvectormap-world-merc.js"></script>
+
+</head>
+
+<body style="max-height: 100vh; height: 100vh;" class="d-flex flex-column flex-grow">
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Homepage</a>
+        <a class="nav-link text-light" href="#" data-toggle="modal" data-target="#modelId">Log in</a>
+    </nav>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Log in</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form name="login-form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="username" id="username"
+                                    aria-describedby="helpId" placeholder="Username">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" name="password" id="password"
+                                    placeholder="Password">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" form="login-form" class="btn btn-primary">Log in</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <div class="col-md-2 bg-primary d-flex align-items-center justify-content-center">
+                <div class="spinner-border text-warning" role="status">
+
+                </div>
+            </div>
+            <div class="col-md-8 bg-dark text-light d-flex flex-column align-items-center justify-content-center p-0">
+                <div class="h-25 w-100 bg-light d-flex flex-column align-items-center justify-content-center p-0">
+                    <div class="spinner-border text-warning" role="status">
+
+                    </div>
+                </div>
+                <div id="map" class="h-75 w-100">
+
+                </div>
+                <div class="h-25 w-100 bg-light d-flex flex-column align-items-center justify-content-center p-0">
+                    <div class="spinner-border text-warning" role="status">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 bg-secondary d-flex align-items-center justify-content-center">
+                <div class="spinner-border text-warning" role="status">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    $('#map').vectorMap({map: 'world_merc'});
+</script>
+
+</html>
