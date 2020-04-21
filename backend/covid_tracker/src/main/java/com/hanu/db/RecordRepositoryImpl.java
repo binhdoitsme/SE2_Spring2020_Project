@@ -33,6 +33,7 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     private static final String CONTINENT_TEMPLATE = Configuration.get("db.nonaggregate.continent");
     private static final String LATEST_DATE = Configuration.get("db.scalar.latestdate");
     private static final String POI_ID_FROM_NAME = Configuration.get("db.scalar.poi_id");
+    private static final String RECORD_ALL_TEMPLATE = Configuration.get("db.record.all");
 
     private static final Logger logger = LoggerFactory.getLogger(RecordRepositoryImpl.class);
 
@@ -40,7 +41,7 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 	public List<Record> getAll() {
         List<Record> records = new ArrayList<>();
         Mapper<Record> mapper = new RecordMapper();
-		String query = "SELECT * FROM record";
+		String query = RECORD_ALL_TEMPLATE;
 		try {
 			ResultSet rs = this.getConnector().connect().connect().executeSelect(query);
 			while(rs.next()) {
@@ -90,7 +91,7 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
             return 0;
         }
 	}
-	
+
 	@Override
 	public int update(Record item) {
         try {
@@ -121,12 +122,12 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 			while(rs.next()) {
 				records.add(mapper.forwardConvert(rs));
 			}
-		} catch (SQLException | InvalidQueryTypeException e) {				
+		} catch (SQLException | InvalidQueryTypeException e) {
 			e.printStackTrace();
-		}			
+		}
 		return records;
 	}
-    
+
     @Override
 	public int add(Record item) {
         String values = new RecordToCreateStringConverter().forwardConvert(item);
@@ -154,9 +155,9 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 		} catch (SQLException | InvalidQueryTypeException e) {
             e.printStackTrace();
             return 0;
-		}	
+		}
 	}
-    
+
     @Override
     public long count() {
         return 0;
@@ -169,7 +170,7 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
 
     @Override
     public List<Record> getAggregatedRecords(AggregationType type) throws SQLException, InvalidQueryTypeException {
-        String sql = buildAggregateQueryString(type);       
+        String sql = buildAggregateQueryString(type);
 
         ResultSet rs = super.getConnector().connect().executeSelect(sql);
         List<Record> resultList = new LinkedList<>();
@@ -186,15 +187,15 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
         String continent = type.continent();
         TimeframeType timeframeType = type.timeframe();
         String sql = groupByType == null ? AGGREGATE_TEMPLATE.replace("$group_by", "") :
-                    groupByType.equals(GroupByType.WORLD) ? 
-                        WORLD_TEMPLATE 
+                    groupByType.equals(GroupByType.WORLD) ?
+                        WORLD_TEMPLATE
                         : AGGREGATE_TEMPLATE.replace("$group_by", groupByType.toString().concat(","));
-        
+
         String limitStr = groupByType == null ? LATEST_LIMIT :
                             groupByType.equals(GroupByType.WORLD) ? "LIMIT 2" : LATEST_LIMIT;
         sql = sql.replace("$limit", type.isLatest() ? limitStr : "")
                 .replace("$timeframe", timeframeType == null ? "DATE" : timeframeType.toString())
-                .replace("$continent_clause", continent.isEmpty() ? 
+                .replace("$continent_clause", continent.isEmpty() ?
                         "" : "AND continent = '$continent'".replace("$continent", continent))
                 .replace("$fields", groupByType == GroupByType.CONTINENT ? FIELD_SUM_TEMPLATE
                                                 : "r.id id, timestamp, poi_id, infected, death, " +
