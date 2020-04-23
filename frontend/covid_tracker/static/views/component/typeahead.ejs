@@ -1,0 +1,47 @@
+<div class="form-group d-flex align-items-center">
+    <label class="m-0 mr-1" for="search-location">Search location: </label>
+    <input type="text" class="form-control" id="search-location-typeahead" name="search-location" id="search-location"
+        aria-describedby="helpId" placeholder="Location...">
+</div>
+
+<script>
+    var substringMatcher = function (strs) {
+        return function findMatches(q, cb) {
+            var matches, substringRegex;
+
+            // an array that will be populated with substring matches
+            matches = [];
+
+            // regex used to determine if a string contains the substring `q`
+            substrRegex = new RegExp(q, 'i');
+
+            // iterate through the pool of strings and for any string that
+            // contains the substring `q`, add it to the `matches` array
+            $.each(strs, function (i, str) {
+                if (substrRegex.test(str)) {
+                    matches.push(str);
+                }
+            });
+
+            cb(matches);
+        };
+    };
+
+    let typeaheadData;
+
+    fetch('/locations').then(res => res.json()).then(json => {
+        typeaheadData = json.map(location => location.name);
+        $('#search-location-typeahead').typeahead({
+            hint: false,
+            highlight: true,
+            minLength: 1,
+            limit: 100
+        },
+            {
+                name: 'locations',
+                source: substringMatcher(typeaheadData)
+            });
+    });
+
+
+</script>

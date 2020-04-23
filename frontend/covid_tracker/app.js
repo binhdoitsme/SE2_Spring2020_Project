@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const fetch = require('node-fetch');
 const homeRouter = require('./router/home-router');
 const loginRouter = require('./router/login-router');
+const locationRouter = require('./router/location-router');
 const hostname = "http://localhost";
 
 app.set('view engine', 'ejs');
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use(homeRouter);
 app.use(loginRouter);
+app.use(locationRouter);
 
 app.get('/articles', (req, res) => {
     fetch(`${hostname}:8080/articles`, {
