@@ -1,20 +1,5 @@
 package com.hanu.servlet;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanu.controller.RecordController;
 import com.hanu.domain.dto.RecordDto;
@@ -23,10 +8,23 @@ import com.hanu.exception.ServerFailedException;
 import com.hanu.exception.UnauthorizedException;
 import com.hanu.util.authentication.Authenticator;
 import com.hanu.util.configuration.Configuration;
-
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 @WebServlet(name = "record", urlPatterns = "/stats")
 public class RecordServlet extends HttpServlet {
@@ -61,19 +59,15 @@ public class RecordServlet extends HttpServlet {
             String continent = req.getParameter(CONTINENT);
             String latest = req.getParameter(LATEST);
 
-            if (groupBy == null && timeframe == null && latest == null) {
+            if (groupBy == null) {
                 // GET by continent here
-                try {
-                    List<Record> recordByContinent = controller.getRecordByContinent(continent);
-                    writeAsJsonToResponse(recordByContinent, resp);
-                    return;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    writeAsJsonToResponse(new ServerFailedException(), resp);
-                }
+                // get filtered records
+                List<Record> filteredRecords = controller.getFilteredRecords(continent, timeframe, latest);
+                writeAsJsonToResponse(filteredRecords, resp);
+                return;
             } else {
                 List<RecordDto> aggregateResult = controller.getAggregatedRecords(groupBy, timeframe, latest,
-                        continent);
+                    continent);
                 result.addAll(aggregateResult);
             }
 
