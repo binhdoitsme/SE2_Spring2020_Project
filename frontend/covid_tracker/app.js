@@ -46,4 +46,3 @@ app.listen(PORT, () => {
     console.log(`Application listening on port ${PORT}`);
 });
 
-//hello from Quang computer//
