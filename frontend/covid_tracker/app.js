@@ -1,4 +1,4 @@
-const PORT = 4200;
+const PORT = 9090;
 const express = require('express');
 const app = express();
 const ejs = require('ejs');
@@ -25,6 +25,24 @@ app.get('/articles', (req, res) => {
     }).then(resp => resp.json()).then(json => {
         const articles = {articles: json};
         res.render('component/articles', articles);
+    });
+});
+
+// app.get('/stats', (req, res) => {
+//     fetch(`${hostname}:8080/stats`, {
+//         method: 'GET'
+//     }).then(resp => resp.json()).then(json => {
+//         const aggregatedRecord = {aggregatedRecor: json};
+//         res.render('component/aggregatedRecor-3-values', aggregatedRecor);
+//     });
+// });
+
+app.get('/stats', (req, res) => {
+    fetch(`${hostname}:8080/stats`, {
+        method: 'GET'
+    }).then(resp => resp.json()).then(json => {
+        const recordByPoi = {recordByPoi: json};
+        res.render('component/stats-list-byLocation', recordByPoi);
     });
 });
 
