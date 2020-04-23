@@ -1,5 +1,25 @@
 <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Homepage</a>
-    <a class="nav-link text-light" href="#" data-toggle="modal" data-target="#loginModal">Log in</a>
+    <div style="display: flex; flex-direction: row;">
+        <a class="nav-link dropdown-toggle nav-link text-light" href="#" id="navbarDropdownMenuLink"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Option
+        </a>
+        <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item text-light" href="#">Home Page</a>
+            <a class="dropdown-item text-light" href="#">Analytics Page</a>
+        </div>
+        <a href="https://moh.gov.vn/" class="text-light navbar-brand">Bộ Y Tế Việt Nam</a>
+    </div>
+    <div>
+        <a class="navbar-brand" href="#" style="margin-left: 25px;">Covid Tracker</a>
+    </div>
+
+    <div style="display: flex; flex-direction: row;">
+        <a class="nav-link text-light" href="#" data-toggle="modal" data-target="#loginModal">Log in</a>
+        <div style="display:flex; flex-direction: row; align-items: center; width: 50px; justify-content: space-around;">
+            <img src="img/vietnamLa.png">
+            <img src="img/englandLa.png">
+        </div>
+    </div>
 </nav>
 <%- include("login-modal.ejs") %>
