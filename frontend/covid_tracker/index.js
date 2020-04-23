@@ -9,4 +9,3 @@ app.listen(PORT, () => {
     console.log(`Application listening on port ${PORT}`);
 });
 
-//hello form Quang's computer
