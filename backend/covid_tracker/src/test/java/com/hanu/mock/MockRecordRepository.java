@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.hanu.db.util.AggregationType;
+import com.hanu.db.util.FilterType;
 import com.hanu.domain.model.Record;
 import com.hanu.domain.repository.RecordRepository;
 import com.hanu.exception.InvalidQueryTypeException;
@@ -111,5 +112,10 @@ public class MockRecordRepository implements RecordRepository {
 	public List<Record> getByPoiID(int input) throws SQLException, InvalidQueryTypeException {
 		return new ArrayList<>();
 	}
+
+    @Override
+    public List<Record> getFilteredRecords(FilterType filterType) throws SQLException, InvalidQueryTypeException {
+        return new ArrayList<>();
+    }
 
 }
