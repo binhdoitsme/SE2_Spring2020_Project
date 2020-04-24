@@ -42,7 +42,8 @@ public class RecordController {
                 .withContinent(continent == null ? "" : continent)
                 .isLatest(latestStr.isEmpty() ? false : Boolean.parseBoolean(latest));
             Converter<Record, RecordDto> converter = new RecordDtoConverter();
-            return new GetAggregatedRecordsUseCase().handle(type).stream().map(r -> converter.forwardConvert(r))
+            List<Record> records = new GetAggregatedRecordsUseCase().handle(type);
+            return records.stream().map(r -> converter.forwardConvert(r))
                 .collect(Collectors.toList());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

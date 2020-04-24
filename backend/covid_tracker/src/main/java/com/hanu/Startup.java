@@ -44,7 +44,7 @@ public class Startup {
         return this;
     }
 
-    public void configureServer() throws ClassNotFoundException {
+    public void configureServer() throws ClassNotFoundException, IOException {
         String servletPackageName = Configuration.get("servlet.package");
         List<Class<HttpServlet>> servlets = ServletLoader.getServletClasses(servletPackageName);
         TomcatBuilder appBuilder = new TomcatBuilderImpl();
