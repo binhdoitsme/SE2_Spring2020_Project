@@ -38,7 +38,7 @@ public class Configuration {
 
         try {
             configurationFolder = new File(CONFIGURATION_PATH);
-            assert configurationFolder.listFiles() != null;
+            @SuppressWarnings("unused") Object o =configurationFolder.listFiles()[0];
         } catch (NullPointerException e) {
             configurationFolder = new File("./src/main/resources/".concat(CONFIGURATION_PATH));
         }
