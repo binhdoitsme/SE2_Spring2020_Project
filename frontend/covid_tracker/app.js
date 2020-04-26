@@ -8,6 +8,7 @@ const fetch = require('node-fetch');
 const homeRouter = require('./router/home-router');
 const loginRouter = require('./router/login-router');
 const locationRouter = require('./router/location-router');
+const CONSTANTS = require('./constants');
 const hostname = "http://localhost";
 
 app.set('view engine', 'ejs');
@@ -28,20 +29,6 @@ app.get('/articles', (req, res) => {
         const articles = {articles: json};
         res.render('component/articles', articles);
     });
-});
-
-app.post('/login', (req, res) => {
-    let status = 200;
-    fetch('http://localhost:8080/session', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(req.body)
-    }).then(res => {
-        status = res.status;
-        return res.json();
-    }).then(json => res.status(status).json(json));
 });
 
 app.listen(PORT, () => {

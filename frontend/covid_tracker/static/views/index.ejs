@@ -3,11 +3,14 @@
 
 <head>
     <%- include("component/head.ejs") %>
-
 </head>
 
-<body style="height: 100vh">
-    <%- include("layout/analytics.ejs") %> 
+<body style="height: 100vh" class="p-0 m-0">
+    <%- include('component/navbar', {
+        authenticated: authenticated
+    }) %>
+
+    <%- include(`layout/${layoutName}`) %>
 </body>
 
 </html>

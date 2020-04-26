@@ -1,0 +1,115 @@
+<script>
+    const togglableData = {
+        worldLatest: `<%- include('report-world-aggregate') %>`,
+        worldTrend: `<%- include('report-world-trend') %>`,
+        worldMap: `<%- include('report-world-map') %>`,
+        countryTop10: `<%- include('report-top10') %>`,
+        caseDistribution: `<%- include('report-case-distr') %>`,
+        vietnameseDistribution: `<%- include('report-vietnam-distribution') %>`,
+        vietnameseLatest: `<%- include('report-vietnam') %>`,
+        vietnameseTable: `<%- include('report-vietnam-table') %>`,
+        continentLatest: `<%- include('report-continents') %>`,
+        continentTrends: `<%- include('report-continent-trends') %>`
+    }
+</script>
+<script src="js/reportEventHandlers.js"></script>
+<div class="w-100 container pt-3 pb-4 border border-info rounded text-left">
+    <div class="row m-0 pt-1 pb-1 pl-2 pr-3 text-center">
+        <h5 class="col-md-12 p-0">Include in your data:</h5>
+    </div>
+    <div class="row m-0 pt-1 pb-1 pl-2 pr-3">
+        <div class="form-check col-sm-6">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" name="worldLatest" id="worldLatest">
+                Latest world aggregation data
+            </label>
+        </div>
+        <div class="form-check col-sm-6">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" name="worldTrend" id="worldTrend">
+                World trend
+            </label>
+        </div>
+    </div>
+    <!-- -->
+    <div class="row m-0 pt-1 pb-1 pl-2 pr-3">
+        <div class="form-check col-sm-6">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" name="worldMap" id="worldMap">
+                World infection map
+            </label>
+        </div>
+        <div class="form-check col-sm-6">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" name="countryTop10" id="countryTop10">
+                Top 10 infected countries
+            </label>
+        </div>
+    </div>
+    <!-- -->
+    <div class="row m-0 pt-1 pb-1 pl-2 pr-3">
+        <div class="form-check col-sm-6">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" name="caseDistribution" id="caseDistribution">
+                Cases distribution
+            </label>
+        </div>
+        <div class="form-check col-sm-6">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" name="vietnameseDistribution"
+                    id="vietnameseDistribution">
+                Vietnamese cases distribution
+            </label>
+        </div>
+    </div>
+    <div class="row m-0 pt-1 pb-1 pl-2 pr-3">
+        <div class="form-check col-sm-6">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" name="vietnameseLatest" id="vietnameseLatest">
+                Latest Vietnamese data
+            </label>
+        </div>
+        <div class="form-check col-sm-6">
+            <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" name="vietnameseTable" id="vietnameseTable">
+                Vietnamese data table
+            </label>
+        </div>
+    </div>
+    <!-- -->
+    <div class="row m-0 pt-1 pb-1 pl-2 pr-3">
+        <div class="form-check col-sm-6 d-flex align-items-center">
+            <label class="form-check-label col-sm-12 m-0 p-0">
+                <input type="checkbox" class="form-check-input" name="continentLatest" id="continentLatest">
+                Latest data by continents
+            </label>
+        </div>
+        <div class="form-check col-sm-6 d-flex align-items-center">
+            <label class="form-check-label col-sm-12 m-0 p-0">
+                <input type="checkbox" class="form-check-input" name="continentTrends" id="continentTrends">
+                Latest trend by continents
+            </label>
+        </div>
+    </div>
+    <!-- -->
+    <!-- <div class="row m-0 pt-1 pb-1 pl-2 pr-3">
+        <div class="form-check col-sm-12 d-flex align-items-center">
+            <label class="form-check-label col-sm-3 m-0 p-0">
+                <input type="checkbox" class="form-check-input" name="countryStats" id="countryStats">
+                Statistics by country
+            </label>
+            <input type="text" class="form-control col-sm-9 m-0" name="country" id="country">
+        </div>
+    </div> -->
+    <!-- -->
+    <!-- <div class="row m-0 pt-1 pb-1 pl-2 pr-3">
+        <div class="form-check col-sm-12 d-flex align-items-center">
+            <label class="form-check-label col-sm-3 m-0 p-0">
+                <input type="checkbox" class="form-check-input" name="countryTrend" id="countryTrend">
+                Trend by country
+            </label>
+            <input type="text" class="form-control col-sm-9 m-0" name="_country" id="_country">
+        </div>
+    </div> -->
+</div>
+<script src="js/reportInfrastructure.js"></script>

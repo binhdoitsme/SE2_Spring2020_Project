@@ -1,0 +1,10 @@
+<%- include('../component/navbar') %>
+<form>
+</form>
+<%- include('../component/location-typeahead', {
+    typeaheadId: "search-location",
+    typeaheadLabel: "Location: ",
+    classList: "form-group d-flex align-items-center",
+    labelClass: "m-0 mr-1"
+}) %>
+<%- include('../component/addlocation-quick.ejs') %>

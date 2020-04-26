@@ -62,7 +62,7 @@ public class PointOfInterestRepositoryImpl  extends RepositoryImpl<PointOfIntere
 		for (PointOfInterest p : items) {
 			insertValueStrings.add(PointOfInterestToDbConverter.forwardConverter(p));
 		}
-		String query = new String("INSERT INTO point_of_interest VALUES $values")
+		String query = new String("INSERT INTO point_of_interest(name, code, continent) VALUES $values")
 								.replace("$values", String.join(",",insertValueStrings));
 		try {
 			return this.getConnector().connect().executeInsert(query);

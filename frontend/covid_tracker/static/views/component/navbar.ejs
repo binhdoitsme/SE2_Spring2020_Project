@@ -1,5 +1,15 @@
-<nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Homepage</a>
-    <a class="nav-link text-light" href="#" data-toggle="modal" data-target="#loginModal">Log in</a>
-</nav>
-<%- include("login-modal.ejs") %>
+<% if (authenticated) { %>
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Homepage</a>
+        <a name="logout" id="logout" class="btn text-light" href="#" 
+            onclick="fetch('/logout', {method: 'POST'}).then(res => window.location.reload())" role="button">
+            Log out
+        </a>
+    </nav>
+<% } else { %>
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Homepage</a>
+        <a class="nav-link text-light" href="#" data-toggle="modal" data-target="#loginModal">Log in</a>
+    </nav>
+    <%- include("login-modal.ejs") %>
+<% } %>
