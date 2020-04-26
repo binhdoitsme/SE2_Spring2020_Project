@@ -29,7 +29,7 @@ public class AddManyRecordsUseCase implements RequestHandler<Map<String, List<Re
     public Integer handle(Map<String, List<Record>> input) throws SQLException, InvalidQueryTypeException {
         Integer rowsAffected = 0;
         Date latestDate = recordRepository.getLatestDate();
-        Timestamp latestTimestamp = Timestamp.valueOf(latestDate.toString().concat(" 23:00:00")); // fixed the bug of putting redundant records into db
+        Timestamp latestTimestamp = latestDate == null ? new Timestamp(0) : Timestamp.valueOf(latestDate.toString().concat(" 23:00:00")); // fixed the bug of putting redundant records into db
 
         for (String poiName : input.keySet()) {
             Integer poiId = recordRepository.getPoiIdByName(poiName);
