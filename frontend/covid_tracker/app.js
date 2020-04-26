@@ -9,6 +9,7 @@ const homeRouter = require('./router/home-router');
 const loginRouter = require('./router/login-router');
 const statsRouter = require('./router/stats-router');
 const pointsRouter = require('./router/point-router');
+const analyticRouter = require('./router/analytics-router');
 const hostname = "http://localhost";
 
 app.set('view engine', 'ejs');
@@ -21,6 +22,7 @@ app.use(cookieParser());
 
 
 //Route
+app.use(analyticRouter);
 app.use(pointsRouter);
 app.use(statsRouter);
 app.use(homeRouter);

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('../component/head.ejs') %>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src=js/renderWorldChar.js></script>
+  <script src="js/renderVnChart.js"></script>
+</head>
+
+<body>
+  <%- include('../component/navbar.ejs') %>
+  <!--world chart -->
+  <div style="display: flex; flex-direction: row;">
+    <div id="curve_chart" style="width: 50%; height: 500px">
+      <script src="js/renderWorldChar.js" defer></script>
+      <script defer>
+        renderWorldChar();
+      </script>
+    </div>
+    <!-- viet nam chart -->
+    <div id="vietnam_chart" style="width: 50%; height: 500px">
+      <script src="js/renderVnChart.js" defer></script>
+      <script defer>
+        renderVNChart();
+      </script>
+    </div>
+  </div>
+
+</body>
+
+</html>

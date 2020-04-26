@@ -8,7 +8,6 @@ async function renderMap() {
     //fet poiCode
     let stats = await getData('http://localhost:4200/getDataForMap');
     let location = await getData('http://localhost:4200/getDataForLocation');
-
     // convert to Data
     var data = new Object()
     for (var item of stats) {
@@ -24,9 +23,6 @@ async function renderMap() {
         }
         data[pointname] = item.infected;
     }
-
-    console.log(data)
-
     $(function () {
         $('#map').vectorMap({
             map: 'world_mill',
@@ -34,7 +30,7 @@ async function renderMap() {
                 regions: [
                     {
                         values: data,
-                        scale: ['#FA8072','#800000'],
+                        scale: ['#FA8072', '#800000'],
                         normalizeFunction: 'polynomial'
                     }
                 ]
@@ -42,7 +38,7 @@ async function renderMap() {
             onRegionTipShow: function (e, el, code) {
                 el.html(el.html() + '(Infected - ' + data[code] + ')');
             },
-            backgroundColor:"#202020"
+            backgroundColor: "#202020"
         }
         );
     }
