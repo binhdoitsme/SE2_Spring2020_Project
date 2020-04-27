@@ -3,5 +3,5 @@ function renderRecordByPoi(id) {
     fetch('/stats', {
         method: 'GET'
     }).then(res => res.text())
-    .then(html => placeholder.innerHTML = html);   
+    .then(html => document.getElementById('statsByLocation').innerHTML = html);   
 }

@@ -1,14 +1,13 @@
-<div class="card-column" style="column-count: 1;">
-    <h6 class="text-light">World stats</h6>
-    <div class="">
-    <% recordByPoi.forEach(recordByPoi => { %>
-    <div class=""></div>
-        
-        <div class="card-body p-2">
-            <p class="card-text text-light"><%- `By: ${recordByPoi.poiName}` %></p>
-            <p>dhfjsdjlj</p>
-        </div>
-    </div>
+<div class="stats-list-warpper" >
+    <h5 class="title">World Latest statistic</h5>
+        <% recordByPoi.forEach(recordByPoi => { %>
+        <div class="stats-byPoi">
+            <div class="country-name"><%- `${recordByPoi.poiName}` %></div> 
+            <div class="stats">
+                <span class="infected" id="infectedByPoi"><%- `${recordByPoi.infected}` %></span>
+                <span class="death" id="deathByPoi"><%- `${recordByPoi.death}` %></span>
+                <span class="recovered" id="recoveredByPoi"><%- `${recordByPoi.recovered}` %></span>                    
+            </div>
+        </div>       
     <% }) %>
-</div>
 </div>
