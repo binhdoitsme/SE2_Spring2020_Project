@@ -7,7 +7,6 @@ const cookieParser = require('cookie-parser');
 const fetch = require('node-fetch');
 const homeRouter = require('./router/home-router');
 const loginRouter = require('./router/login-router');
-const adminRouter = require('./router/admin-router');
 const hostname = "http://localhost";
 
 app.set('view engine', 'ejs');
@@ -19,25 +18,14 @@ app.use(cookieParser());
 
 app.use(homeRouter);
 app.use(loginRouter);
-app.use(adminRouter);
 
 app.get('/articles', (req, res) => {
     fetch(`${hostname}:8080/articles`, {
         method: 'GET'
     }).then(resp => resp.json()).then(json => {
-        const articles = { articles: json };
+        const articles = {articles: json};
         res.render('component/articles', articles);
     });
-});
-
-app.get('/analytics/statstable', async (req, res) => {
-
-    const response = await fetch(`${hostname}:8080/stats`);
-    const statsJSON = await response.json();
-    console.log(statsJSON);
-    res.render('component/statstable',{stats:statsJSON}); 
-    // res.render('index',{stats: statsJSON});  
-    
 });
 
 app.post('/login', (req, res) => {
@@ -58,3 +46,4 @@ app.listen(PORT, () => {
     console.log(`Application listening on port ${PORT}`);
 });
 
+//test local branch at 9.18pm
