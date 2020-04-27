@@ -3,6 +3,5 @@ function renderArticles(id) {
     fetch('/articles', {
         method: 'GET'
     }).then(res => res.text())
-    .then(html => placeholder.innerHTML = html);
-    
+    .then(html => placeholder.innerHTML = html);   
 }
