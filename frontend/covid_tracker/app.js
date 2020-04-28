@@ -46,5 +46,3 @@ app.post('/login', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Application listening on port ${PORT}`);
 });
-
-//test local branch at 9.18pm
