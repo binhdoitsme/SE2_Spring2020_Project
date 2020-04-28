@@ -1,0 +1,63 @@
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="login-form" id="login-form">
+                    <div class="form-group row">
+                        <label for="username" class="col-sm-1-12 col-form-label"></label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" name="username" id="username" autofocus
+                                placeholder="Username..." autocomplete="false" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="password" class="col-sm-1-12 col-form-label"></label>
+                        <div class="col-sm-12">
+                            <input type="password" class="form-control" name="password" id="password"
+                                placeholder="Password..." autocomplete="false" required>
+                        </div>
+                    </div>
+                </form>
+                <p class="text-danger" id="unauth-err"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" form="login-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" form="login-form" class="btn btn-primary" data-toggle="modal"
+                    data-target="#login-loading">Log in</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/login.js"></script>
+<script src="js/modal.js"></script>
+<script>
+    $(document).unbind('keyup');
+    const form = document.querySelector('#login-form');
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        showLoadingModal();
+        login().then(statusCode => {
+            if (statusCode === 200) {
+                $('#loginModal').modal('hide');
+
+                fetch('/', {
+                    method: 'GET'
+                }).then(res => res.text())
+                    .then(html => {
+                        $('body > *').not('#loading-modal').remove();
+                        $(html).insertBefore('#loading-modal');
+                        setTimeout(removeLoadingModal, 100);
+                    });
+            } else {
+                setTimeout(removeLoadingModal, 100);
+            }
+        });
+    });
+</script>

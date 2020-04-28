@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trend-charts</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { packages: ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            // Define the chart to be drawn.
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', 'date');
+            data.addColumn('number', 'Infected');
+            data.addRows([
+                [new Date('2020-04-01'), 1976191],
+                [new Date('2020-04-02'), 1976191],
+                [new Date('2020-04-03'), 1976191],
+                [new Date('2020-04-04'), 1976191],
+                [new Date('2020-04-05'), 1976191],
+                [new Date('2020-04-06'), 1976191],
+                [new Date('2020-04-07'), 1976191],
+                [new Date('2020-04-08'), 1976191],
+                [new Date('2020-04-09'), 1976191],
+                [new Date('2020-04-10'), 1976191],
+                [new Date('2020-04-11'), 1976191],
+                [new Date('2020-04-12'), 1976191],
+                [new Date('2020-04-13'), 1976191],
+                [new Date('2020-04-14'), 1976191],
+                [new Date('2020-04-15'), 2056054],
+                [new Date('2020-04-16'), 2152646]
+            ]);
+
+            // Instantiate and draw the chart.
+            var chart = new google.visualization.LineChart(document.getElementById('myPieChart'));
+            chart.draw(data, {
+                hAxis: {
+                    textPosition: 'none'
+                },
+                vAxis: {
+                    textPosition: 'none'
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div>
+        <div class="spinner-border text-success" role="status">
+
+        </div>
+        <div id="myPieChart">
+
+        </div>
+    </div>
+
+</body>
+
+</html>

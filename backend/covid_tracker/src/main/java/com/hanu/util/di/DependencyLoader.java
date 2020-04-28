@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.hanu.util.configuration.Configuration;
@@ -28,17 +31,31 @@ public class DependencyLoader {
 
         // find fields, constructors, setters with @Inject annotations
         List<CtField> injectedFields = getInjectedFieldsFromClassList(classList, INJECT_ANNOTATION_CLASS);
-        for (CtField injectedField : injectedFields) {
-            setFieldDependencyFor(injectedField);
+        Map<CtClass, List<CtField>> map = createClassFieldMap(injectedFields);
+        for (CtClass clazz : map.keySet()) {
+            setFieldDependency(clazz, map.get(clazz));
         }
     }
 
-    private static void setFieldDependencyFor(CtField injectedField)
+    private static Map<CtClass, List<CtField>> createClassFieldMap(List<CtField> injectFields) {
+        Map<CtClass, List<CtField>> map = new HashMap<>();
+        for (CtField field : injectFields) {
+            CtClass clazz = field.getDeclaringClass();
+            if (map.get(clazz) == null) {
+                map.put(clazz, new LinkedList<>());
+            }
+            map.get(clazz).add(field);
+        }
+        return map;
+    }
+
+    private static void setFieldDependency(CtClass clazz, List<CtField> injectedFields)
             throws NotFoundException, CannotCompileException, ClassNotFoundException {
-        CtClass declaredClass = injectedField.getDeclaringClass();
-        CtConstructor defaultConstructor = declaredClass.getDeclaredConstructor(null);
-        defaultConstructor.insertAfter(getDependencySetterStatement(injectedField));
-        declaredClass.toClass();
+        CtConstructor defaultConstructor = clazz.getDeclaredConstructor(null);
+        for (CtField injectedField : injectedFields) {
+            defaultConstructor.insertAfter(getDependencySetterStatement(injectedField));
+        }
+        clazz.toClass();
     }
 
     private static String getDependencySetterStatement(CtField field) throws NotFoundException {

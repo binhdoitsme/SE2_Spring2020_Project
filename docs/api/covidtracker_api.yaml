@@ -229,23 +229,20 @@ types:
                 message: 
                   type: string
                   example: "Server failed!"
-    patch:
-      description: Change information about a point-of-interest
+/pointOfInterest:
+  /{id}:
+    get:
+      description: Get the records for a point-of-interest
       responses:
         200:
           body:
             application/json:
               properties:
-                message:
-                  type: string
-                  example: "Succeeded!"
-        400:
-          body:
-            application/json:
-              properties:
-                message: 
-                  type: string
-                  example: "Unauthorized user!"
+                records: Record[]
+                links:
+                  properties:
+                    self: Link
+                    all: Link
         500:
           body:
             application/json:
@@ -253,79 +250,87 @@ types:
                 message: 
                   type: string
                   example: "Server failed!"
-    delete:
-      description: Remove a point of interest from the database
-      responses:
-        200:
-          body:
-            application/json:
-              properties:
-                message:
-                  type: string
-                  example: "Succeeded"
-        400:
-          body:
-            application/json:
-              properties:
-                message: 
-                  type: string
-                  example: "Unauthorized user!"
-        500:
-          body:
-            application/json:
-              properties:
-                message: 
-                  type: string
-                  example: "Server failed!"
-    /{recordId}:
-      description: Manage individual records of a point-of-interest
-      patch:
-        description: Update a new record for a point-of-interest manually
+  post:
+    description: Add a point-of-interest
+    body:
+      application/json:
+        type: Record[]
+    responses:
+      200:
         body:
           application/json:
             properties:
-              record: Record
-              authToken: string
-        responses:
-          200:
-          400:
-            body:
-              application/json:
-                properties:
-                  message: 
-                    type: string
-                    example: "Unauthorized user!"
-          500:
-            body:
-              application/json:
-                properties:
-                  message: 
-                    type: string
-                    example: "Server failed!"
-      delete:
-        description: Delete a record of a point-of-interest manually
-        responses:
-          200:
-            body:
-              application/json:
-                properties:
-                  message: 
-                    type: string
-                    example: "Succeeded"
-          400:
-            body:
-              application/json:
-                properties:
-                  message: 
-                    type: string
-                    example: "Unauthorized user!"
-          500:
-            body:
-              application/json:
-                properties:
-                  message: 
-                    type: string
-                    example: "Server failed!"
+              message:
+                type: string
+                example: "Succeeded!"
+      400:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Unauthorized user!"
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
+  put:
+    description: Change information about a point-of-interest
+    body:
+      application/json:
+        type: Record[]
+    responses:
+      200:
+        body:
+          application/json:
+            properties:
+              message:
+                type: string
+                example: "Succeeded!"
+      400:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Unauthorized user!"
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
+  delete:
+    description: Remove a point of interest from the database
+    body: 
+      application/json:
+        type: int[]
+    responses:
+      200:
+        body:
+          application/json:
+            properties:
+              message:
+                type: string
+                example: "Succeeded"
+      400:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Unauthorized user!"
+      500:
+        body:
+          application/json:
+            properties:
+              message: 
+                type: string
+                example: "Server failed!"
 /articles:
   get:
     responses:

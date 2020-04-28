@@ -6,7 +6,7 @@ import com.hanu.util.configuration.Configuration;
 
 public class RecordToUpdateStringConverter extends Converter<Record, String> {
 
-	private static final String UPDATE_RECORD_TEMPLATE = Configuration.get("db.update.single");
+	private static final String UPDATE_RECORD_TEMPLATE = Configuration.get("db.record.updatesingle");
 
 	public RecordToUpdateStringConverter() {
 		super(RecordToUpdateStringConverter::updateRecordDb, null);

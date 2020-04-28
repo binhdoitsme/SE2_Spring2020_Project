@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.hanu.base.Repository;
 import com.hanu.db.util.AggregationType;
+import com.hanu.db.util.FilterType;
 import com.hanu.domain.model.Record;
 import com.hanu.exception.InvalidQueryTypeException;
 import com.hanu.util.di.Dependency;
@@ -16,4 +17,6 @@ public interface RecordRepository extends Repository<Record, Integer> {
     int getPoiIdByName(String poiName) throws SQLException, InvalidQueryTypeException;
     Date getLatestDate() throws SQLException, InvalidQueryTypeException;
     List<Record> getRecordByContinent(String continent) throws SQLException, InvalidQueryTypeException;
+    List<Record> getByPoiID(int input) throws SQLException,InvalidQueryTypeException;
+    List<Record> getFilteredRecords(FilterType filterType) throws SQLException, InvalidQueryTypeException;
 }

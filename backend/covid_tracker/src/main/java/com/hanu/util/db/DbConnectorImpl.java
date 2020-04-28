@@ -32,7 +32,8 @@ public class DbConnectorImpl implements DbConnector {
 
     @Override
     public DbConnector connect() throws SQLException {
-        connection = DriverManager.getConnection(CONNECTION_STRING, DB_USER, DB_PASSWORD);
+        if (connection == null)
+            connection = DriverManager.getConnection(CONNECTION_STRING, DB_USER, DB_PASSWORD);
         return this;
     }
 
@@ -44,13 +45,18 @@ public class DbConnectorImpl implements DbConnector {
     }
 
     @Override @SuppressWarnings("unchecked")
-    public <T> T executeScalar(String query) throws SQLException, InvalidQueryTypeException {
+    public <T extends Object> T executeScalar(String query) throws SQLException, InvalidQueryTypeException {
         throwExceptionIfInvalidQueryType(query, DbQueryType.SELECT);
         logQuery(query);
         ResultSet rs = connection.createStatement().executeQuery(query);
         // scalar query returns one value only
         rs.next();
-        return (T) rs.getObject(1);
+        try {
+            return (T) rs.getObject(1);
+        } catch (Exception e) {
+            logger.info(e.getClass().getName());
+            return null;
+        }
     }
 
     @Override
