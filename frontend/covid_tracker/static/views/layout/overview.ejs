@@ -1,30 +1,48 @@
 <%- include('../component/navbar') %>
 <div class="row p-0 m-0 border-box" style="height: calc(100% - 3.5rem);">
     <!-- change to include soon -->
-    <div class="col-md-2 bg-primary d-flex align-items-center justify-content-center left">
-        <div class="spinner-border text-warning" role="status">
+    <div class="col-md-2 bg-dark d-flex align-items-center justify-content-center left">
+        <!-- <div class="spinner-border text-warning" role="status">
 
-        </div>
+        </div> -->
+    <div class="stats-list">
+        <div id="VnStats"></div>
+        <div id="statsByLocation"></div>
+    </div>
+
         <!-- stats by top locations -->
+        <script src="js/renderRecordByPoi.js" defer></script>
+        <script defer>
+            renderRecordByPoi('recordByPoi');
+        </script>
         <!-- Vietnamese stats -->
+        <script src="js/renderRecordVN.js" defer></script>
+        <script defer>
+            renderRecordVN('recordVN');
+        </script>
+        
     </div>
     <div class="col-md-8 bg-secondary d-flex flex-column center p-0">
         <div class="w-100 d-flex align-items-center justify-content-center" style="height: 80%;">
             <div class="spinner-border text-warning" role="status">
             </div>
-            <!-- stats today on world map -->
+            <!-- stats today on world map -->          
         </div>
-        <div class="w-100 d-flex align-items-center justify-content-center bg-danger" style="height: 20%;">
-            <div class="spinner-border text-warning" role="status">
+        <div class="w-100 d-flex align-items-center justify-content-center bg-dark" style="height: 20%;">
+            <!-- <div class="spinner-border text-warning" role="status">
 
-            </div>
+            </div> -->
             <!-- overall world trend -->
+            <div id="worldStats" class=""></div>        
+         <script src="js/renderWorldStats.js" defer></script>
+         <script defer>
+             renderWorldStats('worldStats');
+         </script>
         </div>
     </div>
     <div class="col-md-2 bg-dark h-100" id="articles" style="font-size: .75rem; overflow-y: auto;">
         <div class="d-flex align-items-center justify-content-center h-100">
-            <div class="spinner-border text-warning" role="status">
-
+            <div class="spinner-border text-warning" role="status">              
             </div>
         </div>
         <!-- articles here -->

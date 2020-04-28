@@ -1,10 +1,11 @@
-const PORT = 4200;
+const PORT = 9000;
 const express = require('express');
 const app = express();
 const ejs = require('ejs');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const fetch = require('node-fetch');
+const statsRouter = require('./router/stats-router');
 const homeRouter = require('./router/home-router');
 const loginRouter = require('./router/login-router');
 const hostname = "http://localhost";
@@ -20,7 +21,7 @@ app.use(homeRouter);
 app.use(loginRouter);
 
 app.get('/articles', (req, res) => {
-    fetch(`${hostname}:8080/articles`, {
+    fetch(`${hostname}:8088/articles`, {
         method: 'GET'
     }).then(resp => resp.json()).then(json => {
         const articles = {articles: json};
@@ -30,7 +31,7 @@ app.get('/articles', (req, res) => {
 
 app.post('/login', (req, res) => {
     let status = 200;
-    fetch('http://localhost:8080/session', {
+    fetch('http://localhost:8088/session', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

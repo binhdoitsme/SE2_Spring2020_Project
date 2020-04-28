@@ -47,7 +47,6 @@
             if (statusCode === 200) {
                 $('#loginModal').modal('hide');
 
-                // fetch dashboard page html then upload this page
                 fetch('/', {
                     method: 'GET'
                 }).then(res => res.text())
