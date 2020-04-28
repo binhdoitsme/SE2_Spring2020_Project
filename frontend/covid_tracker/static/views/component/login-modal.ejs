@@ -38,3 +38,27 @@
 <script src="js/login.js"></script>
 <script src="js/modal.js"></script>
 <script src="js/onLoggedIn.js"></script>
+<!-- <script>
+    $(document).unbind('keyup');
+    const form = document.querySelector('#login-form');
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        showLoadingModal();
+        login().then(statusCode => {
+            if (statusCode === 200) {
+                $('#loginModal').modal('hide');
+
+                fetch('/', {
+                    method: 'GET'
+                }).then(res => res.text())
+                    .then(html => {
+                        $('body > *').not('#loading-modal').remove();
+                        $(html).insertBefore('#loading-modal');
+                        setTimeout(removeLoadingModal, 100);
+                    });
+            } else {
+                setTimeout(removeLoadingModal, 100);
+            }
+        });
+    });
+</script> -->

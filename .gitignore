@@ -5,3 +5,4 @@
 !.vscode/extensions.json
 *.code-workspace
 /tomcat.8080
+/node_modules
