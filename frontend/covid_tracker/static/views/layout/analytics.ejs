@@ -10,20 +10,25 @@
 
 <body>
   <%- include('../component/navbar.ejs') %>
-  <!--world chart -->
-  <div style="display: flex; flex-direction: row;">
-    <div id="curve_chart" style="width: 50%; height: 500px">
-      <script src="js/renderWorldChar.js" defer></script>
-      <script defer>
-        renderWorldChar();
-      </script>
+  
+  <!--  -->
+  <div class="row" style="margin: 0!important;">
+    <div class="clearfix"></div>
+    <div class="col-md-6">
+      <div id="curve_chart" style="width: 100%; min-height: 500px;">
+        <script src="js/renderWorldChar.js" defer></script>
+        <script defer>
+          renderWorldChar();
+        </script>
+      </div>
     </div>
-    <!-- viet nam chart -->
-    <div id="vietnam_chart" style="width: 50%; height: 500px">
-      <script src="js/renderVnChart.js" defer></script>
-      <script defer>
-        renderVNChart();
-      </script>
+    <div class="col-md-6">
+      <div id="vietnam_chart" style="width: 100%; min-height: 500px;">
+        <script src="js/renderVnChart.js" defer></script>
+        <script defer>
+          renderVNChart();
+        </script>
+      </div>
     </div>
   </div>
 

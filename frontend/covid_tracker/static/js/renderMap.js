@@ -23,6 +23,8 @@ async function renderMap() {
         }
         data[pointname] = item.infected;
     }
+
+    console.log(data)
     $(function () {
         $('#map').vectorMap({
             map: 'world_mill',

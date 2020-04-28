@@ -1,6 +1,6 @@
 async function renderVNChart() {
     const total = new Array(['Date', 'Infected', 'Death', "Recovered"]);
-    const result = await (await fetch("http://localhost:4200/getDataForWorldChar")).json();
+    const result = await (await fetch("http://localhost:4200/getDataForWorldChart")).json();
     result.reverse();
     for (var obj of result) {
         var pointoftable = [obj.timestamp.substring(0, 10), obj.infected, obj.death, obj.recovered]
@@ -33,9 +33,8 @@ async function renderVNChart() {
             },
             titleTextStyle: {
                 color: '#dfe1e3',
-                fontSize: 16,
+                fontSize: 20,
                 bold: false,
-                italic: true
             },
             vAxis: {
                 textStyle: {

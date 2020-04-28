@@ -1,0 +1,15 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="js/renderCaseDistribution.js"></script>
+</head>
+<body>
+    <div id="donutchart" style="width: 900px; height: 500px;">
+        <script src="js/renderCaseDistribution.js" defer>
+        </script>
+        <script defer>
+            renderCaseDistribution(JSON.parse('<%- chartdata %>'));
+        </script>
+    </div>
+</body>
+</html>

@@ -7,11 +7,8 @@ async function renderWorldChar() {
             lstDataVn.push(obj)
         }
     }
-
-    console.log(lstDataVn)
-
     for (var obj of lstDataVn) {
-        var pointoftable = [new Date(obj.timestamp), obj.infected, obj.death, obj.recovered]
+        var pointoftable = [convertDate(obj), obj.infected, obj.death, obj.recovered]
         total.push(pointoftable)
     }
     google.charts.load('current', { 'packages': ['corechart'] });
@@ -41,9 +38,8 @@ async function renderWorldChar() {
             },
             titleTextStyle: {
                 color: '#dfe1e3',
-                fontSize: 16,
+                fontSize: 20,
                 bold: false,
-                italic: true
             },
             vAxis: {
                 textStyle: {
@@ -60,3 +56,17 @@ async function renderWorldChar() {
     });
 }
 
+function convertDate(object) {
+    var date = new Date(object.timestamp);
+    var getMonth = 1 + date.getMonth();
+    var getDate = date.getDate();
+    var getYear = date.getFullYear();
+    if (getDate < 10) { 
+        getDate = '0' + getDate; 
+    } 
+    if (getMonth < 10) { 
+        getMonth = '0' + getMonth; 
+    } 
+    var result = getYear + '-' + getDate + '-' + getMonth;
+    return result
+}
