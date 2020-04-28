@@ -6,10 +6,39 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class ClassPathClassLoader {
+    private static boolean isLoadingFromJar() {
+        String currentJarFile = ClassPathClassLoader.class.getProtectionDomain()
+                                    .getCodeSource().getLocation().getPath()
+                                    .substring(1);
+        return currentJarFile.endsWith(".jar");
+    }
+
+    private static List<String> loadClassesFromJar(String packageName) throws IOException {
+        List<String> classNames = new ArrayList<>();
+        String currentJarFile = ClassPathClassLoader.class.getProtectionDomain()
+                                    .getCodeSource().getLocation().getPath()
+                                    .substring(1);
+        JarFile file = new JarFile(currentJarFile);
+        Enumeration<JarEntry> files = file.entries();
+
+        String pkgPath = packageName.replace(".", "/") + "/";
+        while (files.hasMoreElements()) {
+            String name = files.nextElement().getName();
+            if (name.startsWith(pkgPath) && !name.equals(pkgPath) && name.endsWith(".class")) {
+                classNames.add(name.replace(".class", "").replace("/", "."));
+            }
+        }
+        file.close();
+        return classNames;
+    }
+
     public static List<String> getClasses(String packageName)
             throws ClassNotFoundException, IOException {
+        if (isLoadingFromJar()) return loadClassesFromJar(packageName);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
         String path = packageName.replace('.', '/');
