@@ -8,9 +8,9 @@ router.use(express.static('static'));
 //get stats table
 router.get('/admin/statstable', async (req, res) => {
     const response = await fetch(`${hostname}:8080/stats`);
-    const statsJSON = await response.json();
-    // res.render('component/admin-statstable',{stats:statsJSON}); 
+    const statsJSON = await response.json(); 
     res.render('index', { stats: statsJSON });
+    // res.render('component/admin-statstable',{stats:statsJSON});
 });
 
 //put new record => bindh will continue to implement user authentication here

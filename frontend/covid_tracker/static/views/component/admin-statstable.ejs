@@ -1,7 +1,6 @@
 <form class="form-inline" id="myForm">
   <button type="submit" class="btn btn-primary">Add new record</button>
 </form>
-
 <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -27,6 +26,9 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="container">
+  <input class="form-control mb-4" id="tableSearch" type="text"
+    placeholder="Filter stats by location">
 <table class="table table-dark" id="table">
   <thead>
   <tr>
@@ -55,6 +57,7 @@
           </tr>
   </tbody>
 </table>
+</div>
 <script defer>
   //show form
   $('#myForm').on('submit', function(e){
@@ -64,6 +67,7 @@
 const addBtn = document.querySelector('#add-btn');
 const destroy = document.querySelectorAll('#delete-btn');
 const table = document.querySelector('#table'); 
+
 
 addBtn.addEventListener('click',onAdd); 
 destroy.forEach(element => {
@@ -118,4 +122,26 @@ function getRecordData() {
   }
   return record; 
 }
+
+const searchBox = document.querySelector('#tableSearch');
+searchBox.addEventListener('input',onSearch); 
+//filter stats by location
+function onSearch() {
+  const input = document.querySelector('#tableSearch').value.toUpperCase(); 
+  const tr = table.getElementsByTagName('tr'); 
+  // console.log(tr);
+  // console.log(input);
+  for(let i = 0 ; i < tr.length ; i++){
+    const td = tr[i].getElementsByTagName('td')[2];
+    if(td) {
+      textValue = td.innerText
+      if (textValue.toUpperCase().indexOf(input) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }   
+  }  
+}
+
 </script>

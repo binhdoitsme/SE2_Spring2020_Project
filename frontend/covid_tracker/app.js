@@ -95,5 +95,3 @@ app.post('/login', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Application listening on port ${PORT}`);
 });
-
-//hello
