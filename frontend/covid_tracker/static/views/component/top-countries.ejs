@@ -1,0 +1,24 @@
+<table class="table table-dark">
+    <thead>
+    <tr>
+        <th scope="col">Time</th>
+        <th scope="col">Location</th>
+        <th scope="col">Continent</th>
+        <th scope="col">Infected</th>
+        <th scope="col">Death</th>
+        <th scope="col">Recovered</th> 
+    </tr>
+    </thead>
+    <tbody>
+        <% countries.forEach(country => { %>
+            <tr>
+            <td><%= new Date(country.timestamp).toGMTString().slice(0,-4) %></td>
+            <td><%= country.poiName %></td>
+            <td><%= country.continent %></td>
+            <td><%= country.infected %></td>
+            <td><%= country.death %></td>
+            <td><%= country.recovered %></td>
+            <% }) %>
+            </tr>    
+    </tbody>
+</table>

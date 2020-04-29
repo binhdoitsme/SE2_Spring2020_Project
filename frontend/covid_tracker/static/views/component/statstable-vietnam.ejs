@@ -1,0 +1,22 @@
+<table class="table table-dark">
+    <thead>
+    <tr>
+        <th scope="col">Time</th>
+        <th scope="col">Location</th>
+        <th scope="col">Infected</th>
+        <th scope="col">Death</th>
+        <th scope="col">Recovered</th> 
+    </tr>
+    </thead>
+    <tbody>
+        <% recordsVN.forEach(record => { %>
+            <tr>
+            <td><%= new Date(record.timestamp).toGMTString().slice(0,-4) %></td>
+            <td><%= record.poiName %></td>
+            <td><%= record.infected %></td>
+            <td><%= record.death %></td>
+            <td><%= record.recovered %></td>
+            <% }) %>
+            </tr>    
+    </tbody>
+</table>
