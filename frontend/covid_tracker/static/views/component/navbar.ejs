@@ -1,12 +1,15 @@
-<nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Homepage</a>
-    <!-- <div class="dropdown" >
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Language<span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Vienamese</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">English</a></li>
-        </ul>
-      </div> -->
-    <a class="nav-link text-light" href="#" data-toggle="modal" data-target="#loginModal">Log in</a>
-</nav>
-<%- include("login-modal.ejs") %>
+<% if (authenticated) { %>
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Homepage</a>
+        <a name="logout" id="logout" class="btn text-light" href="#" 
+            onclick="fetch('/logout', {method: 'POST'}).then(res => window.location.reload())" role="button">
+            Log out
+        </a>
+    </nav>
+<% } else { %>
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Homepage</a>
+        <a class="nav-link text-light" href="#" data-toggle="modal" data-target="#loginModal">Log in</a>
+    </nav>
+    <%- include("login-modal.ejs") %>
+<% } %>

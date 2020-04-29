@@ -6,19 +6,18 @@ router.use(express.json());
 const ejs = require('ejs');
 
 router.get('/statsVn', (req, res) => {
-    fetch(`http://localhost:8088/stats`, {
+    fetch(`http://localhost:8080/stats?groupby=country`, {
         method: 'GET'
     }).then(resp => resp.json()).then(json => {       
-        const record = {record: json};   
         const latestTime = json[0].timestamp.toString().substring(1,10);
         const vietnam = "Vietnam";
-        const recordVN = {recordVN: json.filter(record => (record.timestamp.toString().substring(1,10) === latestTime)&& (record.poiName === vietnam))};
+        const recordVN = { recordVN: json.filter(record => (record.timestamp.toString().substring(1, 10) === latestTime) && (record.poiName === vietnam)) };
         res.render('component/stats-Vietnam', recordVN);
     });
 });
 
 router.get('/stats', (req, res) => {
-    fetch(`http://localhost:8088/stats`, {
+    fetch(`http://localhost:8080/stats`, {
         method: 'GET'
     }).then(resp => resp.json()).then(json => {
         json.sort(function(a,b){ 
@@ -39,7 +38,7 @@ router.get('/stats', (req, res) => {
 
 
 router.get('/world', (req, res) => {
-    fetch(`http://localhost:8088/stats?groupby=world&latest=true&timeframe=date`, {
+    fetch(`http://localhost:8080/stats?groupby=world&latest=true&timeframe=date`, {
         method: 'GET'
     }).then(resp => resp.json()).then(json => {
         // const worldStat = {worldStat: json}; 

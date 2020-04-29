@@ -1,21 +1,25 @@
 // define the router related to home page
 const router = require('express').Router();
 
-router.get('/', (req, res) => {    
-    if (req.cookies.authToken) {
-        // todo: return the dashboard view
-        res.clearCookie('authToken');
-        res.render('layout/dashboard');
-    } else {
-        res.render('index');
-    }
+router.get('/', (req, res) => {
+    res.clearCookie();
+    const page = req.cookies.page ? req.cookies.page : "overview";
+    const authenticated = req.cookies.username !== undefined;
+    res.cookie('page', 'overview');
+    res.render('index', { 
+        layoutName: page,
+        authenticated: authenticated
+    });
 });
 
 router.post('/', (req, res) => {
+    if (req.query.page) {
+        res.status(200).cookie('page', req.query.page).end();
+    }
     let lang, status;
     const suppportedLangs = ['en', 'vi'];
     if (lang = req.query.lang && suppportedLangs.includes(lang)) {
-        res.cookie(req.query.lang);
+        res.cookie('lang', req.query.lang);
         status = 200;
     } else {
         status = 415;
