@@ -67,7 +67,7 @@
         };
     };
 
-    let locationData, parentLocationData;
+    let locationData, parentLocationData, locationIdMap;
 
     function prepareTypeaheads(locationData, parentLocationData) {
         $('#search-location-typeahead').typeahead({
@@ -98,6 +98,8 @@
         fetch('/locations').then(res => res.json()).then(json => {
             locationData = json.map(location => location.name);
             parentLocationData = Array.from(new Set(locationData.concat(Array.from(new Set(json.map(location => location.continent))))));
+            locationIdMap = json.map(location => ({key: location.name, value: location.id }));
+            console.log(locationIdMap)
 
             prepareTypeaheads(locationData, parentLocationData);
         });

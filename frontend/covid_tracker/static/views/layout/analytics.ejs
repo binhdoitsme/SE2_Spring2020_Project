@@ -1,4 +1,3 @@
-<script src="js/modal.js"></script>
 <%- include('../component/location-typeahead', {
     typeaheadId: "search-location",
     typeaheadLabel: "Location: ",
@@ -6,3 +5,24 @@
     labelClass: "m-0 mr-1"
 }) %>
 <%- include('../component/addlocation-quick.ejs') %>
+ 
+  <!--  -->
+  <div class="row" style="margin: 0!important;">
+    <div class="clearfix"></div>
+    <div class="col-md-6">
+      <div id="curve_chart" style="width: 100%; min-height: 500px;">
+        <script src="js/renderWorldChar.js"></script>
+        <script defer>
+          renderWorldChar();
+        </script>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div id="vietnam_chart" style="width: 100%; min-height: 500px;">
+        <script src="js/renderVnChart.js"></script>
+        <script defer>
+          renderVNChart();
+        </script>
+      </div>
+    </div>
+  </div>

@@ -3,5 +3,5 @@ function renderWorldStats(id) {
     fetch('/world', {
         method: 'GET'
     }).then(res => res.text())
-    .then(html => document.getElementById('worldStats').innerHTML = html);  
+    .then(html => document.getElementById(id).innerHTML = html);  
 }

@@ -11,6 +11,9 @@ const loginRouter = require('./router/login-router');
 const locationRouter = require('./router/location-router');
 const CONSTANTS = require('./constants');
 const adminRouter = require('./router/admin-router');
+const pointsRouter = require('./router/point-router');
+const analyticRouter = require('./router/analytics-router');
+const latestStats = require('./router/distribution-router');
 const hostname = "http://localhost";
 
 app.set('view engine', 'ejs');
@@ -20,10 +23,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+
+
+//Route
+app.use(latestStats);
+app.use(analyticRouter);
+app.use(pointsRouter);
+app.use(statsRouter);
 app.use(homeRouter);
 app.use(loginRouter);
 app.use(locationRouter);
-app.use(statsRouter);
 app.use(adminRouter);
 
 app.get('/articles', (req, res) => {

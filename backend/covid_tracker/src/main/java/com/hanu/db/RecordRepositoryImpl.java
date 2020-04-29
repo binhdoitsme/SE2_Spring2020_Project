@@ -148,15 +148,15 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
         String sql = RECORD_FILTER_TEMPLATE
             .replace("$group_by", isFilteredByTimeframe ? ", " + timeframe + "(timestamp)" : "")
             .replace("$filter_condition", continent != "" ?
-                "HAVING continent = ".concat(continent) : "$filter_condition");
+                "WHERE continent = '$continent'".replace("$continent", continent) : "$filter_condition");
 
-        if (sql.contains("HAVING")) {
-            sql = sql.replace("HAVING", isLatest ?
-                "HAVING timestamp >= DATE(NOW()) - INTERVAL 2 $time AND"
-                : "HAVING");
+        if (sql.contains("WHERE")) {
+            sql = sql.replace("WHERE", isLatest ?
+                "WHERE timestamp >= DATE(NOW()) - INTERVAL 2 $time AND"
+                : "WHERE");
         } else {
             sql = sql.replace("$filter_condition", isLatest ?
-                "HAVING timestamp >= DATE(NOW()) - INTERVAL 2 $time"
+                "WHERE timestamp >= DATE(NOW()) - INTERVAL 2 $time"
                 : "");
         }
 
