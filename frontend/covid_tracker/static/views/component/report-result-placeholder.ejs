@@ -24,26 +24,69 @@
         </script>
     </div>
 </div>
-<div class="row my-2" id="countryTop10_result"></div>
+<div class="row my-2 bg-black text-light pt-3" id="countryTop10_result">
+    <script defer>
+        fetch('/toptencountries').then(res => res.text()).then(html => {
+            $('#countryTop10_result').html("<h3 class='w-100 text-center'>World's most infected countries</h3>" + html + "");
+            document.dispatchEvent(reportLoadedEvent);
+        });
+    </script>
+</div>
 <div class="row my-2" id="caseDistribution_result">
     <script src="js/renderCaseDistribution.js"></script>
     <script defer>
-        fetch('/getDistribute?chart=world').then(res => res.text()).then(html => $('#caseDistribution_result').html(html));
+        fetch('/getDistribute?chart=world').then(res => res.text()).then(html => {
+            $('#caseDistribution_result').html(html);
+            document.dispatchEvent(reportLoadedEvent);
+        });
     </script>
 </div>
 <div class="row my-2" id="vietnameseDistribution_result">
     <script src="js/renderCaseDistribution.js"></script>
     <script defer>
-        fetch('/getDistribute?chart=vietnam').then(res => res.text()).then(html => $('#vietnameseDistribution_result').html(html));
+        fetch('/getDistribute?chart=vietnam').then(res => res.text()).then(html => { 
+            $('#vietnameseDistribution_result').html(html);
+            document.dispatchEvent(reportLoadedEvent);
+        });
     </script>
 </div>
-<div class="row my-2" id="vietnameseLatest_result"></div>
-<div class="row my-2" id="vietnameseTable_result"></div>
+<div class="row my-2 text-light bg-black pt-3" id="vietnameseLatest_result">
+    <script defer>
+        fetch('/vietnameseLatest').then(res => res.text()).then(html => {
+            $('#vietnameseLatest_result').html("<h3 class='w-100 text-center'>Current situation in Vietnam</h3><div class='w-100 d-flex justify-content-between'>" + html + "</div>");
+            document.dispatchEvent(reportLoadedEvent);
+        });
+    </script>
+</div>
+<div class="row my-2 bg-black text-light pt-3" id="vietnameseTable_result">
+    <script defer>
+        fetch('/vietnameseLatestByProvince').then(res => res.text()).then(html => {
+            $('#vietnameseTable_result').html("<h3 class='w-100 text-center'>CoViD-19 in Vietnamese provinces</h3><div class='w-100 d-flex justify-content-between'>" + html + "</div>");
+            document.dispatchEvent(reportLoadedEvent);
+        });
+    </script>
+</div>
 <!-- <div class="row my-2" id="continentLatest_result"></div>
 <div class="row my-2" id="continentTrends_result"></div>
 <div class="row my-2" id="countryStats_result"></div>
 <div class="row my-2" id="countryTrend_result"></div> -->
-
+<script src="js/modal.js"></script>
 <script>
-    // $('#result-container > .row').css("opacity", "0")
+    const reportLoadedEvent = new Event('loaded');
+    showSolidLoadingModal();
+    let loadedCnt = 0;
+    document.addEventListener('loaded', () => {
+        ++loadedCnt;
+        console.log(loadedCnt);
+        if (loadedCnt === 5) {
+            $('#result-container > .row:not("#worldMap_result")').hide();
+            $('#result-container > .row').css('opacity', '1');
+            document.body.style.overflow = 'auto';
+            removeLoadingModal();
+        }
+    })
+</script>
+<script defer>
+    $('#result-container > .row:not("#worldMap_result")').css('opacity', '0');
+    document.body.style.overflow = 'hidden';
 </script>

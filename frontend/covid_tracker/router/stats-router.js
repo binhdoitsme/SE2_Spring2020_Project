@@ -70,11 +70,41 @@ router.get('/toptencountries', (req, res) => {
     fetch('http://localhost:8080/stats?groupby=country&timeframe=date&latest=true')
         .then(res => res.json())
         .then(result => {
-            const topTen = Array.from(result)
-                                .sort((row_1, row_2) => row_1.infected - row_2.infected)
+            const resultArray = Array.from(result);
+            const maxTime = Math.max(...resultArray.map(row => new Date(row.timestamp).getTime()));
+            const topTen = resultArray
+                                .filter(row => new Date(row.timestamp).getTime() === maxTime)
+                                .sort((row_1, row_2) => new Date(row_2.infected) - new Date(row_1.infected))
                                 .slice(0, 10);
-            res.json(result)
+            res.render('component/top-countries.ejs', { countries: topTen });
         });
 });
+
+router.get('/vietnameseLatest', (req, res) => {
+    fetch('http://localhost:8080/stats?groupby=country&timeframe=date&latest=true')
+        .then(res => res.json())
+        .then(result => {
+            const resultArray = Array.from(result);
+            const json = resultArray.filter(row => row.poiName === "Vietnam");
+            if (!json[1]) {
+                json.push(json[0]);
+            }
+            const vietnameseStats = { "infected": json[0].infected, "death": json[0].death, "recovered": json[0].recovered, "infectedIn": json[0].infected - json[1].infected, "deathIn": json[0].death - json[1].death, "recoveredIn": json[0].recovered - json[1].recovered }; 
+            res.render('component/aggregatedRecord-3-values.ejs', { worldStats: vietnameseStats });
+        });
+})
+
+router.get('/vietnameseLatestByProvince', (req, res) => {
+    fetch('http://localhost:8080/stats?continent=Vietnam&latest=true')
+        .then(res => res.json())
+        .then(result => {
+            const resultArray = Array.from(result);
+            const maxTime = Math.max(...resultArray.map(row => new Date(row.timestamp).getTime()));
+            const provinces = resultArray
+                                .filter(row => new Date(row.timestamp).getTime() === maxTime)
+                                .sort((row_1, row_2) => new Date(row_2.infected) - new Date(row_1.infected));
+            res.render('component/top-countries.ejs', { countries: provinces });
+        });
+})
 
 module.exports = router;

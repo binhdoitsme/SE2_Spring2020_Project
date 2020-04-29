@@ -1,19 +1,42 @@
 <div class="rounded py-3 d-flex flex-column align-items-center bg-black" style="width: 33%;">
     <div class="text-light">Deaths</div>
     <h2 class="text-secondary m-0"><%- `${worldStats.death}` %></h2>
-    <div class="text-secondary"><i class="fa fa-arrow-up mx-1" aria-hidden="true"></i>
-        <%- `${worldStats.deathIn}` %></div>
+    <div class="text-secondary">
+        <% if (worldStats.deathIn > 0) { %>
+            <i class="fa fa-arrow-up mx-1" aria-hidden="true"></i>
+            <%- `${worldStats.deathIn}` %></div>
+        <% } else { %>
+            <i class="fa fa-arrow-down mx-1" aria-hidden="true"></i>
+            <%- `${-worldStats.deathIn}` %></div>
+        <% } %>
+        
 </div>
 <div class="rounded py-3 d-flex flex-column align-items-center bg-black" style="width: 33%;">
     <div class="text-light">Infected</div>
     <h2 class="text-danger m-0"><%- `${worldStats.infected}` %></h2>
-    <div class="text-danger"><i class="fa fa-arrow-up mx-1" aria-hidden="true"></i>
-        <%- `${worldStats.infectedIn}` %></div>
+    <div class="text-danger">
+        <% if (worldStats.infectedIn > 0) { %>
+            <i class="fa fa-arrow-up mx-1" aria-hidden="true"></i>
+            <%- `${worldStats.infectedIn}` %></div>
+        <% } else { %>
+            <i class="fa fa-arrow-down mx-1" aria-hidden="true"></i>
+            <%- `${-worldStats.infectedIn}` %></div>
+        <% } %>
+        
 </div>
 
 <div class="rounded py-3 d-flex flex-column align-items-center bg-black" style="width: 33%;">
     <div class="text-light">Recovered</div>
     <h2 class="text-success m-0"><%- `${worldStats.recovered}` %></h2>
-    <div class="text-success"><i class="fa fa-arrow-up mx-1" aria-hidden="true"></i>
-        <%- `${worldStats.recoveredIn}` %></div>
+    <div class="text-success">
+        <% if (worldStats.recoveredIn > 0) { %>
+            <i class="fa fa-arrow-up mx-1" aria-hidden="true"></i>
+            <%- `${worldStats.recoveredIn}` %>
+        <% } else { %>
+            <i class="fa fa-arrow-down mx-1" aria-hidden="true"></i>
+            <%- `${-worldStats.recoveredIn}` %>
+        <% } %>
+        
+        
+    </div>
 </div>
