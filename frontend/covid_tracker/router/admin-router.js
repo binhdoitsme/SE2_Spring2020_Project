@@ -7,8 +7,8 @@ router.use(express.static('static'));
 
 //get stats table
 router.get('/admin/statstable', async (req, res) => {
-    const response = await fetch(`${hostname}:8080/stats`);
-    const statsJSON = await response.json(); 
+    const response = await fetch(`${hostname}:8080/stats?latest=true`);
+    const statsJSON = await response.json();
     res.render('index', { stats: statsJSON });
     // res.render('component/admin-statstable',{stats:statsJSON});
 });

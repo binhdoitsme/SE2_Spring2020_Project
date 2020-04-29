@@ -1,31 +1,7 @@
-<form class="form-inline" id="myForm">
-  <button type="submit" class="btn btn-primary">Add new record</button>
-</form>
-<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">
-        <label for ="poi-id">PoiID</label>
-        <input type ="number" id="poi-id" name="poi=id" required> <br>
-        <label for ="timestamp">Time</label>
-        <input type ="datetime" id="timestamp" name="timestamp" required> <br>
-        <label for ="infected">Infected</label>
-        <input type="number" id="infected" name="infected" required> <br>
-        <label for ="death">Death</label>
-        <input type="number" id="death" name="death" required> <br>
-        <label for ="recovered">Recovered</label>
-        <input type="number" id="recovered" name="recovered" required>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="add-btn">Add</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+<!-- <form class="form-inline" id="myForm"> -->
+  <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Add new record</button>
+<!-- </form> -->
+<%- include ('stats-form.ejs') %> 
 <div class="container">
   <input class="form-control mb-4" id="tableSearch" type="text"
     placeholder="Filter stats by location">
@@ -42,7 +18,7 @@
   </tr>
   </thead>
   <tbody>
-      <% Object.values(stats).forEach(stat => { %>
+      <% Object.values(stats).forEach(stat => { %> 
           <tr>
           <td id="record-id"><%= stat.id %></td>  
           <td><%= new Date(stat.timestamp).toGMTString().slice(0,-4) %></td>
@@ -53,8 +29,9 @@
           <td><%= stat.recovered %></td>
           <td><button id="edit-btn">Edit</button></td>
           <td><button id="delete-btn">Delete</button></td>
-          <% }) %>
+          
           </tr>
+            <% }) %>
   </tbody>
 </table>
 </div>
@@ -143,5 +120,7 @@ function onSearch() {
     }   
   }  
 }
+
+
 
 </script>
