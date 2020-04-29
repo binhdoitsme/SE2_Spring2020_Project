@@ -71,7 +71,8 @@ router.get('/toptencountries', (req, res) => {
         .then(res => res.json())
         .then(result => {
             const topTen = Array.from(result)
-                                .sort((row_1, row_2) => row_1.infected - row_2.infected);
+                                .sort((row_1, row_2) => row_1.infected - row_2.infected)
+                                .slice(0, 10);
             res.json(result)
         });
 });

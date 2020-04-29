@@ -1,15 +1,27 @@
 // define the router related to home page
 const router = require('express').Router();
+const fetch = require('node-fetch');
+const hostname = require('../constants').BACKEND_PREFIX;
 
-router.get('/', (req, res) => {
-    const page = req.cookies.page ? req.cookies.page : "overview";
+router.get('/', async (req, res) => {
+    let page = req.cookies.page ? req.cookies.page : "overview";
     const authenticated = req.cookies.username !== undefined;
-    
-    res.render('index', { 
-        layoutName: page,
-        authenticated: authenticated,
-        username: req.cookies.username
-    });
+
+    if (page === 'dashboard' && authenticated) {
+        const response = await fetch(`${hostname}/stats?latest=true`);
+        const statsJSON = await response.json();
+        res.cookie('page', 'dashboard')
+            .render('index', { authenticated: true, username: req.cookies.username, layoutName: "dashboard", stats: statsJSON });
+    } else {
+        if (authenticated === false && page === "dashboard") {
+            page = "overview";
+        }
+        res.render('index', { 
+            layoutName: page,
+            authenticated: authenticated,
+            username: req.cookies.username
+        });
+    }    
 });
 
 router.post('/', (req, res) => {

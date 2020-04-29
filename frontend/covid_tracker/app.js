@@ -46,7 +46,7 @@ app.get('/articles', (req, res) => {
 
 app.get('/analytics/statstable', async (req, res) => {
 
-    const response = await fetch(`${hostname}:8080/stats`);
+    const response = await fetch(`${hostname}:8080/stats?latest=true`);
     const statsJSON = await response.json();
     console.log(statsJSON);
     res.render('component/statstable',{stats:statsJSON}); 
@@ -71,4 +71,3 @@ app.post('/login', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Application listening on port ${PORT}`);
 });
-

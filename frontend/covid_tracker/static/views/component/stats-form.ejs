@@ -1,0 +1,41 @@
+<div class="modal fade text-dark" tabindex="-1" role="dialog" id="<%- id %>">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add a new record</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <!-- <label for ="poi-id">PoiID</label>
+        <input type ="number" id="poi-id" name="poi=id" required> <br> -->
+                <%- include("location-typeahead",{
+                    typeaheadId: "search-location",
+                    typeaheadLabel: "Location: ",
+                    classList: "form-group d-flex align-items-center",
+                    labelClass: "m-0 mr-1 col-sm-3 p-0"
+                }) %>
+                <div class="form-group row m-0 py-1">
+                    <label class="col-sm-3 p-0 m-0" for="timestamp">Timestamp:</label>
+                    <input type="datetime-local" class="form-control col-sm-6" id="timestamp" name="timestamp" required>
+                  </div>
+                <div class="form-group row m-0 py-1">
+                  <label class="col-sm-3 p-0 m-0" for="infected">Infected:</label>
+                  <input type="number" class="form-control col-sm-6" id="infected" name="infected" required>
+                </div>
+                <div class="form-group row m-0 py-1">
+                    <label class="col-sm-3 p-0 m-0" for="death">Death:</label>
+                    <input type="number" class="form-control col-sm-6" id="death" name="death" required>
+                  </div>
+                  <div class="form-group row m-0 py-1">
+                    <label class="col-sm-3 p-0 m-0" for="recovered">Recovered:</label>
+                    <input type="number" class="form-control col-sm-6" id="recovered" name="recovered" required>
+                  </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="add-btn"><i class="fa fa-plus mr-2" aria-hidden="true"></i> Add</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

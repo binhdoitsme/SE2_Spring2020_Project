@@ -17,7 +17,7 @@ function removeLoadingModal() {
     document.querySelector('#loading-modal').remove();
 }
 
-function showMessageModal(bootstrapClass, title, message) {
+function showMessageModal(bootstrapClass, title, message, modalToRemove='addLocationQuick', dismissCallback=null) {
     const div = document.createElement('div');
 //    <div class="modal fade" id="status_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
     div.classList.add('modal');
@@ -49,5 +49,8 @@ function showMessageModal(bootstrapClass, title, message) {
     </script>`;
     document.body.appendChild(div);
     $('#status_modal').modal('show');
-    $('#addLocationQuick').modal('hide');
+    $(`#${modalToRemove}`).modal('hide');
+    if (dismissCallback !== null) {
+        $('#status_modal').on('hide.bs.modal', dismissCallback);
+    }
 }
