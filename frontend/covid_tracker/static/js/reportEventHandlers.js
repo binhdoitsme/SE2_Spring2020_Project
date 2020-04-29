@@ -2,9 +2,9 @@
 const togglableHandler = (target) => {
     // todo: handle the event!
     if (target.checked) {
-        $(`#${target.id}_result`).html(togglableData[target.id]);
+        $(`#${target.id}_result`).show();
     } else {
-        $(`#${target.id}_result`).html('');
+        $(`#${target.id}_result`).hide();
     }
 };
 const handlers = {
@@ -18,11 +18,5 @@ const handlers = {
     vietnameseLatest: togglableHandler,
     vietnameseTable: togglableHandler,
     continentLatest: togglableHandler,
-    continentTrends: togglableHandler,
-    countryStats: () => {
-
-    },
-    countryTrend: () => {
-
-    }
+    continentTrends: togglableHandler
 }

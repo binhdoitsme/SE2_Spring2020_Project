@@ -1,65 +1,16 @@
-<!-- <div class="worldStats">     -->
-<!-- <div class="data_wrapper">
-            <div class="I-data">
-                <div class="data_name">Infected</div>   
-                <div class="data_detail" id="infected-world"><%- `${worldStats.infected}` %></div> 
-                <div class="data_detail" id="infected-world-increase"><%- `Increase: ${worldStats.infectedIn}` %></div> 
-            </div>
-        </div>
-        <div class="data_wrapper">
-            <div class="I-data">
-                <div class="data_name">Death</div>   
-                <div class="data_detail" id="death-world"><%- `${worldStats.death}` %></div> 
-                <div class="data_detail" id="death-world-increase"><%- `Increase: ${worldStats.deathIn}` %></div> 
-            </div> 
-        </div>
-        <div class="data_wrapper">
-            <div class="I-data">
-                <div class="data_name">Recovered</div>   
-                <div class="data_detail" id="recovered-world"><%- `${worldStats.recovered}` %></div> 
-                <div class="data_detail" id="recovered-world-increase"><%- `Increase: ${worldStats.recoveredIn}` %></div> 
-            </div>   
-        </div> -->
-
-<!-- <div class="data_wrapper">
-            <span><%- `${worldStats.infected}` %></span>
-            <span><%- `${worldStats.death}` %></span>
-            <span><%- `${worldStats.recovered}` %></span>
-        </div> -->
-
-<!-- <div class="row">
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                <div class="I-data">
-                    <div class="data_name">Infected</div>   
-                    <div class="data_detail"><%- `${worldStats.infected}` %></div>  
-                </div>
-            </div>
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                <div class="I-data">
-                    <div class="data_name">Death</div>   
-                    <div class="data_detail"><%- `${worldStats.death}` %></div>  
-                </div> 
-            </div>
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                <div class="I-data">
-                    <div class="data_name">Recovered</div>   
-                    <div class="data_detail"><%- `${worldStats.recovered}` %></div>  
-                </div>  
-            </div>
-        </div> -->
-
-<div class="rounded py-3 d-flex flex-column align-items-center bg-black" style="width: 33%;">
-    <div class="text-light">Infected</div>
-    <h2 class="text-danger m-0"><%- `${worldStats.infected}` %></h2>
-    <div class="text-danger"><i class="fa fa-arrow-up mx-1" aria-hidden="true"></i>
-        <%- `${worldStats.infectedIn}` %></div>
-</div>
 <div class="rounded py-3 d-flex flex-column align-items-center bg-black" style="width: 33%;">
     <div class="text-light">Deaths</div>
     <h2 class="text-secondary m-0"><%- `${worldStats.death}` %></h2>
     <div class="text-secondary"><i class="fa fa-arrow-up mx-1" aria-hidden="true"></i>
         <%- `${worldStats.deathIn}` %></div>
 </div>
+<div class="rounded py-3 d-flex flex-column align-items-center bg-black" style="width: 33%;">
+    <div class="text-light">Infected</div>
+    <h2 class="text-danger m-0"><%- `${worldStats.infected}` %></h2>
+    <div class="text-danger"><i class="fa fa-arrow-up mx-1" aria-hidden="true"></i>
+        <%- `${worldStats.infectedIn}` %></div>
+</div>
+
 <div class="rounded py-3 d-flex flex-column align-items-center bg-black" style="width: 33%;">
     <div class="text-light">Recovered</div>
     <h2 class="text-success m-0"><%- `${worldStats.recovered}` %></h2>

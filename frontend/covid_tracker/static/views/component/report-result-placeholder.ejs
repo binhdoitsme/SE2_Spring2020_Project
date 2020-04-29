@@ -1,12 +1,49 @@
-<div class="row" id="worldLatest_result"></div>
-<div class="row" id="worldTrend_result"></div>
-<div class="row" id="worldMap_result"></div>
-<div class="row" id="countryTop10_result"></div>
-<div class="row" id="caseDistribution_result"></div>
-<div class="row" id="vietnameseDistribution_result"></div>
-<div class="row" id="vietnameseLatest_result"></div>
-<div class="row" id="vietnameseTable_result"></div>
-<div class="row" id="continentLatest_result"></div>
-<div class="row" id="continentTrends_result"></div>
-<div class="row" id="countryStats_result"></div>
-<div class="row" id="countryTrend_result"></div>
+<div class="row my-2 justify-content-between" id="worldLatest_result">
+    <script src="js/renderWorldStats.js"></script>
+    <script>
+        renderWorldStats('worldLatest_result');
+    </script>
+</div>
+<div class="row my-2 py-2" id="worldTrend_result" style="background: #202020;">
+    <h3 class="text-center w-100">World trend on CoViD-19 disease</h3>
+    <small class="text-center w-100"><em>(since January 2020)</em></small>
+    <div id="world_trend" class="w-100">
+        <script src="js/renderWorldChar.js"></script>
+        <script defer>
+            renderWorldChar('world_trend');
+        </script>
+    </div>
+</div>
+<div class="row my-2 py-2" id="worldMap_result" style="min-height: 28rem !important; background: #202020;">
+    <h3 class="text-center w-100 py-2">CoViD-19 around the world</h3>
+    <div id="map" style="width: 100%; height: 28rem;">
+        <!-- stats today on world map -->
+        <script src="js/renderMap.js" defer></script>
+        <script defer>
+            renderMap('map');
+        </script>
+    </div>
+</div>
+<div class="row my-2" id="countryTop10_result"></div>
+<div class="row my-2" id="caseDistribution_result">
+    <script src="js/renderCaseDistribution.js"></script>
+    <script defer>
+        fetch('/getDistribute?chart=world').then(res => res.text()).then(html => $('#caseDistribution_result').html(html));
+    </script>
+</div>
+<div class="row my-2" id="vietnameseDistribution_result">
+    <script src="js/renderCaseDistribution.js"></script>
+    <script defer>
+        fetch('/getDistribute?chart=vietnam').then(res => res.text()).then(html => $('#vietnameseDistribution_result').html(html));
+    </script>
+</div>
+<div class="row my-2" id="vietnameseLatest_result"></div>
+<div class="row my-2" id="vietnameseTable_result"></div>
+<!-- <div class="row my-2" id="continentLatest_result"></div>
+<div class="row my-2" id="continentTrends_result"></div>
+<div class="row my-2" id="countryStats_result"></div>
+<div class="row my-2" id="countryTrend_result"></div> -->
+
+<script>
+    // $('#result-container > .row').css("opacity", "0")
+</script>

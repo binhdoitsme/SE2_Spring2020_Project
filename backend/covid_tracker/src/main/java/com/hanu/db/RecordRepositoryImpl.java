@@ -148,7 +148,7 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
         String sql = RECORD_FILTER_TEMPLATE
             .replace("$group_by", isFilteredByTimeframe ? ", " + timeframe + "(timestamp)" : "")
             .replace("$filter_condition", continent != "" ?
-                "HAVING continent = ".concat(continent) : "$filter_condition");
+                "HAVING continent = '$continent'".replace("$continent", continent) : "$filter_condition");
 
         if (sql.contains("HAVING")) {
             sql = sql.replace("HAVING", isLatest ?

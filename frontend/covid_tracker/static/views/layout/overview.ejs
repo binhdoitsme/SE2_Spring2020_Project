@@ -1,56 +1,60 @@
 <div class="row p-0 m-0 border-box" style="height: calc(100% - 3.5rem);">
     <!-- change to include soon -->
     <div class="col-md-2 bg-dark d-flex align-items-center justify-content-center left">
-        <!-- <div class="spinner-border text-warning" role="status">
-
-        </div> -->
-    <div class="stats-list">
-        <div id="VnStats" class="d-flex justify-content-center align-items-center">
-            <div class="spinner-border text-warning" role="status">
-            </div>
-        </div>
-        <div id="statsByLocation">
-            <div class="d-flex align-items-center justify-content-center h-100 w-100">
-                <div class="spinner-border text-warning" role="status">              
+        <div class="stats-list">
+            <div id="VnStats" class="d-flex justify-content-center align-items-center">
+                <div class="spinner-border text-warning" role="status">
                 </div>
+                <!-- Vietnamese stats -->
+                <script src="js/renderRecordVN.js" defer></script>
+                <script defer>
+                    renderRecordVN('recordVN');
+                </script>
+            </div>
+            <div id="statsByLocation">
+                <div class="d-flex align-items-center justify-content-center h-100 w-100">
+                    <div class="spinner-border text-warning" role="status">
+                    </div>
+                </div>
+                <!-- stats by top locations -->
+                <script src="js/renderRecordByPoi.js" defer></script>
+                <script defer>
+                    renderRecordByPoi('recordByPoi');
+                </script>
             </div>
         </div>
-    </div>
-
-        <!-- stats by top locations -->
-        <script src="js/renderRecordByPoi.js" defer></script>
-        <script defer>
-            renderRecordByPoi('recordByPoi');
-        </script>
-        <!-- Vietnamese stats -->
-        <script src="js/renderRecordVN.js" defer></script>
-        <script defer>
-            renderRecordVN('recordVN');
-        </script>
-        
     </div>
     <div class="col-md-8 bg-secondary d-flex flex-column center p-0">
         <div class="w-100 d-flex align-items-center justify-content-center" style="height: 80%;">
+
+            <!-- stats today on world map -->
+            <div id="map" style="width: 100%; height: 100%;">
+                <div class="d-flex align-items-center justify-content-center h-100 w-100" id="map_spinner">
+                    <div class="spinner-border text-warning" role="status">
+                    </div>
+                </div>
+                <!-- stats today on world map -->
+                <script src="js/renderMap.js" defer></script>
+                <script defer>
+                    renderMap();
+                </script>
+            </div>
+        </div>
+        <div class="w-100 d-flex align-items-center justify-content-sm-between bg-dark" id="worldStats"
+            style="height: 20%;">
             <div class="d-flex align-items-center justify-content-center h-100 w-100">
-                <div class="spinner-border text-warning" role="status">              
+                <div class="spinner-border text-warning" role="status">
                 </div>
             </div>
-            <!-- stats today on world map -->          
-        </div>
-        <div class="w-100 d-flex align-items-center justify-content-sm-between bg-dark" id="worldStats" style="height: 20%;">
-            <div class="d-flex align-items-center justify-content-center h-100 w-100">
-                <div class="spinner-border text-warning" role="status">              
-                </div>
-            </div>    
-         <script src="js/renderWorldStats.js" defer></script>
-         <script defer>
-             renderWorldStats('worldStats');
-         </script>
+            <script src="js/renderWorldStats.js" defer></script>
+            <script defer>
+                renderWorldStats('worldStats');
+            </script>
         </div>
     </div>
     <div class="col-md-2 bg-dark h-100" id="articles" style="font-size: .75rem; overflow-y: auto;">
         <div class="d-flex align-items-center justify-content-center h-100 w-100">
-            <div class="spinner-border text-warning" role="status">              
+            <div class="spinner-border text-warning" role="status">
             </div>
         </div>
         <!-- articles here -->

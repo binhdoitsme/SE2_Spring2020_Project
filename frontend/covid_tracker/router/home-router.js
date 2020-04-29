@@ -2,18 +2,19 @@
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
-    res.clearCookie();
     const page = req.cookies.page ? req.cookies.page : "overview";
     const authenticated = req.cookies.username !== undefined;
-    res.cookie('page', 'overview');
+    
     res.render('index', { 
         layoutName: page,
-        authenticated: authenticated
+        authenticated: authenticated,
+        username: req.cookies.username
     });
 });
 
 router.post('/', (req, res) => {
     if (req.query.page) {
+        console.log(req.query.page);
         res.status(200).cookie('page', req.query.page).end();
     }
     let lang, status;

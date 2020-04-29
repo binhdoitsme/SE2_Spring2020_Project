@@ -5,7 +5,10 @@
     <%- include("component/head.ejs") %>
 </head>
 
-<body style="height: 100vh" class="p-0 m-0">
+<body style="height: 100vh" class="p-0 m-0 bg-dark">
+    <script>
+        console.log('<%- layoutName %>')
+    </script>
     <%- include('component/navbar', {
         authenticated: authenticated
     }) %>

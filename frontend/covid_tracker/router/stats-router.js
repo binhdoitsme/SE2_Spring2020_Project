@@ -1,10 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const fetch = require('node-fetch');
+const fetch = require('node-fetch')
+const router = require('express').Router();
 
-router.use(express.json());
-const ejs = require('ejs');
-
+// quynhtn
 router.get('/statsVn', (req, res) => {
     fetch(`http://localhost:8080/stats?groupby=country`, {
         method: 'GET'
@@ -48,6 +45,35 @@ router.get('/world', (req, res) => {
         const worldStats = {"infected": json[0].infected,"death":json[0].death, "recovered":json[0].recovered, "infectedIn": json[0].infected - json[1].infected,"deathIn":json[0].death - json[1].death, "recoveredIn":json[0].recovered - json[1].recovered}; 
         res.render('component/aggregatedRecord-3-values', {worldStats : worldStats});
     });
+});
+
+// tuquan
+router.get('/getDataForMap', function (req, res) {
+    fetch('http://localhost:8080/stats?groupby=country&latest=true')
+        .then(res => res.json())
+        .then(result => res.json(result));
+})
+
+router.get('/getDataForWorldChart', function (req, res) {
+    fetch('http://localhost:8080/stats?groupby=world')
+        .then(res => res.json())
+        .then(result => res.json(result));
+})
+
+router.get('/getDataForVnChart', function (req, res) {
+    fetch('http://localhost:8080/stats?continent=Vietnam&timeframe=date')
+        .then(res => res.json())
+        .then(result => res.json(result));
+})
+
+router.get('/toptencountries', (req, res) => {
+    fetch('http://localhost:8080/stats?groupby=country&timeframe=date&latest=true')
+        .then(res => res.json())
+        .then(result => {
+            const topTen = Array.from(result)
+                                .sort((row_1, row_2) => row_1.infected - row_2.infected);
+            res.json(result)
+        });
 });
 
 module.exports = router;

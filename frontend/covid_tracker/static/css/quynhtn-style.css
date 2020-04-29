@@ -72,13 +72,16 @@
     height: 320px;
     overflow-y: auto;
 }
-#statsByLocation::-webkit-scrollbar, #VnStats::-webkit-scrollbar, #articles::-webkit-scrollbar {
+#statsByLocation::-webkit-scrollbar, #VnStats::-webkit-scrollbar, 
+#articles::-webkit-scrollbar, body::-webkit-scrollbar {
     width: 3px;
 }
-#statsByLocation::-webkit-scrollbar-track, #VnStats::-webkit-scrollbar-track, #articles::-webkit-scrollbar-track {
+#statsByLocation::-webkit-scrollbar-track, #VnStats::-webkit-scrollbar-track, 
+#articles::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
     background-color: #6c757d;
 }
-#statsByLocation::-webkit-scrollbar-thumb, #VnStats::-webkit-scrollbar-thumb, #articles::-webkit-scrollbar-thumb {
+#statsByLocation::-webkit-scrollbar-thumb, #VnStats::-webkit-scrollbar-thumb,
+#articles::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
     background-color: #dc3545;
 }
 
