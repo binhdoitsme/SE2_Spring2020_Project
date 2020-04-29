@@ -5,8 +5,16 @@
 
         </div> -->
     <div class="stats-list">
-        <div id="VnStats"></div>
-        <div id="statsByLocation"></div>
+        <div id="VnStats" class="d-flex justify-content-center align-items-center">
+            <div class="spinner-border text-warning" role="status">
+            </div>
+        </div>
+        <div id="statsByLocation">
+            <div class="d-flex align-items-center justify-content-center h-100 w-100">
+                <div class="spinner-border text-warning" role="status">              
+                </div>
+            </div>
+        </div>
     </div>
 
         <!-- stats by top locations -->
@@ -23,16 +31,17 @@
     </div>
     <div class="col-md-8 bg-secondary d-flex flex-column center p-0">
         <div class="w-100 d-flex align-items-center justify-content-center" style="height: 80%;">
-            <div class="spinner-border text-warning" role="status">
+            <div class="d-flex align-items-center justify-content-center h-100 w-100">
+                <div class="spinner-border text-warning" role="status">              
+                </div>
             </div>
             <!-- stats today on world map -->          
         </div>
-        <div class="w-100 d-flex align-items-center justify-content-center bg-dark" style="height: 20%;">
-            <!-- <div class="spinner-border text-warning" role="status">
-
-            </div> -->
-            <!-- overall world trend -->
-            <div id="worldStats" class=""></div>        
+        <div class="w-100 d-flex align-items-center justify-content-sm-between bg-dark" id="worldStats" style="height: 20%;">
+            <div class="d-flex align-items-center justify-content-center h-100 w-100">
+                <div class="spinner-border text-warning" role="status">              
+                </div>
+            </div>    
          <script src="js/renderWorldStats.js" defer></script>
          <script defer>
              renderWorldStats('worldStats');
@@ -40,14 +49,14 @@
         </div>
     </div>
     <div class="col-md-2 bg-dark h-100" id="articles" style="font-size: .75rem; overflow-y: auto;">
-        <div class="d-flex align-items-center justify-content-center h-100">
+        <div class="d-flex align-items-center justify-content-center h-100 w-100">
             <div class="spinner-border text-warning" role="status">              
             </div>
         </div>
         <!-- articles here -->
         <script src="js/renderArticles.js" defer></script>
         <script defer>
-            0('articles');
+            renderArticles('articles');
         </script>
     </div>
 </div>

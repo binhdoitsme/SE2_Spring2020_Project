@@ -1,4 +1,4 @@
-const PORT = 9000;
+const PORT = 4200;
 const express = require('express');
 const app = express();
 const ejs = require('ejs');
@@ -27,7 +27,7 @@ app.use(statsRouter);
 app.use(adminRouter);
 
 app.get('/articles', (req, res) => {
-    fetch(`${hostname}:8088/articles`, {
+    fetch(`${hostname}:8080/articles`, {
         method: 'GET'
     }).then(resp => resp.json()).then(json => {
         const articles = { articles: json };
@@ -47,7 +47,7 @@ app.get('/analytics/statstable', async (req, res) => {
 
 app.post('/login', (req, res) => {
     let status = 200;
-    fetch('http://localhost:8088/session', {
+    fetch('http://localhost:8080/session', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

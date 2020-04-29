@@ -2,8 +2,10 @@
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
+    res.clearCookie();
     const page = req.cookies.page ? req.cookies.page : "overview";
     const authenticated = req.cookies.username !== undefined;
+    res.cookie('page', 'overview');
     res.render('index', { 
         layoutName: page,
         authenticated: authenticated
