@@ -39,7 +39,7 @@ app.get('/analytics/statstable', async (req, res) => {
 
     const response = await fetch(`${hostname}:8080/stats?latest=true`);
     const statsJSON = await response.json();
-    console.log(statsJSON);
+    // console.log(statsJSON);
     res.render('component/statstable',{stats:statsJSON}); 
     // res.render('index',{stats: statsJSON});  
     
