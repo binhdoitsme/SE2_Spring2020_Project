@@ -1,0 +1,25 @@
+<table class="table text-light">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Location</th>
+            <th scope="col">Continent</th>
+            <th scope="col">Infected</th>
+            <th scope="col">Death</th>
+            <th scope="col">Recovered</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% countries.forEach((country, index) => { %>
+        <tr>
+            <td><%= index + 1 %></td>
+            <td><%= country.poiName %></td>
+            <td><%= country.continent %></td>
+            <td><%= country.infected %></td>
+            <td><%= country.death %></td>
+            <td><%= country.recovered %></td>
+        </tr>
+        <% }) %>
+
+    </tbody>
+</table>

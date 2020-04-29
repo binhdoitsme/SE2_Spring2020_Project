@@ -1,13 +1,7 @@
-<div class="vietnamStats-warpper" >
-    <h5 class="title">VietNam Latest statistic</h5>
+<div class="vietnamStats-warpper" style="width: 100%;">
+    <h5 class="title">Vietnamese statistics</h5>
         <div class="stats" id="vietnamStats">
         <% recordVN.forEach(recordVN => { %> 
-            <!-- <div class="data-vn">
-                <div class="stats-name"><%- `Date: ` %></div> 
-                <div class="timestamp" id="timestamp-vn"><%- `${recordVN.timestamp}` %></div>
-            </div> -->
-            <!-- <div><%- `Date: ${recordVN.timestamp}` %></div> 
-            <div><%- `Viet name has` %></div> -->
             <div class="data-vn">
                 <div class="stats-name"><%- `Infected: ` %></div> 
                 <div class="infected" id="infected-vn"><%- `${recordVN.infected}` %></div>
@@ -20,9 +14,7 @@
                 <div class="stats-name"><%- `Recovered: ` %></div> 
                 <div class="recovered" id="recovered-vn"><%- `${recordVN.recovered}` %></div>
             </div>
-            <!-- <span><%- `${recordVN.infected}` %></span>
-            <span><%- `${recordVN.death}` %></span>
-            <span><%- `${recordVN.recovered}` %></span> -->
+
         </div>
     <% }) %>
 </div>

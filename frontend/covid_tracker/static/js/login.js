@@ -27,11 +27,11 @@ async function login() {
         status = res.status;
         return res.json();
     }).then(json => {
-        if (json.authToken) {
-            document.cookie = `authToken=${json.authToken}`;
-        } else {
-            showWarning(status);
-        }
+        // if (json.authToken) {
+        //     document.cookie = `authToken=${json.authToken}`;
+        // } else {
+        //     showWarning(status);
+        // }
         return status;
     });
 }

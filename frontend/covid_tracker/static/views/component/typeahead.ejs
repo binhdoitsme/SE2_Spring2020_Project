@@ -1,0 +1,9 @@
+<div class="<%- classList %>">
+    <label class="<%- labelClass %>" for="<%- typeaheadId %>"><%- typeaheadLabel %></label>
+    <input type="text" class="form-control" id="<%- typeaheadId + "-typeahead" %>" name="<%- typeaheadId %>"
+        id="<%- typeaheadId %>" placeholder="Location...">
+    <% if (hasButton === true) { %>
+        <%- include("addlocation-btn") %>
+    <% } %>
+    
+</div>

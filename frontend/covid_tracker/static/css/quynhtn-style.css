@@ -7,7 +7,7 @@
 .stats-list h5 {
     font-size: 20px;
     text-align: center;
-    font-style: oblique;
+    /* font-style: oblique; */
     margin: 10px 0px 30px 0px;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .recovered {
-    background-color: darkgreen;
+    background-color: #28a745;
     border-radius: 5px;
     margin-right: 3px;
     width: 25%;
@@ -46,15 +46,7 @@
     overflow-y: auto;
     margin-bottom: 10px;
 }
-#VnStats::-webkit-scrollbar {
-    width: 3px;
-}
-#VnStats::-webkit-scrollbar-track {
-    background-color: grey;
-}
-#VnStats::-webkit-scrollbar-thumb {
-    background-color: darkred;
-}
+
 .vietnamStats-warpper {
     padding: 10px;
     background-color: rgb(28, 30, 32);
@@ -80,14 +72,17 @@
     height: 320px;
     overflow-y: auto;
 }
-#statsByLocation::-webkit-scrollbar {
+#statsByLocation::-webkit-scrollbar, #VnStats::-webkit-scrollbar, 
+#articles::-webkit-scrollbar, body::-webkit-scrollbar {
     width: 3px;
 }
-#statsByLocation::-webkit-scrollbar-track {
-    background-color: grey;
+#statsByLocation::-webkit-scrollbar-track, #VnStats::-webkit-scrollbar-track, 
+#articles::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
+    background-color: #6c757d;
 }
-#statsByLocation::-webkit-scrollbar-thumb {
-    background-color: darkred;
+#statsByLocation::-webkit-scrollbar-thumb, #VnStats::-webkit-scrollbar-thumb,
+#articles::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
+    background-color: #dc3545;
 }
 
 .stats-list-warpper {
@@ -100,9 +95,9 @@
     overflow: hidden;
 }
 #statsByLocation .country-name {
-    float: left;
+    /* float: left;
     width: 100%;
-    font-style: italic;
+    font-style: italic; */
     font-size: 12px;
     margin-top: 4px;
 }
@@ -115,14 +110,6 @@
 }
 
 /* Stast by Location */
-
-
-
-
-
-
-  
-
 /* World Stats UI */
 #worldStats{
     width: 100%;
@@ -171,12 +158,16 @@
     font-weight: bold;
 }
 #infected-world, #infected-world-increase {
-    color: red;
+    color: #dc3545;
 }
 #death-world, #death-world-increase{
-    color: lightslategray;
+    color: #6c757d;
 }
 #recovered-world, #recovered-world-increase {
-    color: chartreuse;
+    color: #23df4f;
 }
 /* worl stats UI */
+
+.bg-black {
+    background: rgb(28, 30, 32)!important;
+}

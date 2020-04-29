@@ -1,0 +1,148 @@
+<!-- Modal -->
+<div class="modal fade" id="addLocationQuick" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Quick add location</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form name="add-location" id="add-location">
+                        <div class="form-group row">
+                            <label for="loc_name" class="col-sm-4 text-left col-form-label">Location name: </label>
+                            <div class="col-sm-6 ml-2">
+                                <input type="text" class="form-control" name="loc_name" id="loc_name" required
+                                    placeholder="" form="add-location">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="loc_code" class="col-sm-4 text-left col-form-label">Location code: </label>
+                            <div class="col-sm-6 ml-2">
+                                <input type="text" class="form-control" name="loc_code" id="loc_code" required
+                                    placeholder="2 letters only" maxlength="2" form="add-location">
+                            </div>
+                        </div>
+                        <%- include('../component/typeahead.ejs', {
+                            typeaheadId: "continent",
+                            typeaheadLabel: "Parent location: ",
+                            classList: "form-group row",
+                            labelClass: "col-sm-4 text-left col-form-label",
+                            hasButton: false
+                        }) %>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-success" form="add-location">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const substringMatcher = function (strs) {
+        return function findMatches(q, cb) {
+            var matches, substringRegex;
+
+            // an array that will be populated with substring matches
+            matches = [];
+
+            // regex used to determine if a string contains the substring `q`
+            substrRegex = new RegExp(q, 'i');
+
+            // iterate through the pool of strings and for any string that
+            // contains the substring `q`, add it to the `matches` array
+            $.each(strs, function (i, str) {
+                if (substrRegex.test(str)) {
+                    matches.push(str);
+                }
+            });
+
+            cb(matches);
+        };
+    };
+
+    let locationData, parentLocationData, locationIdMap;
+
+    function prepareTypeaheads(locationData, parentLocationData) {
+        $('#search-location-typeahead').typeahead({
+            hint: false,
+            highlight: true,
+            minLength: 1,
+            limit: 100
+        },
+            {
+                name: 'locations',
+                source: substringMatcher(locationData)
+            }
+        );
+        $('#continent-typeahead').typeahead({
+            hint: false,
+            highlight: true,
+            minLength: 1,
+            limit: 100
+        },
+            {
+                name: 'parentLocations',
+                source: substringMatcher(parentLocationData)
+            }
+        );
+    }
+
+    function updateTypeaheads() {
+        fetch('/locations').then(res => res.json()).then(json => {
+            locationData = json.map(location => location.name);
+            parentLocationData = Array.from(new Set(locationData.concat(Array.from(new Set(json.map(location => location.continent))))));
+            locationIdMap = json.map(location => ({key: location.name, value: location.id }));
+            console.log(locationIdMap)
+
+            prepareTypeaheads(locationData, parentLocationData);
+        });
+    }
+
+    $('#addLocationQuick').on('hidden.bs.modal', (event) => {
+        event.currentTarget.querySelector('#add-location').reset();
+    });
+
+    $('#add-location').on('submit', (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const body = {
+            name: form.querySelector('#loc_name').value,
+            code: form.querySelector('#loc_code').value,
+            continent: form.querySelector('#continent-typeahead').value
+        };
+        showLoadingModal();
+        let status, lang;
+        fetch('/locations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }).then(res => {
+            if (document.cookie.includes('lang=')) {
+                const regex = /lang=.+/;
+                lang = regex.compile().exec(document.cookie)[0].replace('lang=', '');
+            } else {
+                lang = 'en';
+            }
+            status = res.status;
+            return res.text();
+        }).then(html => {
+            showMessageModal(status !== 200 ? 'danger' : 'success',
+                            resources[lang][`title_${status}`],
+                            resources[lang][`content_${status}`]);
+            setTimeout(removeLoadingModal, 100);
+            updateTypeaheads();
+        });
+    });
+
+    updateTypeaheads();
+
+</script>

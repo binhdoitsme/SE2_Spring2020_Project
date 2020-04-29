@@ -1,12 +1,66 @@
-<nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Homepage</a>
-    <!-- <div class="dropdown" >
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Language<span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Vienamese</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="#">English</a></li>
-        </ul>
-      </div> -->
-    <a class="nav-link text-light" href="#" data-toggle="modal" data-target="#loginModal">Log in</a>
+<style>
+    .dropdown:hover>.dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-menu>.dropdown-item:hover {
+        color: black !important;
+    }
+
+    .dropdown>.dropdown-toggle:active {
+        /*Without this, clicking will make it sticky*/
+        pointer-events: none;
+    }
+</style>
+<script src="js/modal.js"></script>
+<nav class="navbar navbar-dark bg-black">
+    <div style="display: flex; flex-direction: row;">
+        <div class="dropdown">
+            <a class="nav-link dropdown-toggle nav-link text-light" href="#" id="navbarDropdownMenuLink"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Go to Page
+            </a>
+            <div class="dropdown-menu bg-black" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item text-light navigatable" href="#" data-layout="overview">Home</a>
+                <a class="dropdown-item text-light navigatable" href="#" data-layout="report">Analytics</a>
+                <% if (authenticated) { %>
+                    <a class="dropdown-item text-light navigatable" href="#" data-layout="dashboard">Management</a>
+                <% } %>
+                <a href="https://ncov.moh.gov.vn/" class="dropdown-item text-light">Ministry of Health</a>
+                <a class="dropdown-item text-light navigatable" href="#">About</a>
+            </div>
+        </div>
+    </div>
+    <div>
+        <a class="navbar-brand navigatable" href="#" style="margin-left: 25px;" data-layout="<%- authenticated ? 'dashboard' : 'overview'%>">Covid Tracker</a>
+    </div>
+
+    <div class="d-flex flex-row justify-content-end w-auto">
+        <% if (authenticated) { %>
+        <span class="text-light m-1">Hello, <%- username %>!</span>
+        <a name="logout" id="logout" class="btn text-light p-0 m-1" href="#"
+            onclick="fetch('/logout', {method: 'POST'}).then(res => window.location.reload())" role="button">
+            Log out
+        </a>
+        <% } else { %>
+        <a class="nav-link text-light" href="#" data-toggle="modal" data-target="#loginModal">Log in</a>
+        <%- include("login-modal.ejs") %>
+        <% } %>
+
+        <!-- <div style="display:flex; flex-direction: row; align-items: center; width: 50px; justify-content: space-around;">
+            <img src="img/vietnamLa.png">
+            <img src="img/englandLa.png">
+        </div> -->
+    </div>
 </nav>
-<%- include("login-modal.ejs") %>
+<script defer>
+    $('.navigatable').on('click', (event) => {
+        const currentPage = readCookie('page') !== null ? readCookie('page') : 'overview';
+        const targetPage = event.currentTarget.dataset.layout;
+        if (currentPage == targetPage) return;
+        fetch(`/?page=${targetPage}`,{method: 'POST'}).then(res => {
+            showLoadingModal();
+            window.location.reload();
+        });
+    })
+</script>
