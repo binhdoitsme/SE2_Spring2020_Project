@@ -16,7 +16,7 @@ function showLoadingModal() {
 function showSolidLoadingModal() {
     const modal = document.createElement('div');
     modal.innerHTML = `
-    <div id="loading-modal" class="h-100 w-100 d-flex justify-content-center align-items-center bg-dark" style="width: 100vw;height: 100vh;position: absolute;top: 0;z-index: 9999;">
+    <div id="loading-modal" class="h-100 w-100 d-flex justify-content-center align-items-center bg-dark" style="width: calc(100vw - 3.5rem);height: 100vh;position: absolute;top: 0;z-index: 9999;">
         <h4 class='text-light mr-2'>Preparing data...</h4>
         <div class="spinner-border text-warning" role="status"></div>
     </div>

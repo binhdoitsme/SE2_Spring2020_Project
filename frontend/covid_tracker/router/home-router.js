@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const hostname = require('../constants').BACKEND_PREFIX;
 
 router.get('/', async (req, res) => {
-    let page = req.cookies.page ? req.cookies.page : "overview";
+    let page = req.cookies.page !== 'undefined' ? req.cookies.page : "overview";
     const authenticated = req.cookies.username !== undefined;
 
     if (page === 'dashboard' && authenticated) {

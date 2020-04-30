@@ -57,7 +57,7 @@
     $('.navigatable').on('click', (event) => {
         const currentPage = readCookie('page') !== null ? readCookie('page') : 'overview';
         const targetPage = event.currentTarget.dataset.layout;
-        if (currentPage == targetPage) return;
+        if (currentPage == targetPage || currentPage === undefined || currentPage === 'undefined') return;
         fetch(`/?page=${targetPage}`,{method: 'POST'}).then(res => {
             showLoadingModal();
             window.location.reload();
