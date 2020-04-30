@@ -40,6 +40,7 @@ async function renderWorldChar(id='curve_chart') {
         };
         var chart = new google.visualization.AreaChart(document.getElementById(id));
         chart.draw(data, options);
+        document.dispatchEvent(reportLoadedEvent);
     });
 }
 

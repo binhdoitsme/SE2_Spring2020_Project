@@ -2,6 +2,8 @@ const router = require('express').Router();
 const fetch = require('node-fetch');
 const CONSTANTS = require('../constants');
 const BACKEND_PREFIX = CONSTANTS.BACKEND_PREFIX;
+const defaultTTL = require('../constants').DEFAULT_TTL;
+const cache = require('memory-cache');
 const errorHandlingModal = {
     200: "component/success-modal",
     400: "component/server-failed-modal",
@@ -9,9 +11,16 @@ const errorHandlingModal = {
 };
 
 router.get('/locations', (req, res) => {
-    fetch(`${BACKEND_PREFIX}/pointOfInterest`)
-        .then(resp => resp.json())
-        .then(json => res.json(json));
+    if (!cache.get("_locations")) {
+        fetch(`${BACKEND_PREFIX}/pointOfInterest`)
+            .then(resp => resp.json())
+            .then(json => {
+                cache.put("_locations", json, defaultTTL);
+                res.json(json);
+            });
+    } else {
+        res.json(cache.get("_locations"));
+    }
 });
 
 router.post('/locations', (req, res) => {
@@ -27,6 +36,9 @@ router.post('/locations', (req, res) => {
         },
         body: `[${JSON.stringify(req.body)}]`
     }).then(resp => {
+        if (res.status === 200) {
+            cache.clear();
+        }
         res.status(resp.status).render(errorHandlingModal[resp.status]);
     });
 });

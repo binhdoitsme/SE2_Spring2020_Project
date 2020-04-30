@@ -12,6 +12,7 @@
     "cookie-parser": "^1.4.5",
     "ejs": "^3.0.2",
     "express": "^4.17.1",
+    "memory-cache": "^0.2.0",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.3"
   }

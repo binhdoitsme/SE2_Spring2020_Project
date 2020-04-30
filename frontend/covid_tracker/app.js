@@ -14,7 +14,7 @@ const adminRouter = require('./router/admin-router');
 const pointsRouter = require('./router/point-router');
 const analyticRouter = require('./router/analytics-router');
 const latestStats = require('./router/distribution-router');
-const hostname = "http://localhost";
+const hostname = CONSTANTS.BACKEND_PREFIX;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/static/views'));
@@ -35,38 +35,6 @@ app.use(loginRouter);
 app.use(locationRouter);
 app.use(adminRouter);
 
-app.get('/articles', (req, res) => {
-    fetch(`${hostname}:8080/articles`, {
-        method: 'GET'
-    }).then(resp => resp.json()).then(json => {
-        const articles = { articles: json };
-        res.render('component/articles', articles);
-    });
-});
-
-app.get('/analytics/statstable', async (req, res) => {
-
-    const response = await fetch(`${hostname}:8080/stats?latest=true`);
-    const statsJSON = await response.json();
-    console.log(statsJSON);
-    res.render('component/statstable',{stats:statsJSON}); 
-    // res.render('index',{stats: statsJSON});  
-    
-});
-
-app.post('/login', (req, res) => {
-    let status = 200;
-    fetch('http://localhost:8080/session', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(req.body)
-    }).then(res => {
-        status = res.status;
-        return res.json();
-    }).then(json => res.status(status).json(json));
-});
 
 app.listen(PORT, () => {
     console.log(`Application listening on port ${PORT}`);

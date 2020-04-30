@@ -1,15 +1,21 @@
 const router = require('express').Router();
 const fetch = require('node-fetch');
 const hostname = require('../constants').BACKEND_PREFIX;
+const defaultTTL = require('../constants').DEFAULT_TTL;
+const cache = require('memory-cache');
 // TODO: add authentication for admin router 
 
 //get stats table
 router.post('/admin/statstable', async (req, res) => {
+    
     if (req.cookies.authToken) {
-        const response = await fetch(`${hostname}/stats?latest=true`);
-        const statsJSON = await response.json();
+        if (!cache.get("_admin_stats")) {
+            const response = await fetch(`${hostname}/stats?latest=true`);
+            const statsJSON = await response.json();
+            cache.put("_admin_stats", statsJSON, defaultTTL);
+        }
         res.cookie('page', 'dashboard')
-            .render('index', { authenticated: true, layoutName: "dashboard", stats: statsJSON });
+            .render('index', { authenticated: true, layoutName: "dashboard", stats: cache.get("_admin_stats") });
     } else {
         res.status(400).end();
     }
@@ -49,7 +55,10 @@ router.delete('/admin/records/delete/:id', async (req, res) => {
     });
     try {
         const json = await response.json();
-        console.log(json);
+        
+        if (res.status === 200) {
+            cache.clear();
+        }
         res.status(response.status).json(json);
     } catch (error) {
         res.status(response.status).end();
@@ -57,7 +66,6 @@ router.delete('/admin/records/delete/:id', async (req, res) => {
 });
 
 router.put('/admin/records/update', async (req, res) => {
-    
     const jwt = req.cookies.authToken;
     const response = await fetch(`${hostname}/stats?authToken=${jwt}`, {
         method: 'PUT',
@@ -68,7 +76,10 @@ router.put('/admin/records/update', async (req, res) => {
     });
     try {
         const json = await response.json();
-        console.log(json);
+        
+        if (res.status === 200) {
+            cache.clear();
+        }
         res.status(response.status).json(json);
     } catch (error) {
         res.status(response.status).end();
@@ -83,7 +94,11 @@ router.put('/admin/records/updatebulk', async (req, res) => {
     });
     try {
         const json = await response.json();
-        console.log(json);
+
+        if (res.status === 200) {
+            cache.clear();
+        }
+        
         res.status(response.status).json(json);
     } catch (error) {
         res.status(response.status).end();
