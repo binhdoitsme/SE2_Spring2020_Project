@@ -94,7 +94,11 @@ router.put('/admin/records/updatebulk', async (req, res) => {
     });
     try {
         const json = await response.json();
-        console.log(json);
+
+        if (res.status === 200) {
+            cache.clear();
+        }
+        
         res.status(response.status).json(json);
     } catch (error) {
         res.status(response.status).end();
