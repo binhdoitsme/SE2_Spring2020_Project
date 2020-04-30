@@ -2,16 +2,24 @@
 const router = require('express').Router();
 const fetch = require('node-fetch');
 const hostname = require('../constants').BACKEND_PREFIX;
+const defaultTTL = require('../constants').DEFAULT_TTL;
+const cache = require('memory-cache');
 
 router.get('/', async (req, res) => {
     let page = req.cookies.page !== 'undefined' ? req.cookies.page : "overview";
     const authenticated = req.cookies.username !== undefined;
 
     if (page === 'dashboard' && authenticated) {
-        const response = await fetch(`${hostname}/stats?latest=true`);
-        const statsJSON = await response.json();
+        if (!cache.get('dashboard_list')) {
+            const response = await fetch(`${hostname}/stats?latest=true`);
+            const statsJSON = await response.json();
+            cache.put('dashboard_list', statsJSON, defaultTTL);
+            console.log('abc');
+        }
+        const stats = cache.get('dashboard_list');
+        
         res.cookie('page', 'dashboard')
-            .render('index', { authenticated: true, username: req.cookies.username, layoutName: "dashboard", stats: statsJSON });
+            .render('index', { authenticated: true, username: req.cookies.username, layoutName: "dashboard", stats: stats });
     } else {
         if (authenticated === false && page === "dashboard") {
             page = "overview";
@@ -38,6 +46,15 @@ router.post('/', (req, res) => {
         status = 415;
     }
     res.status(status).end();
+});
+
+router.get('/articles', (req, res) => {
+    fetch(`${hostname}/articles`, {
+        method: 'GET'
+    }).then(resp => resp.json()).then(json => {
+        const articles = { articles: json };
+        res.render('component/articles', articles);
+    });
 });
 
 module.exports = router;

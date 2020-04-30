@@ -26,5 +26,6 @@ async function renderCaseDistribution(chartdata, id='donutchart') {
 
         var chart = new google.visualization.PieChart(document.getElementById(id));
         chart.draw(data, options);
+        document.dispatchEvent(reportLoadedEvent);
     });
 }

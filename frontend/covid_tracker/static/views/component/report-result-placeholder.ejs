@@ -46,7 +46,6 @@
     <script defer>
         fetch('/getDistribute?chart=vietnam').then(res => res.text()).then(html => { 
             $('#vietnameseDistribution_result').html(html);
-            document.dispatchEvent(reportLoadedEvent);
         });
     </script>
 </div>
@@ -54,7 +53,6 @@
     <script defer>
         fetch('/vietnameseLatest').then(res => res.text()).then(html => {
             $('#vietnameseLatest_result').html("<h3 class='w-100 text-center'>Current situation in Vietnam</h3><div class='w-100 d-flex justify-content-between'>" + html + "</div>");
-            document.dispatchEvent(reportLoadedEvent);
         });
     </script>
 </div>
@@ -78,15 +76,18 @@
     document.addEventListener('loaded', () => {
         ++loadedCnt;
         console.log(loadedCnt);
-        if (loadedCnt === 5) {
-            $('#result-container > .row:not("#worldMap_result")').hide();
-            $('#result-container > .row').css('opacity', '1');
+        if (loadedCnt === 6) {
+            // $('#result-container > .row:not("#worldMap_result")').hide();
+            // $('#result-container > .row').css('opacity', '1');
             document.body.style.overflow = 'auto';
-            removeLoadingModal();
+            setTimeout(() => {
+                $('#result-container > .row:not("#worldMap_result")').hide();
+            }, 250);
+            setTimeout(removeLoadingModal, 150);
         }
     })
 </script>
 <script defer>
-    $('#result-container > .row:not("#worldMap_result")').css('opacity', '0');
+    // $('#result-container > .row:not("#worldMap_result")').css('opacity', '0');
     document.body.style.overflow = 'hidden';
 </script>
