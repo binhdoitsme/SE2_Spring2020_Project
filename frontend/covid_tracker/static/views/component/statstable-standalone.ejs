@@ -168,6 +168,7 @@
         document.body.appendChild(div);
         $(`#update_${stat.id}`).modal('show');
         $('#update-btn').on('click', (event) => {
+            showLoadingModal();
             const infected = document.querySelector('#_infected').value;
             const death = document.querySelector('#_death').value;
             const recovered = document.querySelector('#_recovered').value;
@@ -184,7 +185,7 @@
                     recovered: recovered
                 })
             }).then(nonQueryResponseHandler);
-        })
+        });
     }
     
     $('.edit-btn').on('click', (event) => {

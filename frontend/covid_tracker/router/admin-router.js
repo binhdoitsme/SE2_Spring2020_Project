@@ -86,7 +86,7 @@ router.delete('/admin/records/delete/:id', async (req, res) => {
     try {
         const json = await response.json();
         
-        if (res.status === 200) {
+        if (response.status === 200) {
             cache.clear();
         }
         res.status(response.status).json(json);
@@ -107,7 +107,7 @@ router.put('/admin/records/update', async (req, res) => {
     try {
         const json = await response.json();
         
-        if (res.status === 200) {
+        if (response.status === 200) {
             cache.clear();
         }
         res.status(response.status).json(json);
@@ -125,9 +125,8 @@ router.put('/admin/records/updatebulk', async (req, res) => {
     try {
         const json = await response.json();
 
-        if (res.status === 200) {
+        if (response.status === 200) {
             cache.clear();
-            console.log(cache.keys());
         }
         
         res.status(response.status).json(json);
