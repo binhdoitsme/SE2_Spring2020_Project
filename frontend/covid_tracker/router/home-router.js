@@ -6,20 +6,35 @@ const defaultTTL = require('../constants').DEFAULT_TTL;
 const cache = require('memory-cache');
 
 router.get('/', async (req, res) => {
-    let page = req.cookies.page !== 'undefined' ? req.cookies.page : "overview";
+    let page = req.cookies.page ? req.cookies.page : "overview";
+    if (req.cookies.page === 'undefined') page = "overview"
     const authenticated = req.cookies.username !== undefined;
 
     if (page === 'dashboard' && authenticated) {
-        if (!cache.get('dashboard_list')) {
-            const response = await fetch(`${hostname}/stats?latest=true`);
+        if (!cache.get('_admin_stats')) {
+            const response = await fetch(`${hostname}/stats`);
             const statsJSON = await response.json();
-            cache.put('dashboard_list', statsJSON, defaultTTL);
-            console.log('abc');
+            cache.put('_admin_stats', statsJSON, defaultTTL);
         }
-        const stats = cache.get('dashboard_list');
+
+        const result = cache.get("_admin_stats");
+        const resultArray = Array.from(result);
+        const maxTime = Math.max(...resultArray.map(row => new Date(row.timestamp).getTime()));
+        cache.put('_max_time', maxTime);
         
+        const filteredStats = resultArray.filter(row => row.timestamp === maxTime);
         res.cookie('page', 'dashboard')
-            .render('index', { authenticated: true, username: req.cookies.username, layoutName: "dashboard", stats: stats });
+            .render('index', { 
+                authenticated: true, 
+                username: req.cookies.username,
+                layoutName: "dashboard", 
+                stats: filteredStats,
+                location: "World",
+                maxTime: maxTime
+            });
+        
+        // res.cookie('page', 'dashboard')
+        //     .render('index', { authenticated: true, username: req.cookies.username, layoutName: "dashboard", stats: stats, location: "World" });
     } else {
         if (authenticated === false && page === "dashboard") {
             page = "overview";

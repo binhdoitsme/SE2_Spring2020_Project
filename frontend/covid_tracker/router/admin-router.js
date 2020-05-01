@@ -7,15 +7,45 @@ const cache = require('memory-cache');
 
 //get stats table
 router.post('/admin/statstable', async (req, res) => {
-    
     if (req.cookies.authToken) {
         if (!cache.get("_admin_stats")) {
-            const response = await fetch(`${hostname}/stats?latest=true`);
+            const response = await fetch(`${hostname}/stats`);
             const statsJSON = await response.json();
             cache.put("_admin_stats", statsJSON, defaultTTL);
         }
-        res.cookie('page', 'dashboard')
-            .render('index', { authenticated: true, layoutName: "dashboard", stats: cache.get("_admin_stats") });
+    
+        const location = req.query.location;
+        const date = req.query.date;
+        const result = cache.get("_admin_stats");
+        const resultArray = Array.from(result);
+        
+        if (!location) {
+            const filteredStats = resultArray.filter(row => new Date(row.timestamp).toISOString().startsWith(date));
+            res.cookie('page', 'dashboard')
+                .render('index', { 
+                    authenticated: true, 
+                    layoutName: "dashboard", 
+                    stats: filteredStats,
+                    location: "World",
+                    username: req.query.username,
+                    maxTime: cache.get('_max_time')
+                });
+        } else {
+            // const availableLocations = location === "World" ? 
+            //                             [ "Asia", "Europe", "Antarctica", "Africa", "Oceania", "North America", "South America", "unknown" ] : ["Vietnam"]
+            // const filteredStats = resultArray.filter(row => availableLocations.contains(row.continent))
+            let filteredStats;
+            if (location === "World") {
+                filteredStats = resultArray.filter(row => row.continent !== "Vietnam" && new Date(row.timestamp).toISOString().startsWith(date));
+            } else {
+                filteredStats = resultArray.filter(row => row.continent === "Vietnam" && new Date(row.timestamp).toISOString().startsWith(date));
+            }
+            res.render('component/statstable-standalone', {
+                stats: filteredStats,
+                location: location,
+                maxTime: cache.get('_max_time')
+            });
+        }
     } else {
         res.status(400).end();
     }
@@ -97,6 +127,7 @@ router.put('/admin/records/updatebulk', async (req, res) => {
 
         if (res.status === 200) {
             cache.clear();
+            console.log(cache.keys());
         }
         
         res.status(response.status).json(json);
