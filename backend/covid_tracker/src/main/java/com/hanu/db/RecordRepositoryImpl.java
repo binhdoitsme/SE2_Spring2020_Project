@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -273,10 +274,10 @@ public class RecordRepositoryImpl extends RepositoryImpl<Record, Integer> implem
     }
 
     @Override
-    public Date getLatestDate() throws SQLException, InvalidQueryTypeException {
-        Date date = getConnector().connect()
+    public Timestamp getLatestTime() throws SQLException, InvalidQueryTypeException {
+        Timestamp timestamp = getConnector().connect()
             .executeScalar(LATEST_DATE);
-        date = date == null ? new Date(0) : date;
-        return date;
+        timestamp = timestamp == null ? new Timestamp(0) : timestamp;
+        return timestamp;
     }
 }

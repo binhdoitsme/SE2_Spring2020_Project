@@ -96,6 +96,35 @@ public class RecordController {
         return result;
     }
 
+    public Timestamp getLatestTime() {
+        try {
+            return new GetLatestTimeUseCase().handle(null);
+        } catch (Exception e) {
+            return new Timestamp(0);
+        }
+    }
+
+    // new method to update data for today
+    public Object addBatch(List<Record> records, String fallbackContinent) {
+        Object result = null;
+        try {
+            Map<String, List<Record>> recordsByPoiName = new HashMap<>();
+            for (Record r : records) {
+                recordsByPoiName.putIfAbsent(r.getPoiName(), new ArrayList<>());
+                recordsByPoiName.get(r.getPoiName()).add(r);
+            }
+
+            // add
+            int affectedRows = new AddManyRecordsUseCase(fallbackContinent).handle(recordsByPoiName);
+            result = new NonQueryResult(affectedRows);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = new ServerFailedException();
+        }
+        return result;
+    }
+
     private Record recordFromLineString(String line, int length, int infectedPos, int deathPos, int recoveredPos,
                                         int countryPos, int datePos) {
         String[] elements = line.trim().split(",");
@@ -202,11 +231,13 @@ public class RecordController {
         boolean isLatest = false;
         try {
             timeframeType = TimeframeType.valueOf(timeframe.trim().toUpperCase());
-        } catch (Exception e) { }
+        } catch (Exception e) {
+        }
 
         try {
             isLatest = Boolean.parseBoolean(latest);
-        } catch (Exception e) { }
+        } catch (Exception e) {
+        }
 
         FilterType filterType = FilterType.from(continent, timeframeType, isLatest);
         return new GetFilteredRecordsUseCase().handle(filterType);

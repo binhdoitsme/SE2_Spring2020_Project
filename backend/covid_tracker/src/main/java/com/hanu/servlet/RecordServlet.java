@@ -9,9 +9,14 @@ import com.hanu.exception.UnauthorizedException;
 import com.hanu.util.authentication.Authenticator;
 import com.hanu.util.configuration.Configuration;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,11 +25,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 @WebServlet(name = "record", urlPatterns = "/stats")
 public class RecordServlet extends HttpServlet {
@@ -94,11 +107,15 @@ public class RecordServlet extends HttpServlet {
 
     private void writeAsJsonToResponse(Object o, HttpServletResponse resp) throws IOException {
         resp.setHeader("Content-Type", "application/json");
+        resp.setCharacterEncoding("UTF-8");
         String json = new String();
         try {
             if (o instanceof JSONObject) {
                 json = o.toString();
-            } else {
+            } else if (o instanceof String) {
+                json = (String)o;
+            }
+            else {
                 json = new ObjectMapper().writeValueAsString(o);
             }
             if (o instanceof ServerFailedException) {
@@ -127,13 +144,53 @@ public class RecordServlet extends HttpServlet {
     }
 
     private String getTextDataFromUrl(String url) throws IOException, MalformedURLException {
+        /* Start of Fix */
+        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() { return null; }
+            public void checkClientTrusted(X509Certificate[] certs, String authType) { }
+            public void checkServerTrusted(X509Certificate[] certs, String authType) { }
+
+        } };
+
+        SSLContext sc = null;
+        try {
+            sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+        // Create all-trusting host name verifier
+        HostnameVerifier allHostsValid = (hostname, session) -> true;
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+        /* End of the fix*/
+
         URL link = new URL(url);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(link.openConnection().getInputStream()));
+        HttpsURLConnection connection = (HttpsURLConnection)link.openConnection();
+        String charset = "UTF-8";
+
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36");
+
+        connection.setRequestProperty("Accept-Charset", charset);
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
+
+        BufferedReader reader;
+        if ("gzip".equals(connection.getContentEncoding())) {
+            reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream()), "UTF-8"));
+        }
+        else {
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+        }
         StringBuilder content = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
             content.append(line).append("\n");
         }
+        reader.close();
+        connection.disconnect();
         return content.toString();
     }
 
@@ -153,17 +210,98 @@ public class RecordServlet extends HttpServlet {
             String body = getRequestBody(req);
 
             if (body.equals("")) {
-                String remoteDataUrl = Configuration.get("io.remote.countries");
-                String remoteData = getTextDataFromUrl(remoteDataUrl);
-
-                // delgate to controller
-                Object addResult = controller.addBatch(remoteData);
-                writeAsJsonToResponse(addResult, resp);
-                return;
+//                String remoteDataUrl = Configuration.get("io.remote.countries");
+//                String remoteData = getTextDataFromUrl(remoteDataUrl);
+//
+//                // delgate to controller
+//                Object addResult = controller.addBatch(remoteData);
+//                writeAsJsonToResponse(addResult, resp);
+//                return;
+                try {
+                    Object result = updateFromChosenUrls();
+                    writeAsJsonToResponse(result, resp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    writeAsJsonToResponse(new ServerFailedException(), resp);
+                }
             } else {
                 updateManually(body, req, resp);
             }
         }
+    }
+
+    // parse data from chosen urls io.remote.update.duration
+    private Object updateFromChosenUrls() throws IOException {
+        final long durationBetweenUpdates = Long.parseLong(Configuration.get("io.remote.update.duration"));
+        long latestTime = controller.getLatestTime().getTime();
+        long now = new Date().getTime();
+        if (now - latestTime < durationBetweenUpdates) {
+            return "{\"message\" : \"Not yet time for update data, try again in " + ((latestTime - now  + durationBetweenUpdates)/1000) + " second(s)!\"}";
+        }
+
+        final String worldUrl = Configuration.get("io.remote.countries.latest");
+        final String worldSelector = Configuration.get("io.remote.countries.latest.selector");
+        final String vietnamUrl = Configuration.get("io.remote.vietnam.latest");
+        final String vietnamSelector = Configuration.get("io.remote.vietnam.latest.selector");
+
+        String vietnamHtml = getTextDataFromUrl(vietnamUrl);
+        String worldHtml = getTextDataFromUrl(worldUrl);
+
+        Document worldDoc = Jsoup.parse(worldHtml);
+        Document vietnamDoc = Jsoup.parse(vietnamHtml);
+
+        Elements worldRows = worldDoc.select(worldSelector);
+        Elements vietnamRows = vietnamDoc.select(vietnamSelector);
+
+        List<Record> worldRecordsToAdd = new LinkedList<>();
+        worldRecordsToAdd.addAll(worldRows.stream()
+                                .map(row -> createWorldRecordFromRow(row, now))
+                                .distinct()
+                                .filter(row -> row != null)
+                                .collect(Collectors.toList()));
+
+        List<Record> vietnameseRecordsToAdd = new LinkedList<>();
+        vietnameseRecordsToAdd.addAll(vietnamRows.stream()
+                                .map(row -> createVietnamRecordFromRow(row, now))
+                                .distinct()
+                                .filter(row -> row != null)
+                                .collect(Collectors.toList()));
+
+        Object result1 = controller.addBatch(worldRecordsToAdd, "unknown");
+        Object result2 = controller.addBatch(vietnameseRecordsToAdd, "Vietnam");
+        if (result1 instanceof ServerFailedException || result2 instanceof ServerFailedException) {
+            return new ServerFailedException();
+        } else {
+            return "{\"message\": \"Database updated!\"}";
+        }
+//        return "{\"message\": \"Database updated!\"}";
+
+    }
+
+    private Record createWorldRecordFromRow(Element row, long now) {
+        int infected = Integer.parseInt(row.child(1).text().replace(",", ""));
+        String deathStr = row.child(3).text().replace(",", "");
+        int death = Integer.parseInt(deathStr.equals("") || deathStr.equals("N/A") ? "0": deathStr);
+        String recoveredStr = row.child(5).text().replace(",", "");
+        int recovered = Integer.parseInt(recoveredStr.equals("") || recoveredStr.equals("N/A") ? "0": recoveredStr);
+        String country = row.child(0).child(0).text()
+            .replace("USA", "US")
+            .replace("UK", "United Kingdom")
+            .replace("S. Korea", "South Korea")
+            .replace("UAE", "United Arab Emirates");
+        if (country.startsWith("Total")) return null;
+        return new Record(0, new Timestamp(now), 0, infected, death, recovered).poiName(country);
+    }
+
+    private Record createVietnamRecordFromRow(Element row, long now) {
+        int infected = Integer.parseInt(row.child(1).text().replace(",", ""));
+        String deathStr = row.child(4).text().replace(",", "");
+        int death = Integer.parseInt(deathStr.equals("") || deathStr.equals("N/A") ? "0": deathStr);
+        String recoveredStr = row.child(3).text().replace(",", "");
+        int recovered = Integer.parseInt(recoveredStr.equals("") || recoveredStr.equals("N/A") ? "0": recoveredStr);
+        String country = row.child(0).text();
+        if (country.startsWith("Total")) return null;
+        return new Record(0, new Timestamp(now), 0, infected, death, recovered).poiName(country);
     }
 
     private void updateManually(String body, HttpServletRequest req, HttpServletResponse resp) throws IOException {

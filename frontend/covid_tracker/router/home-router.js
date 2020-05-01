@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
         const maxTime = Math.max(...resultArray.map(row => new Date(row.timestamp).getTime()));
         cache.put('_max_time', maxTime);
         
-        const filteredStats = resultArray.filter(row => row.timestamp === maxTime);
+        const filteredStats = resultArray.filter(row => row.timestamp === maxTime && row.continent !== "Vietnam");
         res.cookie('page', 'dashboard')
             .render('index', { 
                 authenticated: true, 

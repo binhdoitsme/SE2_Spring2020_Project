@@ -23,25 +23,34 @@ public class AddManyRecordsUseCase implements RequestHandler<Map<String, List<Re
     @Inject
     private PointOfInterestRepository poiRepository;
 
-    public AddManyRecordsUseCase() { }
+    private String fallbackContinent;
+
+    public AddManyRecordsUseCase() {
+        this.fallbackContinent = "unknown";
+    }
+
+    public AddManyRecordsUseCase(String fallbackContinent) {
+        this();
+        this.fallbackContinent = fallbackContinent;
+    }
 
     @Override
     public Integer handle(Map<String, List<Record>> input) throws SQLException, InvalidQueryTypeException {
         Integer rowsAffected = 0;
-        Date latestDate = recordRepository.getLatestDate();
-        Timestamp latestTimestamp = latestDate == null ? new Timestamp(0) : Timestamp.valueOf(latestDate.toString().concat(" 23:00:00")); // fixed the bug of putting redundant records into db
+//        Timestamp latestTime = recordRepository.getLatestTime();
+//        Timestamp latestTimestamp = latestTime == null ? new Timestamp(0) : latestTime; // fixed the bug of putting redundant records into db
 
         for (String poiName : input.keySet()) {
             Integer poiId = recordRepository.getPoiIdByName(poiName);
             if (poiId == -1) {
-                poiRepository.add(new PointOfInterest(poiName, generateRandomCode(), "unknown"));
+                poiRepository.add(new PointOfInterest(poiName, generateRandomCode(), fallbackContinent));
                 poiId = recordRepository.getPoiIdByName(poiName);
             }
             final int finalPoiId = poiId;
             List<Record> values = input.get(poiName)
                                         .stream()
                                         .map(r -> r.poiId(finalPoiId))
-                                        .filter(r -> r.getTimestamp().after(latestTimestamp))
+//                                        .filter(r -> r.getTimestamp().after(latestTimestamp))
                                         .distinct()
                                         .collect(Collectors.toList());
             if (values.isEmpty()) continue;
