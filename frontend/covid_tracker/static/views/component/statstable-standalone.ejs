@@ -1,0 +1,195 @@
+<thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Time</th>
+        <th scope="col">Location</th>
+        <% if (location === "World") { %>
+            <th scope="col">Continent</th>
+        <% } %> 
+        <th scope="col">Infected</th>
+        <th scope="col">Death</th>
+        <th scope="col">Recovered</th>
+        <th></th>
+        <th></th>
+    </tr>
+</thead>
+<tbody>
+    <% if (stats) { %>
+        <% stats.forEach(stat => { %>
+        <tr>
+            <td id="record-id"><%= stat.id %></td>
+            <td><%= new Date(stat.timestamp).toGMTString().slice(0,-4) %></td>
+            <td><%= stat.poiName %></td>
+            <% if (location === "World") { %>
+                <td><%= stat.continent %></td>
+            <% } %>
+            <td><%= stat.infected %></td>
+            <td><%= stat.death %></td>
+            <td><%= stat.recovered %></td>
+            <td class="p-1"><button data-id="<%- stat.id %>" data-edit-info='<%- JSON.stringify(stat) %>'
+                    class="edit-btn btn btn-primary"><i class="fas fa-edit fa-sm fa-fw"></i> Edit</button></td>
+            <% if (new Date(stat.timestamp).toISOString().substring(0, 10) === new Date(maxTime).toISOString().substring(0, 10)) { %>
+                <td class="p-1"><button data-id="<%- stat.id %>" class="delete-btn btn btn-danger"> <i class="fas fa-times fa-sm fa-fw"></i>
+                    Delete</button></td>    
+            <% } %>
+            
+
+        </tr>
+        <% }) %>
+    <% } %>
+
+</tbody>
+
+<script defer>
+    document.querySelectorAll('.delete-btn').forEach(element => {
+        element.addEventListener('click', onDelete)
+    });
+
+    async function onDelete(event) {
+        // console.log(event.currentTarget);
+        const message = confirm('Are you sure to delete?');
+        if (message) {
+            showLoadingModal();
+            const recordId = event.currentTarget.dataset.id;
+            const row = event.currentTarget.parentNode.parentNode;
+            console.log(recordId);
+            fetch(`/admin/records/delete/${recordId}`, {
+                method: 'DELETE'
+            }).then(res => {
+                const status = res.status;
+                let lang;
+                if (document.cookie.includes('lang=')) {
+                    const regex = /lang=.+/;
+                    lang = regex.compile().exec(document.cookie)[0].replace('lang=', '');
+                } else {
+                    lang = 'en';
+                }
+                showMessageModal(status !== 200 ? 'danger' : 'success',
+                    resources[lang][`title_${status}`],
+                    resources[lang][`content_${status}`],
+                    modalToRemove = "record_add",
+                    dismissCallback = () => {
+                        showLoadingModal();
+                        row.remove();
+                        setTimeout(removeLoadingModal, 100);
+                    });
+                setTimeout(removeLoadingModal, 100);
+            })
+        }
+    }
+
+    //get new record from admin
+    function getRecordData() {
+        const poiName = document.querySelector('#search-location-typeahead').value;
+        const poiId = locationIdMap.filter(row => row.key === poiName)[0].value;
+        const timestamp = document.querySelector('#timestamp').value;
+        const infected = document.querySelector('#infected').value;
+        const death = document.querySelector('#death').value;
+        const recovered = document.querySelector('#recovered').value;
+        const record = {
+            poiId: poiId,
+            timestamp: new Date(timestamp).getTime(),
+            infected: infected,
+            death: death,
+            recovered: recovered
+        }
+        return record;
+    }
+
+    document.querySelector('#tableSearch').addEventListener('input', onSearch);
+    //filter stats by location
+    function onSearch() {
+        const input = document.querySelector('#tableSearch').value.toUpperCase();
+        const tr = document.querySelector('#table').getElementsByTagName('tr');
+        // console.log(tr);
+        // console.log(input);
+        for (let i = 0; i < tr.length; i++) {
+            const td = tr[i].getElementsByTagName('td')[2];
+            if (td) {
+                textValue = td.innerText
+                if (textValue.toUpperCase().indexOf(input) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+
+<script defer>
+    // edit modal
+    function showEditModal(eventTarget, stringifiedJson) {
+        const stat = JSON.parse(stringifiedJson);
+        const div = document.createElement('div');
+        div.classList.add('modal');
+        div.classList.add('fade');
+        div.id = 'status_modal';
+        div.attributes.tabIndex = '-1';
+        div.setAttribute('role', 'dialog');
+        div.setAttribute('aria-modal', 'true');
+        div.style.zIndex = '9999';
+        div.id = `update_${stat.id}`;
+        div.innerHTML = `<div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Update a record</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group row m-0 py-1">
+                                        <label class="col-sm-3 p-0 m-0">Location:</label>
+                                        <input type="text" class="form-control col-sm-6" disabled value="${stat.poiName}">
+                                    </div>
+                                    <div class="form-group row m-0 py-1">
+                                        <label class="col-sm-3 p-0 m-0">Timestamp:</label>
+                                        <input type="text" class="form-control col-sm-6" disabled value="${new Date(stat.timestamp).toISOString().replace("T", " ").replace(".000Z", "").concat(" UTC")}">
+                                    </div>
+                                    <div class="form-group row m-0 py-1">
+                                    <label class="col-sm-3 p-0 m-0" for="_infected">Infected:</label>
+                                    <input type="number" class="form-control col-sm-6" id="_infected" name="_infected" value="${stat.infected}" required>
+                                    </div>
+                                    <div class="form-group row m-0 py-1">
+                                        <label class="col-sm-3 p-0 m-0" for="_death">Death:</label>
+                                        <input type="number" class="form-control col-sm-6" id="_death" name="_death" value="${stat.death}" required>
+                                    </div>
+                                    <div class="form-group row m-0 py-1">
+                                        <label class="col-sm-3 p-0 m-0" for="_recovered">Recovered:</label>
+                                        <input type="number" class="form-control col-sm-6" id="_recovered" name="__recovered" value="${stat.recovered}" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" data-id='${stat.id}' class="btn btn-success" id="update-btn"><i class="fa fa-check" aria-hidden="true"></i>Confirm</button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->`;
+        document.body.appendChild(div);
+        $(`#update_${stat.id}`).modal('show');
+        $('#update-btn').on('click', (event) => {
+            const infected = document.querySelector('#_infected').value;
+            const death = document.querySelector('#_death').value;
+            const recovered = document.querySelector('#_recovered').value;
+            const id = event.currentTarget.dataset.id;
+            fetch('/admin/records/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id,
+                    infected: infected,
+                    death: death,
+                    recovered: recovered
+                })
+            }).then(nonQueryResponseHandler);
+        })
+    }
+    
+    $('.edit-btn').on('click', (event) => {
+        event.preventDefault();
+        console.log(event.currentTarget.dataset.editInfo);
+        showEditModal(event.currentTarget, event.currentTarget.dataset.editInfo);
+    })
+</script>
