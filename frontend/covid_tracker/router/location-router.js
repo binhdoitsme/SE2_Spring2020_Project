@@ -11,16 +11,12 @@ const errorHandlingModal = {
 };
 
 router.get('/locations', (req, res) => {
-    if (!cache.get("_locations")) {
-        fetch(`${BACKEND_PREFIX}/pointOfInterest`)
-            .then(resp => resp.json())
-            .then(json => {
-                cache.put("_locations", json, defaultTTL);
-                res.json(json);
-            });
-    } else {
-        res.json(cache.get("_locations"));
-    }
+    fetch(`${BACKEND_PREFIX}/pointOfInterest`)
+        .then(resp => resp.json())
+        .then(json => {
+            res.json(json);
+        });
+
 });
 
 router.post('/locations', (req, res) => {

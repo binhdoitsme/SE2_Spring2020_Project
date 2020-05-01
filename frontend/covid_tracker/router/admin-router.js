@@ -63,8 +63,12 @@ router.post('/admin/records/add', async (req, res) => {
         body: JSON.stringify([req.body])
     });
     try {
+        if (response.status === 200) {
+            cache.clear();
+        }
+
         const json = await response.json();
-        console.log(json);
+        
         res.status(response.status).json(json);
     } catch (error) {
         res.status(response.status).end();
@@ -84,11 +88,12 @@ router.delete('/admin/records/delete/:id', async (req, res) => {
         body: JSON.stringify([parseInt(recordId)])
     });
     try {
-        const json = await response.json();
-        
         if (response.status === 200) {
             cache.clear();
         }
+
+        const json = await response.json();
+        
         res.status(response.status).json(json);
     } catch (error) {
         res.status(response.status).end();
@@ -105,11 +110,12 @@ router.put('/admin/records/update', async (req, res) => {
         body: JSON.stringify([req.body])
     });
     try {
-        const json = await response.json();
-        
         if (response.status === 200) {
             cache.clear();
         }
+
+        const json = await response.json();
+        
         res.status(response.status).json(json);
     } catch (error) {
         res.status(response.status).end();
@@ -123,11 +129,10 @@ router.put('/admin/records/updatebulk', async (req, res) => {
         method: 'PUT'
     });
     try {
-        const json = await response.json();
-
         if (response.status === 200) {
             cache.clear();
         }
+        const json = await response.json();
         
         res.status(response.status).json(json);
     } catch (error) {
