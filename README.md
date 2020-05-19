@@ -14,3 +14,8 @@ The backend is constructed as a Web API using Java EE Servlet technology, workin
 
 ## Deployment
 Currently, we have only provided support for deploying both on the same machine. The backend can be built as a standalone JAR file, and the frontend can be built as a node module. To operate the project, just run both servers concurrently. Currently, neither server can rely on external server-related configurations - this will be taken into consideration in subsequent patches.
+*_To run the project:_*
+- Download this repository as ZIP file & extract
+- Run *_build.bat_*
+- Run *_run.bat_*
+- The application can now be accessed at port #4200
