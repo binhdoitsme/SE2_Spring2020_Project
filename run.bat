@@ -1,3 +1,3 @@
 cd /D "%~dp0"
-start nodemon ./frontend/covid_tracker/app.js
+start run_fe.bat
 ./backend/covid_tracker/target/server.bat
