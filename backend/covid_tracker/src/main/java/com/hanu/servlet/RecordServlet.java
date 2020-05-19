@@ -279,12 +279,13 @@ public class RecordServlet extends HttpServlet {
     }
 
     private Record createWorldRecordFromRow(Element row, long now) {
-        int infected = Integer.parseInt(row.child(1).text().replace(",", ""));
-        String deathStr = row.child(3).text().replace(",", "");
+        System.out.println(row);
+        int infected = Integer.parseInt(row.child(2).text().replace(",", ""));
+        String deathStr = row.child(4).text().replace(",", "");
         int death = Integer.parseInt(deathStr.equals("") || deathStr.equals("N/A") ? "0": deathStr);
-        String recoveredStr = row.child(5).text().replace(",", "");
+        String recoveredStr = row.child(6).text().replace(",", "");
         int recovered = Integer.parseInt(recoveredStr.equals("") || recoveredStr.equals("N/A") ? "0": recoveredStr);
-        String country = row.child(0).child(0).text()
+        String country = row.child(1).child(0).text()
             .replace("USA", "US")
             .replace("UK", "United Kingdom")
             .replace("S. Korea", "South Korea")
