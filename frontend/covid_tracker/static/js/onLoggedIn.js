@@ -14,6 +14,7 @@ form.addEventListener('submit', (event) => {
             });
         } else {
             setTimeout(removeLoadingModal, 100);
+            showMessageModal('danger', 'Login failed', 'Your credentials are undefined for this system, please try again!', 'loginModal');
         }
     });
 });

@@ -24,6 +24,7 @@ async function login() {
         },
         body: JSON.stringify(credentials)
     }).then(res => {
+        if (status !== 200) return Promise.resolve(status);
         status = res.status;
         return res.json();
     }).then(json => {

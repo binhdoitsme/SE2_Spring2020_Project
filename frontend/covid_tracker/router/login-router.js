@@ -16,6 +16,10 @@ router.post('/login', (req, res) => {
         status = res.status;
         return res.json();
     }).then(json => {
+        if (!json.authToken) {
+            res.status(400).end();
+            return;
+        }
         res.cookie('authToken', json.authToken, {
             expires: new Date(Date.now() + 1800000)
         });
