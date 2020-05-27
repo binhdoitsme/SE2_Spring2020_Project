@@ -1,2 +1,2 @@
 cd /D "%~dp0"
-mvn assembly:assembly -DdescriptorId=jar-with-dependencies -q
+./maven/bin/mvn assembly:assembly -DdescriptorId=jar-with-dependencies -q
