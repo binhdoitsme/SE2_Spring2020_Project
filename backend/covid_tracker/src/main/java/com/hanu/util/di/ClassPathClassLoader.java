@@ -21,7 +21,8 @@ public class ClassPathClassLoader {
         List<String> classNames = new ArrayList<>();
         String currentJarFile = ClassPathClassLoader.class.getProtectionDomain()
                                     .getCodeSource().getLocation().getPath()
-                                    .substring(1);
+                                    .substring(1)
+                                    .replace("%20", " ");
         JarFile file = new JarFile(currentJarFile);
         Enumeration<JarEntry> files = file.entries();
 
