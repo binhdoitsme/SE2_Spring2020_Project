@@ -31,7 +31,7 @@ router.get('/stats', (req, res) => {
 
             const latestTime = json[0].timestamp.toString().substring(1, 10);
             const vietnam = 'Vietnam';
-            const recordByPoi = { recordByPoi: json.filter(record => (record.timestamp.toString().substring(1, 10) === latestTime) && (record.poiName !== vietnam)) };
+            const recordByPoi = { recordByPoi: json.filter(record => (record.timestamp.toString().substring(1, 10) === latestTime) && (record.continent !== vietnam)) };
             cache.put('_quynhtn_stats_world', recordByPoi, defaultTTL);
             res.render('component/stats-list-byLocation', recordByPoi);
         });

@@ -7,6 +7,7 @@ form.addEventListener('submit', (event) => {
     event.preventDefault();
     showLoadingModal();
     login().then(statusCode => {
+        console.log(statusCode);
         if (statusCode === 200) {
             $('#loginModal').modal('hide');
             fetch('/?page=dashboard', { method: 'POST' }).then(res => {
