@@ -112,17 +112,34 @@
     async function onAdd(e) {
         e.preventDefault();
         showLoadingModal();
-        const record = getRecordData();
-        // console.log(record);
-        fetch('/admin/records/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(record)
-        }).then(nonQueryResponseHandler)
-
-        // console.log(response);
+        try {
+            const record = getRecordData();
+            // console.log(record);
+            fetch('/admin/records/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(record)
+            }).then(nonQueryResponseHandler)
+            // console.log(response);
+        } catch {
+            status = 406;
+            if (document.cookie.includes('lang=')) {
+                const regex = /lang=.+/;
+                lang = regex.compile().exec(document.cookie)[0].replace('lang=', '');
+            } else {
+                lang = 'en';
+            }
+            showMessageModal('danger',
+                resources[lang][`title_${status}`],
+                resources[lang][`content_${status}`],
+                modalToRemove = null,
+                dismissCallback = () => {
+                    removeLoadingModal();
+                    setTimeout(() => $('#status_modal').remove(), 250);
+                });
+        }
     }
     addBtn.addEventListener('click', onAdd);
 

@@ -1,7 +1,7 @@
 function showLoadingModal() {
     const modal = document.createElement('div');
     modal.innerHTML = `
-    <div id="loading-modal" class="h-100 w-100 d-flex justify-content-center align-items-center" style="width: 100vw;height: 100vh;background: rgba(0, 0, 0, 0.8);position: absolute;top: 0;z-index: 9999;">
+    <div  class="h-100 w-100 d-flex justify-content-center align-items-center" style="width: 100vw;height: 100vh;background: rgba(0, 0, 0, 0.8);position: absolute;top: 0;z-index: 9999;">
         <div class="spinner-border text-warning" role="status"></div>
     </div>
     `;

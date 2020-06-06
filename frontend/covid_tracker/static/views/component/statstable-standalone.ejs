@@ -86,6 +86,9 @@
         const infected = document.querySelector('#infected').value;
         const death = document.querySelector('#death').value;
         const recovered = document.querySelector('#recovered').value;
+        if (!poiName || !poiId || !timestamp || !infected || !death || !recovered) {
+            throw "Some fields are missing!";
+        }
         const record = {
             poiId: poiId,
             timestamp: new Date(timestamp).getTime(),
